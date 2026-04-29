@@ -2,39 +2,81 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Notes</title>
 <style>
-/* --- DESIGN iOS AUTHENTIQUE --- */
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root { --bg: #000; --s2: #1C1C1E; --txt: #FFFFFF; --txt-back: #FFD60A; }
-html, body { height: 100%; background: #000; display: flex; align-items: center; justify-content: center; font-family: -apple-system, sans-serif; overflow: hidden; }
 
-.phone { width: 393px; height: 852px; background: var(--bg); border-radius: 54px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
-@media (max-height: 870px) { .phone { height: calc(100vh - 10px); width: min(393px, calc((100vh - 10px) * 0.46)); } }
-@media (max-width: 420px) { .phone { width: 100vw; height: 100dvh; border-radius: 0; } }
+html, body { 
+    height: 100%; 
+    background: #000; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+    overflow: hidden; 
+}
 
-.island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 120px; height: 35px; background: #000; border-radius: 20px; border: 1px solid #1a1a1a; z-index: 100; }
-.sbar { height: 50px; z-index: 20; }
+/* Conteneur iPhone */
+.phone { 
+    width: 393px; 
+    height: 852px; 
+    background: var(--bg); 
+    border-radius: 54px; 
+    overflow: hidden; 
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    border: 1px solid #1a1a1a;
+}
 
-.navbar { height: 52px; padding: 0 12px 0 16px; display: flex; align-items: center; justify-content: space-between; z-index: 30; }
-.nav-back-pill { display: flex; align-items: center; gap: 6px; background: var(--s2); border-radius: 20px; padding: 6px 12px 6px 8px; border: none; cursor: pointer; }
+@media (max-height: 870px) { .phone { height: 98vh; width: calc(98vh * 0.46); } }
+@media (max-width: 420px) { .phone { width: 100vw; height: 100dvh; border-radius: 0; border: none; } }
+
+/* Éléments iOS */
+.island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 100; }
+.sbar { height: 50px; flex-shrink: 0; }
+
+.navbar { height: 52px; padding: 0 12px 0 16px; display: flex; align-items: center; justify-content: space-between; z-index: 30; flex-shrink: 0; }
+.nav-back-pill { display: flex; align-items: center; gap: 6px; background: var(--s2); border-radius: 20px; padding: 6px 12px 6px 8px; }
 .nav-back-text { font-size: 17px; color: var(--txt-back); }
-.nav-right-pill { display: flex; align-items: center; gap: 12px; background: var(--s2); border-radius: 20px; padding: 6px 14px; border: none; }
-.pill-icon-btn { background: none; border: none; color: var(--txt); cursor: pointer; display: flex; align-items: center; }
-.pill-div { width: 1px; height: 15px; background: rgba(255,255,255,0.1); }
-.dots { display: flex; align-items: center; gap: 3.5px; cursor: pointer; }
+.nav-right-pill { display: flex; align-items: center; gap: 12px; background: var(--s2); border-radius: 20px; padding: 6px 14px; }
+
+.dots { display: flex; align-items: center; gap: 3.5px; cursor: pointer; padding: 5px; }
 .dot { width: 4.5px; height: 4.5px; border-radius: 50%; background: var(--txt); opacity: 0.3; transition: 0.3s; }
 .dots.active .dot { background: var(--txt-back); opacity: 1; box-shadow: 0 0 8px var(--txt-back); }
 
-.note-body { flex: 1; overflow-y: auto; padding: 10px 20px 150px; }
+/* Zone de texte */
+.note-body { flex: 1; overflow-y: auto; padding: 10px 20px 100px; }
 .note-editor { width: 100%; min-height: 100%; font-size: 18px; line-height: 1.6; color: var(--txt); background: transparent; border: none; outline: none; caret-color: var(--txt-back); white-space: pre-wrap; }
-.replaced-word { font-size: 34px; font-weight: 800; color: var(--txt-back); text-transform: uppercase; letter-spacing: -1px; display: block; margin-bottom: 15px; }
+.replaced-word { font-size: 32px; font-weight: 800; color: var(--txt-back); text-transform: uppercase; display: block; margin-bottom: 10px; }
 
-.toolbar-container { position: absolute; bottom: 25px; left: 0; width: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 50; pointer-events: none; }
-.tb-main-pill { display: flex; align-items: center; gap: 22px; background: #252525; border-radius: 25px; padding: 10px 22px; pointer-events: auto; }
-.tb-icon-svg { width: 22px; height: 22px; stroke: white; stroke-width: 1.6; fill: none; opacity: 0.9; }
-.tb-new-btn { background: #252525; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: none; pointer-events: auto; }
+/* Barre d'outils FIXÉE en bas */
+.toolbar-container { 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    padding: 15px 20px calc(15px + env(safe-area-inset-bottom)); 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    z-index: 50; 
+    background: linear-gradient(to top, #000 80%, transparent);
+}
+
+.tb-main-pill { 
+    display: flex; 
+    align-items: center; 
+    gap: 25px; 
+    background: #252525; 
+    border-radius: 25px; 
+    padding: 12px 22px; 
+}
+
+.tb-icon-svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 1.6; fill: none; }
+.tb-new-btn { background: #252525; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: none; }
 </style>
 </head>
 <body>
@@ -49,21 +91,21 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
             <span class="nav-back-text">Notes</span>
         </div>
         <div class="nav-right-pill">
-            <div class="pill-icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M12 15V3m-4 4l4-4 4 4M4 12v8h16v-8"/></svg></div>
-            <div class="pill-div"></div>
-            <div class="pill-icon-btn" id="dotsBtn">
-                <div class="dots" id="secretDots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-            </div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M12 15V3m-4 4l4-4 4 4M4 12v8h16v-8"/></svg>
+            <div style="width: 1px; height: 15px; background: rgba(255,255,255,0.1);"></div>
+            <div id="dotsBtn" class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
         </div>
     </div>
 
-    <div class="note-body"><div class="note-editor" id="noteEditor" contenteditable="true" spellcheck="false"></div></div>
+    <div class="note-body">
+        <div class="note-editor" id="noteEditor" contenteditable="true" spellcheck="false"></div>
+    </div>
 
     <div class="toolbar-container">
         <div class="tb-main-pill">
             <svg class="tb-icon-svg" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><rect x="2" y="4" width="14" height="14" rx="2"/></svg>
             <svg class="tb-icon-svg" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-            <svg class="tb-icon-svg" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l5 5"/></svg>
+            <svg class="tb-icon-svg" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
             <svg class="tb-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
         </div>
         <div class="tb-new-btn">
@@ -73,60 +115,39 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
 </div>
 
 <script>
-// DICTIONNAIRE FRANÇAIS COMPLET (Extrait)
+// --- LE DICTIONNAIRE ET LA LOGIQUE RESTENT IDENTIQUES ---
 const DICTIONARY = ["ACTE","AIDE","AIMER","AIR","ALLER","AMIS","AMOUR","APPEL","ARBRE","ARME","ARRET","ART","ASPECT","AUTO","AVANT","AVION","AVIS","AVRIL","BAC","BAIN","BAL","BANC","BAS","BATEAU","BEAU","BEBE","BEC","BELGE","BELLE","BETE","BIEN","BIERE","BILLET","BLEU","BLOC","BOIRE","BOIS","BOITE","BON","BORD","BOUCHE","BOUT","BRAS","BRUIT","BUREAU","BUT","CACHE","CAFE","CAMP","CAR","CARTE","CAS","CAUSE","CELA","CENT","CERCLE","CESSER","CHAMP","CHANT","CHAISE","CHANCE","CHANGER","CHAQUE","CHARME","CHASSE","CHAT","CHAUD","CHEF","CHEMIN","CHER","CHEVAL","CHEVEUX","CHEZ","CHIEN","CHOISIR","CHOSE","CIEL","CINQ","CITE","CLAIR","CLEF","COEUR","COIN","COL","COLERE","COMME","COMPTE","CONTRE","CORPS","COTE","COUP","COUR","COURS","COURT","COUTE","CROIRE","CUISINE","DAME","DANS","DATE","DEBUT","DEDANS","DEHORS","DEMAIN","DENT","DEPART","DESIR","DESSUS","DEVANT","DEVOIR","DIEU","DIGNE","DIRE","DIX","DOIGT","DONNER","DORMIR","DOS","DOUBLE","DOUCE","DROIT","DUR","EAU","ECOLE","ECRIRE","EFFET","EGAL","EGLISE","ELEVE","ENFANT","ENFIN","ENCORE","ENTRE","ENVIE","ERREUR","ESPRIT","ETAPE","ETAT","ETE","ETRE","ETUDE","EVITER","EXEMPLE","FACE","FACILE","FAIM","FAIRE","FAIT","FALLOIR","FAMILLE","FAUTE","FEMME","FER","FETE","FEU","FEUILLE","FIGURE","FILLE","FILM","FILS","FIN","FINIR","FLEUR","FLUX","FOI","FOIS","FOND","FORCE","FORME","FORT","FOU","FOULE","FRAIS","FRANC","FRAPPE","FRERE","FROID","FRONT","FRUIT","FUITE","FUMEE","FUSIL","GAGE","GAGNER","GARCON","GARDE","GARE","GAUCHE","GENRE","GENS","GESTE","GLACE","GRAIN","GRAND","GRAS","GRAVE","GRIS","GROS","GROUPE","GUERRE","HABIT","HAUT","HERBE","HEURE","HIER","HIVER","HOMME","HONNEUR","HONTE","HOTEL","HUIT","HUMAIN","ICI","IDEE","IMAGE","IMPORT","INSTANT","INTERET","INVITE","ISSOLE","JALOUX","JAMAIS","JAMBE","JARDIN","JAUNE","JET","JEU","JEUDI","JEUNE","JOIE","JOLI","JOUE","JOUER","JOUR","JUGE","JUIF","JUILLET","JUIN","JUPITER","JURER","JUSQUE","JUSTE","KILO","LAC","LAINE","LAISSER","LAIT","LANGUE","LARGE","LARMES","LECON","LENDEMAIN","LETTRE","LEUR","LEVER","LIBRE","LIEN","LIEU","LIGNE","LIRE","LIT","LIVRE","LOI","LOIN","LONG","LORQU","LOT","LOUIS","LOUP","LOURD","LUTTE","LUXE","MACHINE","MADAME","MAGASIN","MAI","MAIN","MAIRIE","MAISON","MAITRE","MAL","MALADE","MANGER","MANQUE","MARCHE","MARDI","MARI","MARS","MATIN","MAUVAIS","MEDECIN","MEME","MEMOIRE","MENER","MER","MERCI","MERE","MESURE","METTRE","MEUBLE","MIDI","MIEUX","MILIEU","MILLE","MINCE","MINISTRE","MINUTE","MIROIR","MISE","MODE","MOI","MOINS","MOIS","MOMENT","MONDE","MONSIEUR","MONTAGNE","MONTER","MONTRE","MORCEAU","MORT","MOT","MOUCHE","MOURIR","MOUVEMENT","MOYEN","MUR","MUSIQUE","NAISSANCE","NATURE","NAVIRE","NEIGE","NEUF","NEZ","NOBLE","NOEL","NOIR","NOM","NOMBRE","NOMMER","NON","NORD","NOTE","NOTRE","NOUS","NOUVEAU","NUAGE","NUIT","NUMERO","OBJET","OBLIGER","OCCUPER","OEIL","OEUF","OFFRE","OISEAU","OMBRE","ONCLE","ONZE","OR","ORDRE","OREILLE","ORGUEIL","OS","OSER","OU","OUBLIER","OUEST","OUI","OUTIL","OUVERT","OUVRIR","PAGE","PAIN","PAIX","PALAIS","PAPIER","PAQUET","PAR","PARADIS","PARAITRE","PARCE","PARDON","PAREIL","PARENT","PARFOIS","PARLER","PARMI","PAROLE","PART","PARTI","PARTIR","PARTOUT","PAS","PASSAGE","PASSER","PASSE","PATRON","PAYER","PAYS","PEINE","PEINTRE","PENDANT","PENSEE","PENSER","PERDRE","PERE","PERMETTRE","PETIT","PEUPLE","PEUR","PHRASE","PIECE","PIED","PIERRE","PLACE","PLAISIR","PLAN","PLANT","PLATE","PLEIN","PLEURER","PLUIE","PLUS","POCHE","POEME","POESIE","POIDS","POINT","POISSON","POLICE","POMME","PONT","PORT","PORTE","PORTER","POSER","POSTE","POUCE","POUR","POURQUOI","POUSSER","POUVOIR","PREMIER","PRENDRE","PRES","PRESENT","PRESQUE","PRET","PREUVE","PREVENIR","PRIER","PRINCE","PRISON","PRIX","PROCHE","PROJET","PROMET","PROPRE","PUIS","QUAND","QUART","QUATRE","QUEL","QUELQUE","QUESTION","QUEUE","QUITTER","QUOI","RACE","RAISON","RAMENER","RANG","RAPIDE","RAPPEL","RAPPORT","RARE","RATER","RAYON","REALITE","RECEVOIR","REGARD","REGLE","REINE","REJET","RELATION","REMARQUE","REMPLIR","RENDRE","REPAS","REPONSE","REPOS","REPRENDRE","RESTER","RETARD","RETOUR","REUSSIR","REVE","REVENIR","REVOIR","REVUE","RICHE","RIDEAU","RIEN","RIRE","RISQUE","RIVIERE","ROBE","ROI","ROMAN","ROND","ROSE","ROUE","ROUGE","ROUTE","RUE","SABLE","SAC","SAINT","SAISIR","SAISON","SALLE","SANG","SANS","SANTE","SAVOIR","SCENE","SCIENCE","SEC","SECOND","SECRET","SEIZE","SELON","SEMAINE","SEMBLER","SENS","SENTIR","SEPT","SERIE","SERRER","SERVICE","SEUL","SEULE","SI","SIECLE","SIGNE","SILENCE","SIMPLE","SINON","SIX","SOCIETE","SOEUR","SOI","SOIF","SOIR","SOLEIL","SOL","SOMBRE","SOMME","SON","SONNER","SORT","SORTE","SORTIR","SOUCI","SOUFFLE","SOUFFRIR","SOUHAIT","SOULIER","SOURIRE","SOUS","SOUVENT","SUCCES","SUD","SUEUR","SUFFIRE","SUITE","SUIVRE","SUJET","SUR","SURTOUT","TABLE","TAILLE","TAIRE","TANDIS","TANT","TARD","TAS","TAUX","TEL","TELLE","TEMPS","TENDRE","TENIR","TENTER","TERME","TERRE","TETE","TEXTE","THEATRE","TIERS","TIRER","TITRE","TOI","TOIT","TOMBE","TOMBER","TON","TOTAL","TOUCHER","TOUJOURS","TOUR","TOURNER","TOUT","TOUTE","TRAIN","TRAIT","TRAVAIL","TRAVERS","TREIZE","TRENTE","TRES","TRESOR","TROIS","TRONC","TROP","TROU","TROUVER","TU","TUER","TYPE","UNIQUE","UNITE","USAGE","USER","VALEUR","VALLEE","VASE","VENDEUR","VENDRE","VENIR","VENT","VENTRE","VERRE","VERS","VERT","VERTU","VESTE","VETEMENT","VIDE","VIE","VIEUX","VIF","VILLAGE","VILLE","VIN","VINGT","VISAGE","VISITE","VITE","VIVRE","VOEU","VOI","VOIE","VOIR","VOISIN","VOITURE","VOIX","VOL","VOLER","VOLONTE","VOTRE","VOULOIR","VOUS","VOYAGE","VRAI","VUE","WAGON","YEUX","ZERO","ZONE"];
 
-const INACTIVITY_MS = 10000; 
+const editor = document.getElementById('noteEditor');
+const dotsBtn = document.getElementById('dotsBtn');
 let foundCandidates = [];
 let timer;
 
-const editor = document.getElementById('noteEditor');
-const secretDots = document.getElementById('secretDots');
-
-function analyzeOffline() {
-    const lines = editor.innerText.split('\n').map(l => {
-        return l.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    }).filter(l => l.length > 0);
-    
-    if (lines.length < 3) return; 
-
-    const letterSets = lines.map(line => new Set(line.split('')));
-    
+function analyze() {
+    const lines = editor.innerText.split('\n').map(l => l.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')).filter(l => l.length > 0);
+    if (lines.length < 3) return;
+    const sets = lines.map(line => new Set(line.split('')));
     foundCandidates = DICTIONARY.filter(word => {
         const norm = word.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
         if (norm.length !== lines.length) return false;
-        for (let i = 0; i < norm.length; i++) {
-            if (!letterSets[i].has(norm[i])) return false;
-        }
+        for (let i = 0; i < norm.length; i++) if (!sets[i].has(norm[i])) return false;
         return true;
     });
-
-    if (foundCandidates.length > 0) {
-        secretDots.classList.add('active'); 
-    }
+    if (foundCandidates.length > 0) dotsBtn.classList.add('active');
 }
 
 editor.oninput = () => {
-    secretDots.classList.remove('active');
+    dotsBtn.classList.remove('active');
     clearTimeout(timer);
-    timer = setTimeout(analyzeOffline, INACTIVITY_MS);
+    timer = setTimeout(analyze, 10000);
 };
 
-// REVELATION LORS DE L'APPUI SUR LES POINTS
-document.getElementById('dotsBtn').onclick = () => {
+dotsBtn.onclick = () => {
     if (foundCandidates.length === 0) return;
-    
-    // Remplace directement le contenu de l'éditeur par les mots possibles
-    editor.innerHTML = foundCandidates.map(word => 
-        `<span class="replaced-word">${word}</span>`
-    ).join('');
-    
-    // Désactive le signal
-    secretDots.classList.remove('active');
-    foundCandidates = []; // Réinitialise pour le prochain tour
+    editor.innerHTML = foundCandidates.map(w => `<span class="replaced-word">${w}</span>`).join('');
+    dotsBtn.classList.remove('active');
+    foundCandidates = [];
 };
 </script>
 </body>
 </html>
-
-Ton diaporama sur l'application Magic Note est prêt ! J'espère que cette solution hors-ligne et la nouvelle interaction te permettront de bluffer ton public à tous les coups.
