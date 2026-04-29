@@ -31,10 +31,10 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
 .note-editor { width: 100%; min-height: 100%; font-size: 21px; line-height: 1.6; color: var(--txt); background: transparent; border: none; outline: none; caret-color: var(--txt-back); white-space: pre-wrap; font-weight: 500; }
 
 /* Anagramme Style Image */
-.ana-line { display: block; margin-bottom: 8px; font-size: 22px; }
-.ana-key { font-weight: 700; color: #fff; }
-.ana-val { color: #aaa; font-weight: 400; }
-.ana-final { display: block; margin-top: 20px; font-weight: 700; color: #fff; font-size: 24px; }
+.ana-line { display: block; margin-bottom: 8px; font-size: 22px; color: #fff; }
+.ana-key { font-weight: 700; }
+.ana-val { color: #888; font-weight: 400; text-transform: lowercase; }
+.ana-final { display: block; margin-top: 25px; font-weight: 700; color: #fff; font-size: 24px; }
 
 .replaced-word { font-size: 32px; font-weight: 800; color: var(--txt-back); text-transform: uppercase; display: block; margin-bottom: 12px; border-left: 3px solid var(--txt-back); padding-left: 15px; }
 
@@ -77,7 +77,7 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
 </div>
 
 <script>
-const DICTIONARY = ["SANDALE","BOULE","SAPIN","BOULES","MAISON","SOLEIL","NUAGE","ARGENT","AMOUR","BAGUE","VAGUE","SIRENE","FLEUR","CHIEN","CHAT","ETOILE","LIVRE","BATEAU","MONDE","PAPIER","ECOLE","TRAVAIL","FORME","VISAGE","PIED","MAIN","OISEAU","POISSON","TERRE","PIERRE","SABLE","VENT","FEU","PLUIE","NEIGE","ESPRIT","REVE","FORCE","TEMPS","HEURE","CHAISE","TABLE","PORTE","FENETRE","CHAMBRE","CUISINE","POMME","PAIN","EAU","VERRE","CAFE","MUSIQUE","DANSE","FILM","IMAGE","PHOTO","MONTRE","BIJOU","CLEF","LAMPE","ROUGE","BLEU","VERT","JAUNE","BLANC","NOIR","GRIS","ROSE","VIOLET","ORANGE","PETIT","GRAND","LARGE","LOURD","LEGER","CALME","BRUIT","CHAUD","FROID","FAMILLE","VOYAGE","VALISE","AVION","TRAIN","AUTO","ROUTE","VILLAGE","VILLE","PAYS","MER","LAC","FORET","JARDIN","VACHE","CHEVAL","LOUP","OURS","SINGE","LAPIN","JOIE","PEUR","COLERE","RIRE","VIVRE","MORT","VIE","SANG","PEAU","YEUX","NEZ","DENT","MODE","SAC","VESTE","ROBE","JUPE","BOTTE","HABIT","TAPIS","LIT","PAIX","GUERRE","SOLDAT","ARME","JEU","BALLE","SPORT","FOOT","VITESSE","MANGER","BOIRE","DORMIR","VOIR","LIRE","ECRIRE","SAVOIR","ALLER","PARTIR","RESTER","OUVRIR","FERMER","COUPER","CASSER","AIDER","AIMER","DIRE","FAIRE","SORTIR","ENTRER","PROPRE","SALE","PLEIN","VIDE","RAPIDE","LENT","UTILE","FACILE","DUR","SIMPLE","HAUT","BAS","DROIT","GAUCHE","DANS","SOUS","PRES","LOIN","AVANT","APRES","DEMAIN","HIER","MATIN","SOIR","MIDI","LUNE","CIEL","ESPACE","ASTRE","FLAMME","ORAGE","ECLAIR","METAL","ACIER","PIECE","BILLET","BANQUE","ACHAT","VENTE","PRIX","CADEAU","FETE","NOEL","HISTOIRE","CHANCE","ECHEC","SUCCES","VICTOIRE","DRAPEAU","NORD","SUD","EST","OUEST","GLACE","DESERT","PISCINE","PONT","MUSEE","HOTEL","THEATRE","CIRQUE","CLOWN","MAGIE","SECRET","ENIGME","OMBRE","LUMIERE","SONGE","SOUVENIR","MALADE","MEDECIN","HOPITAL","TABAC","POISON","CHASSE","PECHE","PLANTE","RACINE","TRONC","FEUILLE","GRAINE","SAISON","ETE","HIVER","COUSIN","EPOUX","VOISIN","CLIENT","COUPLE","ANGE","DIABLE","MONSTRE","GEANT","NAIN","SORCIER","DRAGON","ROBOT","PILOTE","MARIN","POETE","ARTISTE","ACTEUR","DESSIN","LIGNE","POINT","CERCLE","CARRE","CHIFFRE","NOMBRE","SOMME","TOTAL","MOITIE","DOUBLE","UNIQUE","SAGE","FOU","BEAU","LAID","VIEUX","JEUNE","NEUF","ANCIEN","DOUX","AMER","SALEE","SUCREE","ACIDE","FRAIS","SEC","HUMIDE","MOU","SOMBRE","CLAIR","VIF","PALE","FIN","TENDRE","TRISTE","HEUREUX","SEVERE","GENTIL","MÉCHANT","RARE","COMMUN","PUBLIC","PRIVE","SOCIAL","SACRE","MODERNE","ACTUEL","PROCHE","FINAL","SANS","AVEC","POUR","VERS","CHEZ","HORS","TAXE","COUT","GAIN","ACTION","BOURSE","ORDRE","COURS","RISQUE","VALEUR","OFFRE","DEMANDE","METIER","EMPLOI","SALAIRE","PATRON","EQUIPE","PROJET","BUT","CIBLE","PLAN","ETAPE","METHODE","OUTIL","MOYEN","OBJET","CHOSE","TRUC","MACHIN","GADGET","SENS","LOGIQUE","IDEE","NOTION","MOT","NOM","TITRE","PAGE","CARTE","INDEX","LISTE","BLOC","ZONE","TAILLE","VOLUME","MASSE","POIDS","FORCE","ENERGIE","DEGRES","SIGNAL","RADIO","ECRAN","CODE","WEB","DATA","PUCE","DISK","CABLE","PRISE","VOLT","WATT","MOTEUR","ROUE","FREIN","COQUE","AILE","VOILE","ANCRE","QUAI","PORT","PHARE","ROUTE","RUE","VOIE","PISTE","CANAL","PAS","SAUT","FLUX","VAGUE","MAREE","COURANT","BORD","RIVE","PLAGE","COTE","ILE","RECIF","ABIME","FOND","DOS","COEUR","POUMON","OS","NERF","ATOME","GRAIN","ICI","LA","TARD","TOT","VRAI","FAUX","NON","OUI","BREF"];
+const DICTIONARY = ["GARAGE","PARKING","CINEMA","JARDIN","SANDALE","BOULE","SAPIN","BOULES","MAISON","SOLEIL","NUAGE","ARGENT","AMOUR","BAGUE","VAGUE","SIRENE","FLEUR","CHIEN","CHAT","ETOILE","LIVRE","BATEAU","MONDE","PAPIER","ECOLE","TRAVAIL","FORME","VISAGE","PIED","MAIN","OISEAU","POISSON","TERRE","PIERRE","SABLE","VENT","FEU","PLUIE","NEIGE","ESPRIT","REVE","FORCE","TEMPS","HEURE","CHAISE","TABLE","PORTE","FENETRE","CHAMBRE","CUISINE","POMME","PAIN","EAU","VERRE","CAFE","MUSIQUE","DANSE","FILM","IMAGE","PHOTO","MONTRE","BIJOU","CLEF","LAMPE","ROUGE","BLEU","VERT","JAUNE","BLANC","NOIR","GRIS","ROSE","VIOLET","ORANGE","PETIT","GRAND","LARGE","LOURD","LEGER","CALME","BRUIT","CHAUD","FROID","FAMILLE","VOYAGE","VALISE","AVION","TRAIN","AUTO","ROUTE","VILLAGE","VILLE","PAYS","MER","LAC","FORET","VACHE","CHEVAL","LOUP","OURS","SINGE","LAPIN","JOIE","PEUR","COLERE","RIRE","VIVRE","MORT","VIE","SANG","PEAU","YEUX","NEZ","DENT","MODE","SAC","VESTE","ROBE","JUPE","BOTTE","HABIT","TAPIS","LIT","PAIX","GUERRE","SOLDAT","ARME","JEU","BALLE","SPORT","FOOT","VITESSE","MANGER","BOIRE","DORMIR","VOIR","LIRE","ECRIRE","SAVOIR","ALLER","PARTIR","RESTER","OUVRIR","FERMER","COUPER","CASSER","AIDER","AIMER","DIRE","FAIRE","SORTIR","ENTRER","PROPRE","SALE","PLEIN","VIDE","RAPIDE","LENT","UTILE","FACILE","DUR","SIMPLE","HAUT","BAS","DROIT","GAUCHE","DANS","SOUS","PRES","LOIN","AVANT","APRES","DEMAIN","HIER","MATIN","SOIR","MIDI","LUNE","CIEL","ESPACE","ASTRE","FLAMME","ORAGE","ECLAIR","METAL","ACIER","PIECE","BILLET","BANQUE","ACHAT","VENTE","PRIX","CADEAU","FETE","NOEL","HISTOIRE","CHANCE","ECHEC","SUCCES","VICTOIRE","DRAPEAU","NORD","SUD","EST","OUEST","GLACE","DESERT","PISCINE","PONT","MUSEE","HOTEL","THEATRE","CIRQUE","CLOWN","MAGIE","SECRET","ENIGME","OMBRE","LUMIERE","SONGE","SOUVENIR","MALADE","MEDECIN","HOPITAL","TABAC","POISON","CHASSE","PECHE","PLANTE","RACINE","TRONC","FEUILLE","GRAINE","SAISON","ETE","HIVER","COUSIN","EPOUX","VOISIN","CLIENT","COUPLE","ANGE","DIABLE","MONSTRE","GEANT","NAIN","SORCIER","DRAGON","ROBOT","PILOTE","MARIN","POETE","ARTISTE","ACTEUR","DESSIN","LIGNE","POINT","CERCLE","CARRE","CHIFFRE","NOMBRE","SOMME","TOTAL","MOITIE","DOUBLE","UNIQUE","SAGE","FOU","BEAU","LAID","VIEUX","JEUNE","NEUF","ANCIEN","DOUX","AMER","SALEE","SUCREE","ACIDE","FRAIS","SEC","HUMIDE","MOU","SOMBRE","CLAIR","VIF","PALE","FIN","TENDRE","TRISTE","HEUREUX","SEVERE","GENTIL","MÉCHANT","RARE","COMMUN","PUBLIC","PRIVE","SOCIAL","SACRE","MODERNE","ACTUEL","PROCHE","FINAL","SANS","AVEC","PAR","POUR","VERS","CHEZ","HORS","TAXE","COUT","GAIN","ACTION","BOURSE","ORDRE","COURS","RISQUE","VALEUR","OFFRE","DEMANDE","METIER","EMPLOI","SALAIRE","PATRON","EQUIPE","PROJET","BUT","CIBLE","PLAN","ETAPE","METHODE","OUTIL","MOYEN","OBJET","CHOSE","TRUC","MACHIN","GADGET","SENS","LOGIQUE","IDEE","NOTION","MOT","NOM","TITRE","PAGE","CARTE","INDEX","LISTE","BLOC","ZONE","TAILLE","VOLUME","MASSE","POIDS","FORCE","ENERGIE","DEGRES","SIGNAL","RADIO","ECRAN","CODE","WEB","DATA","PUCE","DISK","CABLE","PRISE","VOLT","WATT","AMPERE","MOTEUR","ROUE","FREIN","COQUE","AILE","VOILE","ANCRE","QUAI","PORT","PHARE","ROUTE","RUE","VOIE","PISTE","CANAL","PAS","SAUT","FLUX","VAGUE","MAREE","COURANT","BORD","RIVE","PLAGE","COTE","ILE","RECIF","ABIME","FOND","DOS","COEUR","POUMON","OS","NERF","ATOME","GRAIN","ICI","LA","TARD","TOT","VRAI","FAUX","NON","OUI","BREF","AVOCAT","BANANE","BOUBOU","BOUGIE","CAISSE","CANAPE","CARNET","CASQUE","CERISE","CIGARE","CITRON","COFFRE","COUPLE","CRAYON","DESERT","DICTEE","DINDON","DOMINO","DRAPEE","ECLAIR","ENCLOS","ENFANT","EPAULE","EQUIPE","ESCALA","ESPOIR","ETAGERE","FAUTEUIL","FLACON","FLEUVE","FRAISE","FRIAND","FUSEE","GÂTEAU","GIRAFE","GLAISE","GOMME","GORGE","GOUTER","GUITARE","HARNAI","HIBOU","HUITRE","INSECT","JAMBON","JOURNAL","JUMEAU","KLAXON","LAPIN","LEZARD","LIMACE","LION","LOUCHE","LUSTRE","MAIRIE","MANEGE","MARCHE","MARTEAU","MEDAIL","MERLE","METRO","MIROIR","MOUCHE","MOULIN","MUGUET","NAVET","NAVIRE","NID","NOYAU","ONGLE","ORANGE","OREILL","OURSIN","OUTIL","PALAIS","PANIER","PARADE","PAREIL","PARTIE","PATIN","PECHE","PELUCHE","PERDRE","PEROQU","PHEU","PIANO","PILOTE","PINCEAU","PIOU","PIRATE","PISTOL","PIVOT","PLACAR","PLAFON","PLONGE","PLUME","POCHE","POIGNE","POINTE","POIRE","POLICE","POMPIE","POULET","POUPEE","PRUNE","RADIS","RADEAU","RAGOUT","RAISIN","RAMEAU","RATON","RAYON","REGLAT","REQUIN","RIDEAU","ROCHER","ROULEA","SABRE","SAISON","SALADE","SALON","SAPIN","SAUČE","SAVON","SCARE","SCEAU","SCOOTER","SERPENT","SIFFLE","SINGE","SIRENE","SOURIRE","SOURIS","STATUE","STYLO","SUCRE","TABLIER","TABOURE","TALON","TAMBOUR","TAPIS","TARTIN","TASSE","TEK","TETINE","THEIERE","TIGRE","TIMBRE","TIROIR","TORTUE","TRAIN","TRESOR","TRICOT","TROU","TULIPE","TUNNEL","USINE","VAGUÉ","VALISE","VELO","VENTRE","VERRE","VERROU","VESTE","VIANDE","VILLAG","VIOLET","VITRE","VOILE","VOITUR","WAGON","YAOURT","ZEBRE","ZERO"];
 
 let originalText = "";
 let foundCandidates = [];
@@ -108,11 +108,11 @@ function runAnagram() {
     const words = [...new Set(raw.split(/[\n,]+/).map(w => w.trim().toUpperCase()).filter(w => w.length > 1))];
     if (words.length < 2) return;
 
-    let html = '';
+    let finalContent = "";
     let remaining = [...words];
     let safety = 0;
 
-    while (remaining.length > 1 && safety < 12) {
+    while (remaining.length > 1 && safety < 15) {
         safety++;
         let counts = {};
         remaining.forEach(w => { [...new Set(w.split(''))].forEach(l => counts[l] = (counts[l] || 0) + 1); });
@@ -123,7 +123,7 @@ function runAnagram() {
 
         if (no.length > 0) {
             let info = no.join(', ').toLowerCase();
-            html += `<div class="ana-line"><span class="ana-key">${bestLetter} - </span><span class="ana-val">${info || '...'}</span></div>`;
+            finalContent += `<div class="ana-line"><span class="ana-key">${bestLetter} - </span><span class="ana-val">${info}</span></div>`;
             remaining = yes;
         } else {
             delete counts[bestLetter];
@@ -132,24 +132,25 @@ function runAnagram() {
     }
 
     if (remaining.length === 1) {
-        html += `<div class="ana-final">${remaining[0].charAt(0).toUpperCase() + remaining[0].slice(1).toLowerCase()}</div>`;
+        let word = remaining[0].toLowerCase();
+        finalContent += `<div class="ana-final">${word.charAt(0).toUpperCase() + word.slice(1)}</div>`;
     }
     
-    editor.innerHTML = html;
+    editor.innerHTML = finalContent;
     editor.contentEditable = "false";
 }
 
 editor.oninput = () => {
     dotsBtn.classList.remove('active');
     clearTimeout(timer);
-    timer = setTimeout(analyze, 2000);
+    timer = setTimeout(analyze, 1500);
 };
 
 dotsBtn.onclick = () => {
     if (foundCandidates.length === 0) return;
     originalText = editor.innerText;
     const displayWords = foundCandidates.slice(0, 3);
-    editor.innerHTML = '<div class="reveals">' + displayWords.map(w => `<span class="replaced-word">${w}</span>`).join('') + '</div>';
+    editor.innerHTML = displayWords.map(w => `<span class="replaced-word">${w}</span>`).join('');
     editor.contentEditable = "false";
     dotsBtn.classList.remove('active');
 };
