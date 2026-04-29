@@ -21,29 +21,30 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
 .island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 100; }
 
 .navbar { height: 95px; padding: 40px 12px 0 16px; display: flex; align-items: center; justify-content: space-between; z-index: 30; }
-.nav-back-pill { display: flex; align-items: center; gap: 6px; background: var(--s2); border-radius: 20px; padding: 6px 12px 6px 8px; cursor: pointer; }
+.nav-back-pill { display: flex; align-items: center; gap: 6px; background: var(--s2); border-radius: 20px; padding: 6px 12px 6px 8px; cursor: pointer; transition: opacity 0.2s; }
+.nav-back-pill:active { opacity: 0.5; }
 .nav-back-text { font-size: 17px; color: var(--txt-back); }
-.nav-right-pill { display: flex; align-items: center; gap: 12px; background: var(--s2); border-radius: 20px; padding: 6px 14px; }
 
+.nav-right-pill { display: flex; align-items: center; gap: 12px; background: var(--s2); border-radius: 20px; padding: 6px 14px; }
 .dots { display: flex; align-items: center; gap: 3.5px; cursor: pointer; padding: 5px; }
-.dot { width: 4.5px; height: 4.5px; border-radius: 50%; background: var(--txt); opacity: 0.3; transition: 0.3s; }
+.dot { width: 4.5px; height: 4.5px; border-radius: 50%; background: var(--txt); opacity: 0.3; }
 .dots.active .dot { background: var(--txt-back); opacity: 1; box-shadow: 0 0 8px var(--txt-back); }
 
 .note-body { flex: 1; overflow-y: auto; padding: 10px 20px 160px; }
 .note-editor { width: 100%; min-height: 100%; font-size: 19px; line-height: 1.5; color: var(--txt); background: transparent; border: none; outline: none; caret-color: var(--txt-back); white-space: pre-wrap; }
 
 .reveals .replaced-word { font-size: 32px; font-weight: 800; color: var(--txt-back); text-transform: uppercase; display: block; margin-bottom: 12px; border-left: 3px solid var(--txt-back); padding-left: 15px; }
-.anagram-line { font-size: 18px; color: #888; margin-bottom: 15px; line-height: 1.4; padding-bottom: 10px; border-bottom: 0.5px solid #1c1c1e; }
-.anagram-yes { color: #fff; display: block; margin-top: 4px; }
-.anagram-letter { color: var(--txt-back); font-weight: 800; font-size: 24px; margin-right: 10px; }
-.anagram-no { color: #555; font-size: 14px; display: block; margin-top: 2px; }
+.anagram-line { font-size: 18px; color: #888; margin-bottom: 18px; line-height: 1.4; padding-bottom: 12px; border-bottom: 0.5px solid #1c1c1e; }
+.anagram-yes { color: #fff; display: block; margin-top: 4px; font-weight: 500; }
+.anagram-letter { color: var(--txt-back); font-weight: 800; font-size: 26px; margin-right: 12px; }
+.anagram-no { color: #666; font-size: 14px; display: block; margin-top: 5px; font-style: italic; }
 
 .toolbar-container { 
     position: absolute; 
     bottom: 0; 
     left: 0; 
     width: 100%; 
-    padding: 0 20px calc(8px + env(safe-area-inset-bottom)); 
+    padding: 0 20px calc(5px + env(safe-area-inset-bottom)); 
     display: flex; 
     align-items: center; 
     justify-content: space-between; 
@@ -71,7 +72,7 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
     </div>
 
     <div class="note-body">
-        <div class="note-editor" id="noteEditor" contenteditable="true" spellcheck="false"></div>
+        <div class="note-editor" id="noteEditor" contenteditable="true" spellcheck="false" placeholder="Commencez à écrire..."></div>
     </div>
 
     <div class="toolbar-container">
@@ -88,7 +89,6 @@ html, body { height: 100%; background: #000; display: flex; align-items: center;
 </div>
 
 <script>
-// Dictionnaire enrichi avec DISQUE et ACTEUR
 const DICTIONARY = ["DISQUE","ACTEUR","ARBRE","MAISON","COEUR","SOLEIL","NUAGE","ARGENT","AMOUR","BAGUE","VIANDE","MARIAGE","VAGUE","SOURRE","CAPRICORNE","SIRENE","FLEUR","CHIEN","CHAT","ETOILE","LIVRE","BATEAU","CHEMIN","MONDE","JOUR","NUIT","FEMME","HOMME","ENFANT","PAPIER","ECOLE","TRAVAIL","FORME","BOUCHE","VISAGE","CORPS","BRAS","JAMBE","PIED","MAIN","DOIGT","OISEAU","POISSON","TERRE","PIERRE","SABLE","VENT","FEU","PLUIE","NEIGE","PROJET","ESPRIT","REVE","ESPOIR","FORCE","TEMPS","HEURE","MINUTE","CHAISE","TABLE","PORTE","FENETRE","CHAMBRE","CUISINE","REPAS","POMME","PAIN","EAU","VERRE","CAFE","THE","MUSIQUE","DANSE","CHANT","FILM","IMAGE","PHOTO","CADRE","MONTRE","BIJOU","CLEF","LAMPE","ROUGE","BLEU","VERT","JAUNE","BLANC","NOIR","GRIS","ROSE","VIOLET","ORANGE","FORTE","PETIT","GRAND","LARGE","COURT","LONG","LOURD","LEGER","CALME","BRUIT","CHAUD","FROID","DOUCE","AMIS","FRERE","SOEUR","PARENTS","FAMILLE","VOYAGE","VALISE","AVION","TRAIN","AUTO","ROUTE","VILLAGE","VILLE","PAYS","MER","LAC","FORET","HERBE","JARDIN","PLANTER","FERME","VACHE","CHEVAL","LOUP","OURS","SINGE","LAPIN","SOUCIS","JOIE","PEUR","COLERE","RIRE","PLEURER","CALME","VIVRE","MORT","VIE","SANTE","CORPS","SANG","PEAU","CHEVEUX","YEUX","NEZ","DENT","COI","MODE","STYL","SAC","GANTS","VESTE","ROBE","JUPE","BOTTE","HABIT","LINGE","TAPIS","LIT","REPOS","STRESS","CALME","LIBRE","DROIT","LOI","PAIX","GUERRE","SOLDAT","ARME","JEU","BALLE","SPORT","FOOT","TENNIS","VITESSE","COURIR","MARCHER","DANSER","SAUTER","NAGER","VOLER","MANGER","BOIRE","DORMIR","VOIR","LIRE","ECRIRE","PARLER","ECOUTER","PENSER","CROIRE","SAVOIR","VENIR","ALLER","PARTIR","RESTER","DONNER","PRENDRE","GARDER","PERDRE","GAGNER","CHERCHER","TROUVER","OUVRIR","FERMER","COUPER","CASSER","REPARER","CHOISIR","OFFRIR","AIDER","AIMER","HAIR","OUSER","DIRE","FAIRE","METTRE","TENIR","SORTIR","ENTRER","MORTEL","PROPRE","SALE","PLEIN","VIDE","RAPIDE","LENT","UTILE","FACILE","DUR","SIMPLE","COMPLEXE","ENTIER","PARTIE","CENTRE","COIN","HAUT","BAS","DROIT","GAUCHE","DEVANT","DERRIERE","DANS","SURS","SOUS","ENTRE","PRES","LOIN","AVANT","APRES","DEMAIN","HIER","MATIN","SOIR","MIDI","LUNE","CIEL","UNIVERS","ESPACE","ASTRE","PLANETE","VAPEUR","FLAMME","ORAGE","ECLAIR","BRIQUE","BETON","METAL","ACIER","ARGENT","BRONZE","PIECE","BILLET","BANQUE","CREDIT","ACHAT","VENTE","COUTER","PRIX","VALEUR","CADEAU","FETE","NOEL","CULTURE","HISTOIRE","DESTIN","HASARD","CHANCE","RISQUE","ECHEC","SUCCES","VICTOIRE","COMBAT","DRAPEAU","NATION","PEUPLE","CITOYEN","VOTE","REGION","NORD","SUD","EST","OUEST","GLACE","DESERT","SABLE","DUNES","CAVE","GRENIER","SALON","PISCINE","PONT","TUNNEL","MUSEE","HOTEL","THEATRE","CIRQUE","CLOWN","MAGIE","SECRET","ENIGME","OMRE","LUMIERE","RAYON","SONGE","SOUVENIR","ODORAT","GOUT","TOUCHER","OUIE","DOULEUR","MALADE","MEDECIN","HOPITAL","DROGUE","ALCOOL","TABAC","POISON","CHASSE","PECHE","FORET","PLANTE","RACINE","TRONC","FEUILLE","GRAINE","RECOLTE","SAISON","ETE","HIVER","PRINTEMP","AUTOMNE","NEVEU","NIECE","COUSIN","EPOUX","EPOUSE","VOISIN","CLIENT","BOSS","COUPLE","HUMAIN","DIVIN","ANGE","DIABLE","MONSTRE","GEANT","NAIN","FEERIE","SORCIER","DRAGON","ROBOT","PILOTE","MARIN","POETE","ARTISTE","PEINTRE","SCULPTE","ACTEUR","DESSIN","LIGNE","POINT","CERCLE","CARRE","ANGLE","CHIFFRE","NOMBRE","SOMME","TOTAL","RESTE","MOITIE","DOUBLE","TRIPLE","UNIQUE","EGAL","STRICT","LIBRE","SAGE","FOU","BEAU","LAID","VIEUX","JEUNE","NEUF","ANCIEN","CACHE","VISIBLE","CACHER","MONTRE","DOUX","AMER","SALEE","SUCREE","ACIDE","FRAIS","SEC","HUMIDE","DUR","MOU","SOUPLY","RAIDE","LOURD","LEGER","PETIT","MINCE","MINIM","SOMBRE","CLAIR","VIF","TERNE","PALE","DENSE","EPAIS","FIN","MOU","TENDRE","CALME","DOCILE","REBELLE","BRAVE","LACHE","FIER","HUMBLE","VIL","NOBLE","TRISTE","HEUREUX","GAI","MOROSE","SEVERE","GENTIL","MÉCHANT","DOUX","AMICAL","UNIQUE","DIVERS","RARE","COMMUN","PUBLIC","PRIVE","SOCIAL","MORAL","LEGAL","SACRE","PROFANE","MODERNE","ACTUEL","PASSÉ","FUTUR","PROCHE","FINAL","PREMIER","DERNIER","SANS","AVEC","PAR","POUR","CONTRE","MALGRE","SAUF","VERS","CHEZ","HORS","DURANT","PRIX","TAXE","FRAIS","COUT","DEBIT","PERTE","GAIN","PROFIE","ACTION","BOURSE","CHANGES","ORDRE","COURS","INDICE","CRASH","RISQUE","VALEUR","OFFRE","DEMANDE","CLIENT","ACHETEU","VENDEUR","METIER","EMPLOI","SALAIRE","PATRON","CADRE","EQUIPE","PROJET","BUT","CIBLE","PLAN","ETAPE","ORDRE","METHODE","OUTIL","MOYEN","OBJET","CHOSE","TRUC","MACHIN","GADGET","SENS","LOGIQ","IDEE","NOTION","MOT","TERME","NOM","TITRE","PAGE","VERSO","REVERSE","CARTE","INDEX","LISTE","BLOC","LIGNE","ZONE","ESPACE","TAILLE","VOLUME","MASSE","POIDS","GRANDEU","FORCE","VIGUEUR","PUISSAN","ENERGIE","FEU","CHALEUR","DEGRES","ONDE","SIGNAL","RADIO","ECRAN","CLAVIER","SOURIS","CODE","WEB","DATA","PUCE","DISK","CABLE","FIBRE","PRISE","VOLT","WATT","AMPERE","MOTEUR","ROUE","FREIN","PONT","COQUE","AILE","HELICE","VOILE","ANCRE","QUAI","PORT","PHARE","BOUEE","PONT","ROUTE","RUE","VOIE","PISTE","CANAL","GUE","PAS","SAUT","MARCHE","COURSE","TROT","GALOP","FLUX","REFLUX","VAGUE","MAREE","COURAN","BORD","RIVE","PLAGE","COTE","ILE","RECIF","ABIME","FOND","SURFACE","DESSUS","DESSOUS","COTE","ANGLE","FACE","PROFIL","DOS","VENTRE","TORSE","COEUR","POUMON","FOIE","REIN","OS","MUSCLE","NERF","CELLULE","ATOME","GRAIN","POUR","CONTRE","PARTOUT","ICI","LA","BAS","HAUT","LOIN","PRES","TARD","TOT","BIEN","MAL","MIEUX","PIRE","TROP","ASSEZ","PEU","TANT","PLUS","MOINS","TRES","FORT","VITE","LENT","VRAI","FAUX","NON","OUI","BREF"];
 
 const editor = document.getElementById('noteEditor');
@@ -114,22 +114,27 @@ function analyze() {
 }
 
 function generateAnagramProgressive() {
-    const words = [...new Set(editor.innerText.split(/[\n,]+/).map(w => w.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')).filter(w => w.length > 1))];
+    const rawInput = editor.innerText;
+    const words = [...new Set(rawInput.split(/[\n,]+/).map(w => w.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')).filter(w => w.length > 1))];
+    
     if (words.length < 2) return;
 
-    originalText = editor.innerText;
-    let anagramHTML = '<div class="reveals" style="font-size:16px; color:#555">Méthode YES-SET :<br><br>';
+    // Sauvegarde immédiate avant transformation
+    originalText = rawInput;
+    
+    let anagramHTML = '<div class="reveals">';
     let remainingWords = [...words];
+    let maxIterations = 10;
 
-    while (remainingWords.length > 1) {
+    while (remainingWords.length > 1 && maxIterations > 0) {
+        maxIterations--;
         let counts = {};
         remainingWords.forEach(w => {
             new Set(w.split('')).forEach(l => { counts[l] = (counts[l] || 0) + 1; });
         });
 
-        // REVERSE : On cherche la lettre la plus commune pour forcer le "OUI"
+        // Trouver la lettre la plus commune pour maximiser le "OUI"
         let bestLetter = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-
         let matching = remainingWords.filter(w => w.includes(bestLetter));
         let notMatching = remainingWords.filter(w => !w.includes(bestLetter));
 
@@ -137,19 +142,18 @@ function generateAnagramProgressive() {
             anagramHTML += `
                 <div class="anagram-line">
                     <span class="anagram-letter">${bestLetter}</span>
-                    <span class="anagram-yes">Si OUI : (reste ${matching.length} mots)</span>
-                    <span class="anagram-no">Si NON : Choix = ${notMatching.join(' / ')}</span>
+                    <span class="anagram-yes">OUI → Reste ${matching.length}</span>
+                    <span class="anagram-no">NON → ${notMatching.join(' / ')}</span>
                 </div>`;
             remainingWords = matching; 
         } else {
-            // Si tous les mots ont la lettre, on cherche la 2ème plus commune
             delete counts[bestLetter];
             if (Object.keys(counts).length === 0) break;
         }
     }
     
     if (remainingWords.length === 1) {
-        anagramHTML += `<div class="anagram-line" style="border:none"><span class="anagram-yes" style="color:var(--txt-back)">FINAL : ${remainingWords[0]}</span></div>`;
+        anagramHTML += `<div class="anagram-line" style="border:none"><span class="anagram-yes" style="color:var(--txt-back); font-size:24px">FINAL : ${remainingWords[0]}</span></div>`;
     }
     
     anagramHTML += '</div>';
@@ -159,13 +163,12 @@ function generateAnagramProgressive() {
 editor.oninput = () => {
     dotsBtn.classList.remove('active');
     clearTimeout(timer);
-    timer = setTimeout(analyze, 3000);
+    timer = setTimeout(analyze, 2000);
 };
 
 dotsBtn.onclick = () => {
     if (foundCandidates.length === 0) return;
     originalText = editor.innerText;
-    // Affiche jusqu'à 3 candidats
     const displayWords = foundCandidates.slice(0, 3);
     editor.innerHTML = '<div class="reveals">' + displayWords.map(w => `<span class="replaced-word">${w}</span>`).join('') + '</div>';
     dotsBtn.classList.remove('active');
@@ -173,10 +176,12 @@ dotsBtn.onclick = () => {
 
 anagramBtn.onclick = generateAnagramProgressive;
 
+// FONCTION RETOUR (Fleche Notes en haut à gauche)
 backBtn.onclick = () => {
     if (originalText !== "") {
-        editor.innerText = originalText;
-        originalText = ""; 
+        editor.innerHTML = ""; // Vide d'abord
+        editor.innerText = originalText; // Restaure le texte pur
+        originalText = ""; // Reset de la sauvegarde
     }
 };
 </script>
