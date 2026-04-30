@@ -63,7 +63,6 @@ const DICTIONARY = ["ABORD", "ABRI", "ACCES", "ADIEU", "ADULTES", "AFFAIRE", "AG
 
 let ghostCandidates = []; 
 let ghostList = [];      
-let originalContent = "";
 
 const editor = document.getElementById('editor');
 const dotsBtn = document.getElementById('dotsBtn');
@@ -72,19 +71,17 @@ const backBtn = document.getElementById('backBtn');
 
 function normalize(str) { return str.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
 
-// --- SURVEILLANCE ULTRA-RÉACTIVE ---
 editor.oninput = () => {
     const text = editor.innerText;
     const rawLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     
     if (rawLines.length > 0) {
-        // Sauvegarde immédiate pour l'anagramme
         ghostList = [...rawLines];
-
-        // Calcul Dico en temps réel sur chaque caractère
         const sets = rawLines.map(l => new Set(normalize(l).split('')));
+        
         const currentCandidates = DICTIONARY.filter(word => {
             const norm = normalize(word);
+            // CORRECTION: Vérification stricte de la longueur du mot
             if (norm.length !== rawLines.length) return false;
             for (let i = 0; i < norm.length; i++) {
                 if (!sets[i].has(norm[i])) return false;
@@ -95,35 +92,38 @@ editor.oninput = () => {
         if (currentCandidates.length > 0) {
             ghostCandidates = currentCandidates;
             dotsBtn.classList.add('active');
+        } else {
+            // On ne désactive pas si on a déjà des candidats en mémoire (mode ghost)
+            if (ghostCandidates.length === 0) dotsBtn.classList.remove('active');
         }
     }
-    // Note: Si rawLines est vide, on ne réinitialise PAS ghostCandidates 
-    // pour qu'ils restent accessibles via les points jaunes après effacement.
 };
 
-// --- ALGORITHME ANAGRAMME ---
 function getBestLetter(wordList, usedLetters) {
     let counts = {};
     wordList.forEach(w => {
         let uniqueChars = new Set(normalize(w).split(''));
         uniqueChars.forEach(c => { if (!usedLetters.has(c)) counts[c] = (counts[c] || 0) + 1; });
     });
+    
     let bestChar = null; let minDiff = Infinity;
     for (let char in counts) {
         let noCount = wordList.filter(w => !normalize(w).includes(char)).length;
-        if (noCount > 0 && noCount <= 2 && noCount < minDiff) { minDiff = noCount; bestChar = char; }
+        // CORRECTION: Logique plus permissive pour forcer l'affichage des lignes
+        if (noCount > 0 && noCount < minDiff) { 
+            minDiff = noCount; 
+            bestChar = char; 
+        }
     }
     return bestChar || Object.keys(counts)[0];
 }
 
 function runAnagram() {
-    // Utilise soit le texte actuel, soit la dernière liste mémorisée
     let currentText = editor.innerText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     let listToUse = (currentText.length > 0) ? currentText : ghostList;
     
     if (listToUse.length < 1) return;
 
-    originalContent = editor.innerHTML;
     let currentWords = [...listToUse];
     let usedLetters = new Set();
     let displayHTML = "";
@@ -135,39 +135,42 @@ function runAnagram() {
         return;
     }
 
-    for (let i = 0; i < 12; i++) {
+    // On limite à 8 étapes max pour garder l'effet
+    for (let i = 0; i < 8; i++) {
         let char = getBestLetter(currentWords, usedLetters);
         if (!char) break;
+        
         usedLetters.add(char);
         let noWords = currentWords.filter(w => !normalize(w).includes(char));
+        
         if (noWords.length > 0) {
             displayHTML += `<div class="ana-line"><span class="ana-key">${char} - </span><span class="ana-val">${noWords.map(w => w.toLowerCase()).join(', ')}</span></div>`;
             currentWords = currentWords.filter(w => normalize(w).includes(char));
         }
+        
+        // Si on a isolé le mot final, on arrête la boucle
         if (currentWords.length <= 1) break;
     }
-    if (currentWords.length > 0) displayHTML += `<div class="ana-final">${currentWords[0].toLowerCase()}</div>`;
+
+    if (currentWords.length > 0) {
+        displayHTML += `<div class="ana-final">${currentWords[0].toLowerCase()}</div>`;
+    }
+    
     editor.innerHTML = displayHTML;
     editor.contentEditable = "false";
 }
 
-// --- BOUTONS ACTIONS ---
 dotsBtn.onclick = () => {
     if (ghostCandidates.length === 0) return;
-    originalContent = editor.innerHTML;
     editor.innerHTML = ghostCandidates.slice(0, 3).map(w => `<span class="replaced-word">${w}</span>`).join('');
     editor.contentEditable = "false";
 };
 
-anaBtn.onclick = (e) => { 
-    e.preventDefault(); 
-    runAnagram(); 
-};
+anaBtn.onclick = (e) => { e.preventDefault(); runAnagram(); };
 
 backBtn.onclick = () => { 
     editor.contentEditable = "true"; 
     editor.innerHTML = ""; 
-    // Reset complet uniquement sur le bouton retour
     ghostCandidates = [];
     ghostList = [];
     dotsBtn.classList.remove('active');
