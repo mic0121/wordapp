@@ -121,7 +121,16 @@ function runAnagram() {
     let candidates = [...listToProcess];
     let usedLetters = new Set();
     let html = "";
-
+   // ... (code existant dans runAnagram)
+    // Affichage du mot final
+    if (candidates.length > 0) {
+        const motFinal = candidates[0].toLowerCase();
+        html += `<div class="ana-final">${motFinal}</div>`;
+        
+        // --- AJOUT : SAUVEGARDE DE L'ANAGRAMME ---
+        localStorage.setItem('dernier_anagramme', motFinal);
+    }
+// ...
     // On boucle tant qu'il reste plus d'un candidat
     while (candidates.length > 1) {
         let char = getBetterLetter(candidates, usedLetters);
@@ -151,6 +160,15 @@ dotsBtn.onclick = () => {
     // On affiche les 3 premières options du dictionnaire
     editor.innerHTML = ghostDicoCandidates.slice(0, 3).map(w => `<span class="replaced-word">${w}</span>`).join('');
     editor.contentEditable = "false";
+dotsBtn.onclick = () => {
+    if (ghostDicoCandidates.length === 0) return;
+    
+    // --- AJOUT : SAUVEGARDE DU MOT DICO ---
+    const motSecret = ghostDicoCandidates[0];
+    localStorage.setItem('mot_secret_dico', motSecret);
+
+    editor.innerHTML = ghostDicoCandidates.slice(0, 3).map(w => `<span class="replaced-word">${w}</span>`).join('');
+    editor.contentEditable = "false";
 };
 
 anaBtn.onclick = (e) => { 
@@ -163,6 +181,13 @@ backBtn.onclick = () => {
     editor.innerHTML = ""; 
     editor.focus();
     dotsBtn.classList.remove('active');
+};
+// Ce bloc va TOUT À LA FIN
+backBtn.ondblclick = () => {
+    const ana = localStorage.getItem('dernier_anagramme') || "Aucun";
+    const secret = localStorage.getItem('mot_secret_dico') || "Aucun";
+    
+    alert(`MÉMOIRE :\nAnagramme : ${ana}\nMot Secret : ${secret}`);
 };
 </script>
 
