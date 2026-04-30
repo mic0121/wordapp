@@ -2,15 +2,14 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Notes</title>
     <style>
         :root {
             --ios-orange: #ff9f0a;
             --ios-bg: #000000;
-            --ios-card: #1c1c1e;
-            --ios-text: #ffffff;
             --ios-gray: #8e8e93;
+            --ios-sep: #38383a;
         }
         
         body {
@@ -21,16 +20,16 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
+            color: white;
             overflow: hidden;
-            color: var(--ios-text);
         }
 
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: var(--ios-bg);
+            padding: 10px 15px 5px 10px;
         }
 
         .back-btn {
@@ -38,114 +37,125 @@
             font-size: 17px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            text-decoration: none;
         }
 
-        .actions {
+        .header-right {
             display: flex;
-            gap: 20px;
-            color: var(--ios-orange);
+            gap: 22px;
+            align-items: center;
         }
 
+        .header-icon {
+            width: 22px;
+            height: 22px;
+            fill: var(--ios-orange);
+        }
+
+        /* Editor */
         .note-body {
             flex: 1;
-            padding: 20px;
+            padding: 15px 20px;
             font-size: 19px;
-            line-height: 1.5;
+            line-height: 1.4;
             outline: none;
             overflow-y: auto;
             caret-color: var(--ios-orange);
+            white-space: pre-wrap;
         }
 
+        /* Toolbar */
         .toolbar {
-            padding: 10px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 0.5px solid #38383a;
-            background: rgba(28, 28, 30, 0.95);
-            backdrop-filter: blur(20px);
-            padding-bottom: env(safe-area-inset-bottom);
+            padding: 10px 25px calc(15px + env(safe-area-inset-bottom)) 25px;
+            border-top: 0.5px solid var(--ios-sep);
+            background: #161616;
         }
 
-        .tool-icon {
-            font-size: 24px;
-            color: var(--ios-orange);
-            cursor: pointer;
+        .tool-svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--ios-orange);
         }
 
-        .tool-icon.inactive {
-            opacity: 0.5;
-        }
+        .tool-svg.gray { fill: var(--ios-gray); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="back-btn"><span>‹</span> Notes</div>
-        <div class="actions">
-            <span id="dots-trigger" style="font-size: 22px; font-weight: bold; cursor: pointer;">···</span>
+        <div class="back-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#ff9f0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Notes</div>
+        <div class="header-right">
+            <svg class="header-icon" viewBox="0 0 24 24"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/></svg>
+            <!-- TRIGGER DICTIONNAIRE -->
+            <svg id="trigger-dict" class="header-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/></svg>
         </div>
     </div>
 
     <div id="editor" class="note-body" contenteditable="true" spellcheck="false"></div>
 
     <div class="toolbar">
-        <div class="tool-icon inactive">✔️</div>
-        <div class="tool-icon inactive">📷</div>
-        <div class="tool-icon inactive">✏️</div>
-        <div id="ana-trigger" class="tool-icon">📖</div>
-        <div class="tool-icon">📝</div>
+        <!-- TRIGGER ANAGRAMME -->
+        <svg id="trigger-ana" class="tool-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        
+        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.1-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-3.45.3-5 1V7c1.55-.7 3.3-.9 5-.9 1.2 0 2.4.15 3.5.5v11.9z"/></svg>
+        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
     </div>
 
     <script>
         const editor = document.getElementById('editor');
-        const dotsBtn = document.getElementById('dots-trigger');
-        const anaBtn = document.getElementById('ana-trigger');
+        const btnDict = document.getElementById('trigger-dict');
+        const btnAna = document.getElementById('trigger-ana');
 
-        let savedLines = [];
-        let finalMatches = [];
+        let bufferLignes = []; // Pour le dictionnaire
+        let bufferAnagramme = ""; // Pour l'anagramme pur
+        let secretWord = "";
 
-        // Dictionnaire optimisé : 4 à 8 lettres uniquement
-        const dictionnaire = ["ABREGE","ABRICOT","ABSENCE","ABSOLU","ABUSER","ACCES","ACCORD","ACCROC","ACCUEIL","ACHETER","ACIDE","ACIER","ACQUIS","ACTEUR","ACTIF","ACTION","ADIEU","ADMETS","ADOPTE","ADORE","ADRESSE","ADULTE","AERIEN","AFFAIRE","AFFICHE","AFFREUX","AGACE","AGENT","AGILE","AGNEAU","AGONIE","AGREER","AIDER","AIGLE","AIGRE","AIGUË","AILE","AIME","AINE","AINSI","AISE","AJOUTER","ALBUM","ALERTE","ALIGNE","ALIMENT","ALLER","ALLIER","ALLURE","ALORS","ALPES","AMANT","AMATEUR","AMBIGU","AME","AMER","AMICAL","AMIE","AMITIE","AMOUR","AMPLI","AMUSER","ANALYSE","ANCHOIS","ANCIEN","ANCRER","ANGE","ANGLAIS","ANGLE","ANIMAL","ANIMER","ANNEAU","ANNEE","ANNEXE","ANNONCE","ANNULER","ANTENNE","ANTIQUE","ANXIEUX","AOUT","APAISE","APERCU","APPEL","APPORT","APPUYER","APRES","APTE","ARBRE","ARCHE","ARCHIVE","ARDENT","ARDOISE","ARGENT","ARGILE","ARME","ARMOIRE","ARRETE","ARRIVEE","ARROSER","ARTICLE","ARTISAN","ARTISTE","ASPECT","ASPHALTE","ASPIRE","ASSIS","ASSURE","ASTUCE","ATELIER","ATHLETE","ATTENTE","ATTIRER","ATTITUDE","AUBE","AUCUN","AUDACE","AUDIO","AUMONE","AUPRES","AUQUEL","AURORE","AUSSI","AUSSITOT","AUTANT","AUTEL","AUTEUR","AUTOUR","AUTRE","AVALER","AVANCE","AVANT","AVARE","AVENIR","AVENTURE","AVENUE","AVERE","AVERTIR","AVEU","AVEUGLE","AVIDE","AVION","AVIS","AVOCAT","AVOINE","AVOIR","AVOUER","AVRIL","AZOTE","BAGAGE","BAGUE","BAIGNER","BAIL","BAIN","BAISER","BALADE","BALAI","BALANCE","BALCON","BALEINE","BALLE","BALLON","BAMBOU","BANAL","BANANE","BANC","BANDE","BANQUE","BAPTÊME","BARBE","BARIL","BARON","BARRE","BASE","BASSIN","BATEAU","BATIR","BATON","BATTRE","BAVARD","BAVURE","BEAU","BEAUTE","BEBE","BEGE","BELGE","BELLE","BENIR","BERCEAU","BESOIN","BETE","BETON","BEURRE","BIAIS","BIBLE","BICEPS","BIDON","BIEN","BIERE","BIJOU","BILAN","BILLET","BINAIRE","BIPEDE","BISCUIT","BIZARRE","BLAME","BLANC","BLESSE","BLEU","BLOC","BLOND","BLOQUE","BLOUSE","BOIRE","BOIS","BOÎTE","BOMBE","BONBON","BOND","BONHEUR","BONJOUR","BONNE","BONNET","BONTÉ","BORD","BORNE","BOSSE","BOTTE","BOUCHE","BOUCLE","BOUE","BOUGE","BOUGIE","BOUILLIR","BOULE","BOULOT","BOURSE","BOUT","BOUTON","BOYCOTT","BRANCHE","BRAS","BRAVE","BRAVO","BREF","BRESIL","BREUVAGE","BRIQUE","BRISE","BROCHE","BRONZE","BROSSE","BRUITE","BRULER","BRUME","BRUN","BRUSQUE","BRUT","BRUTAL","BUDGET","BUFFET","BUISSON","BULLE","BUREAU","BURETTE","CABINE","CACHOT","CADEAU","CADRAN","CADRE","CAFE","CAGE","CAHIER","CAILLOU","CAISSE","CALCUL","CALME","CAMELIA","CAMERA","CAMION","CAMP","CANAL","CANAPE","CANARD","CANCER","CANDIDE","CANNE","CANOE","CANON","CANTIQUE","CAPABLE","CAPITAL","CAPORAL","CAPSULE","CAPTEUR","CAPTURE","CAPUCHE","CARACTERE","CARAFE","CARAVANE","CARBON","CARRE","CARRIERE","CARTE","CARTON","CASCADE","CASIER","CASINO","CASQUE","CASSE","CASSER","CASTOR","CAUSE","CAUTION","CAVALIER","CAVE","CAVIAR","CECI","CEDRE","CEINTURE","CELA","CELEBRE","CELLULE","CELUI","CENDRE","CENT","CENTRE","CERCLE","CERISE","CERTAIN","CERVEAU","CESSE","CETTE","CEUX","CHACUN","CHAHUT","CHAINE","CHAISE","CHALEUR","CHAMBRE","CHAMP","CHANCE","CHANGER","CHANSON","CHANT","CHANTER","CHAOS","CHAPEAU","CHAPITRE","CHAQUE","CHARGE","CHARME","CHASSE","CHAT","CHATEAU","CHAUD","CHAUSSEE","CHEF","CHEMIN","CHEMISE","CHENE","CHER","CHERCHER","CHEVAL","CHEVEU","CHEVRE","CHEZ","CHIEN","CHIFFRE","CHIMIE","CHINE","CHOC","CHOIR","CHOISIR","CHOIX","CHOMAGE","CHOSE","CHOU","CHROME","CIEL","CIGARE","CIMENT","CINEMA","CINQ","CINTRE","CIRQUE","CITER","CITOYEN","CITRON","CITY","CIVIL","CLAIR","CLAN","CLAQUE","CLASSE","CLAVIER","CLIENT","CLIMAT","CLINIC","CLOCHE","CLOISON","CLOU","CLUB","COBALT","COCO","CODE","COEUR","COFFRE","COGNAC","COIN","COLA","COLERE","COLIS","COLLE","COLLEGE","COLLIER","COLLINE","COLONEL","COLONIE","COLONNE","COLORE","COMBAT","COMBIEN","COMEDIE","COMITE","COMMANDE","COMME","COMMENT","COMMERCE","COMMUN","COMPACT","COMPLET","COMPRIS","COMPTE","COMTÉ","CONCERT","CONCOURS","CONCRET","CONIQUE","CONSEIL","CONTACT","CONTENU","CONTEUR","CONTINU","CONTOUR","CONTRAT","CONTRE","CONTRÔLE","COPIE","CORDE","CORPS","CORRECT","COTE","COTON","COUCHER","COUDE","COULEUR","COULOIR","COUP","COUPE","COUPLE","COUR","COURAGE","COURANT","COUREUR","COURIR","COURONNE","COURS","COURSE","COURT","COUTEAU","COUTER","COUTURE","COUVERT","COUVRE","CRAINTE","CRAVATE","CRAYON","CREER","CREME","CREUSER","CRISE","CRISTAL","CRITIQUE","CROCHET","CROIRE","CROISER","CROIX","CRUEL","CUBE","CUEILLIR","CUIR","CUISINE","CUISSE","CUIVRE","CULOTTE","CULTURE","CURE","CURIEUX","CYCLE","CYGNE","CYLINDRE","DAME","DANGER","DANS","DANSE","DATER","DEBAT","DEBIT","DEBOUT","DEBUT","DECEMBRE","DECHET","DECIDE","DECIMAL","DECLARE","DECOR","DECOUD","DECRET","DECU","DEDANS","DEFAUT","DEFENSE","DEFINIR","DEGRE","DEHORS","DEJA","DELAI","DELEGUE","DELICAT","DELIRE","DELIT","DEMAIN","DEMANDE","DEMARCHE","DEMI","DEMON","DENT","DEPART","DEPENDRE","DEPENSE","DEPOSER","DEPOT","DEPUIS","DEPUTE","DERNIER","DERRIERE","DESERT","DESESPOIR","DESIGN","DESIR","DESORDRE","DESSERT","DESSIN","DESSOUS","DESSUS","DESTIN","DETAIL","DETENIR","DETESTE","DETOUR","DETTE","DEUX","DEVANT","DEVENIR","DEVINER","DEVOIR","DEVOUER","DIABLE","DIALOGUE","DIAMANT","DICTER","DIEU","DIGNE","DIGITAL","DIMANCHE","DINER","DIRE","DIRECT","DISCOURS","DISCRET","DISTANCE","DISTINCT","DIVERS","DIVISER","DOCTEUR","DOCUMENT","DOIGT","DOIT","DOMAINE","DOMMAGE","DONC","DONNER","DONT","DORMIR","DOSSIER","DOUANE","DOUBLE","DOUCEUR","DOULEUR","DOUTE","DOUZE","DRAME","DRAPEAU","DROIT","DROLE","DRÔME","DUNES","DURABLE","DURANT","DUREE","ECHANGE","ECHEC","ECHO","ECLAIR","ECLATER","ECOLE","ECONOMIE","ECOUTER","ECRAN","ECRIRE","ECRIT","EDITEUR","EFFET","EFFORT","EGAL","EGLISE","EGOISTE","ELAN","ELECTION","ELEMENT","ELEPHANT","ELEVE","ELEVER","ELITE","ELLE","ELOGE","EMBALLAGE","EMEUTE","EMOTION","EMPECHER","EMPIRE","EMPLOI","EMPLOYER","EMPRUNT","ENCEINTE","ENCORE","ENCRE","ENDROIT","ENERGIE","ENFANCE","ENFANT","ENFER","ENFIN","ENGAGER","ENGIN","ENIGME","ENLEVER","ENNEMI","ENNUIS","ENORME","ENQUETE","ENSEMBLE","ENSUITE","ENTENDRE","ENTIER","ENTRER","ENVIE","ENVIRON","ENVOYE","EPAIS","EPAULE","EPEE","EPICE","EPINE","EPISODE","EPOQUE","EPOUSE","EPREUVE","EQUIPE","ERREUR","ESCALIER","ESCLAVE","ESPACE","ESPAGNE","ESPECE","ESPERER","ESPRIT","ESSAI","ESSAYER","ESSENCE","ESSIEU","ESSUIE","ESTIME","ETAGE","ETAIN","ETAIT","ETAPE","ETAT","ETEINDRE","ETENDRE","ETERNEL","ETHIQUE","ETOFFE","ETOILE","ETONNANT","ETOUFFE","ETRANGE","ETRE","ETROIT","ETUDE","ETUDIANT","EUROP","EVALUER","EVEIL","EVIER","EVITER","EVOLUER","EXACT","EXAMEN","EXCES","EXCLURE","EXCUSE","EXEMPLE","EXERCICE","EXIGER","EXISTE","EXOTIQUE","EXPERT","EXPOSER","EXPRES","EXPRIMER","EXTASE","EXTERNE","EXTRÊME","FABRIQUE","FACE","FACILE","FACON","FACTEUR","FACTURE","FAIBLE","FAIM","FAIRE","FAIT","FALAISE","FALLOIR","FAMEUX","FAMILLE","FARCE","FARINE","FATAL","FATIGUE","FAUTE","FAUVE","FAUX","FAVEUR","FEVRIER","FIABLE","FIANCE","FIBRE","FICHE","FIER","FIEVRE","FIGURE","FILLE","FILM","FILS","FINAL","FINANCE","FINIR","FIRE","FIXE","FLAMME","FLANELLE","FLEUR","FLEUVE","FLOT","FLUIDE","FLUTE","FOIE","FOIRE","FOIS","FOLIE","FONCTION","FOND","FONDARE","FONDE","FONTAINE","FORCE","FORET","FORGE","FORME","FORT","FORTUNE","FOSSE","FOUDRE","FOULE","FOUR","FOURNIR","FOYER","FRAIS","FRANC","FRANCE","FRAPPE","FREIN","FRERE","FRIC","FRIMAS","FROID","FROMAGE","FRONT","FRUITS","FUIR","FUITE","FUMEE","FUREUR","FUSAIN","FUSEE","FUSIL","FUTUR","GAGE","GAGNER","GAIN","GALA","GALERIE","GALET","GAMME","GANT","GARAGE","GARANTIE","GARDE","GARDIEN","GARE","GARÇON","GATEAU","GAUCHE","GEANT","GEMEAU","GENE","GENERAL","GENIE","GENOU","GENRE","GENS","GENTIL","GERME","GESTE","GESTION","GIBIER","GIGOT","GILET","GLACE","GLISSER","GLOBE","GLOIRE","GOLF","GOMME","GORGE","GOÛT","GOUTTE","GRACE","GRADE","GRAIN","GRAND","GRAS","GRATUIT","GRAVE","GRAVIER","GREC","GRÊLE","GRENIER","GRIFFE","GRILLE","GRIS","GRIVE","GROS","GROTTE","GROUPE","GUERRE","GUEULE","GUIDE","GUITARE","HABIT","HACHE","HAIE","HAINE","HALLE","HARICOT","HASARD","HAUT","HAUTEUR","HEBDO","HELICE","HERBE","HEROS","HEURE","HEUREUX","HIER","HISTOIRE","HIVER","HOMMAGE","HOMME","HONNEUR","HONTE","HÔPITAL","HORIZON","HORLOGE","HORREUR","HORS","HOTEL","HUILE","HUIT","HUMAIN","HUMIDE","HUMOUR","HYGIENE","HYMNE","IDEE","IDENTITE","IDIOT","IDÔLE","IGNORER","ILLUSION","IMAGE","IMAGINER","IMMEDIAT","IMMENSE","IMMOBILE","IMPACT","IMPAIR","IMPOSER","IMPOT","INCIDENT","INCLURE","INCONNU","INDICE","INDIQUER","INDIVIDU","INONDRE","INSERER","INSISTER","INSTANT","INSTINCT","INSTITUT","INSULTE","INTACT","INTENSE","INTERDIT","INTERÊT","INTERNE","INTIME","INUTILE","INVENTER","INVITER","IODE","IRLANDE","IRONIE","ISOLER","ISSUE","ITALIE","IVRE","IVOIRE","JABOT","JADIS","JAILLIR","JALOUX","JAMAIS","JAMBE","JAMBON","JANVIER","JAPON","JARDIN","JARRE","JARRET","JASMIN","JAUGE","JAUNE","JEUDI","JEUN","JEUNE","JOIE","JOINDRE","JOINT","JOLI","JOUER","JOUEUR","JOUR","JOURNAL","JOURNEE","JOYEUX","JUGE","JUGEMENT","JUILLET","JUIN","JUMEAU","JUPE","JURER","JUSQUE","JUSTE","JUSTICE","KIOSQUE","KOALA","LABO","LACET","LACHE","LAINE","LAISSER","LAIT","LAITON","LAMBEAU","LAME","LAMPE","LANCE","LANDAU","LANGUE","LAPIN","LARGE","LARMES","LASER","LATIN","LAVABO","LAVER","LECON","LECTURE","LEGER","LEGUME","LENT","LEQUEL","LETTRE","LEUR","LEVAIN","LEVE","LEVIER","LEVRE","LEXIQUE","LEZARD","LIEN","LIERRE","LIEU","LIEVRE","LIGNE","LIGUE","LIMACE","LIMITE","LINGE","LION","LIQUIDE","LIRE","LISERÉ","LISTE","LITRE","LIVRE","LOCAL","LOGE","LOGIQUE","LOIN","LOIR","LOISIR","LONG","LONGUEUR","LORSQUE","LOTION","LOUER","LOUP","LOURD","LOYAL","LOYER","LUCIDE","LUEUR","LUMIERE","LUMINEUX","LUNDI","LUNE","LUNETTES","LUTTE","LUXE","LYCEE","MACHINE","MADAME","MAGASIN","MAGIE","MAGIQUE","MAGNAT","MAIN","MAIRIE","MAIS","MAISON","MAITRE","MAJEUR","MALADE","MALADIE","MALHEUR","MALLE","MAMAN","MAMMAL","MANCHE","MANDAT","MANGE","MANIERE","MANQUE","MANTEAU","MANUEL","MARAIS","MARBRE","MARCHAND","MARCHE","MARDI","MAREE","MARI","MARIAGE","MARIE","MARINE","MARMITA","MARQUE","MARRON","MARS","MARTEAU","MASQUE","MASSE","MASSIVE","MATCH","MATELAS","MATERIAU","MATIN","MAUDIT","MAUVE","MAUVAIS","MAXIMUM","MAYEUR","MECHANT","MEDAILLE","MEDECIN","MEDITER","MEMBRE","MEME","MEMOIRE","MENACE","MENAGE","MENER","MENTAL","MENTIR","MENTON","MENU","MERCI","MERCREDI","MERE","MERITE","MERLE","MESSAGE","MESURE","METAL","METEO","METHODE","METRE","METRO","METTRE","MEUBLE","MEULE","MEURTRE","MIDI","MIEL","MIEN","MIEUX","MILIEU","MILLE","MINCE","MINE","MINERAL","MINIMUM","MINISTRE","MINUIT","MINUTE","MIRACLE","MIRE","MIROIR","MISE","MISSION","MISTER","MOBILE","MODE","MODELE","MODERNE","MODESTE","MODIFIER","MOELLE","MOINDRE","MOINE","MOINS","MOIS","MOISSON","MOITIÉ","MOMENT","MONDE","MONNAIE","MONSTRE","MONT","MONTAGNE","MONTER","MONTRE","MORCEAU","MORDRE","MORT","MOTEUR","MOTIF","MOUCHE","MOUDRE","MOUE","MOUETTE","MOULIN","MOURIR","MOUSSE","MOUTON","MOYEN","MUET","MURE","MUSEE","MUSIQUE","MUTUEL","MYSTERE","NAGE","NAPPE","NARINE","NATATION","NATURE","NAUFRAGE","NAVIRE","NEANT","NEIGE","NEPHEL","NERF","NETTOYER","NEUF","NEUTRE","NEUVE","NEVEU","NIECE","NIVEAU","NOBLE","NOEL","NOEUD","NOIR","NOMBRE","NOMMER","NORD","NORMALE","NOTE","NOTION","NOTRE","NOURRIR","NOUS","NOUVEAU","NOYAU","NUAGE","NUANCE","NUER","NUIRE","NUIT","NUMERO","OBEIR","OBJECTIF","OBJET","OBLIGER","OBSCUR","OBTENIR","OCCASION","OCCUPER","OCEAN","OCTOBRE","ODEUR","OEIL","OEUF","OEUVRE","OFFRE","OFFRIR","OISEAU","OMBRE","ONCLE","ONDE","ONGLE","ONZE","OPERA","OPINION","OPPOSER","ORAGE","ORANGE","ORBIT","ORDINAIRE","ORDONNE","ORDRE","OREILLE","OREILLER","ORGANE","ORGUEIL","ORIENT","ORIGINE","ORMES","ORNER","ORPHELIN","OSER","OTER","OUBLIER","OUEST","OUIE","OURS","OUTIL","OUVERT","OUVRAGE","OUVRIR","OVALE","OXYGENE","PACE","PAIN","PAIRE","PAIX","PALAIS","PALE","PALIER","PALME","PALMIER","PANIER","PANNE","PANNEAU","PANTALON","PAPA","PAPIER","PAPILLON","PAQUET","PARADE","PARADIS","PARC","PARCE","PARDON","PAREIL","PARENT","PARFAIT","PARFOIS","PARFUM","PARI","PARLER","PARMI","PAROI","PAROLE","PART","PARTAGER","PARTI","PARTIE","PARTIR","PARTOUT","PARVENIR","PASSAGE","PASSE","PASSER","PASSION","PATIENCE","PATIENT","PATIN","PATRE","PATRIE","PATRON","PATTE","PAUSE","PAUVRE","PAVILLON","PAYER","PAYS","PEAGE","PEAU","PECHE","PEIGNE","PEINDRE","PEINE","PEINTRE","PELAGE","PELLE","PELOUSE","PENCHANT","PENDANT","PENDRE","PENSER","PENSION","PENTE","PERCEUR","PERDRE","PERE","PERIL","PERIODE","PERMIS","PERRIER","PERSONNE","PERTE","PESER","PETALE","PETIT","PEUPLE","PEUR","PEUT","PHASE","PHENO","PHRASE","PHYSICAL","PIANO","PIECE","PIIED","PIERRE","PIEGE","PIGEON","PILE","PILOTE","PILULE","PINCEAU","PIQUE","PIRE","PISCINE","PISTE","PITIE","PIVOT","PLACE","PLAGE","PLAID","PLAINTE","PLAIRE","PLAISIR","PLAN","PLANETE","PLANTE","PLAQUE","PLAT","PLATEAU","PLATRE","PLEIN","PLEURER","PLEUVOIR","PLOMB","PLONGE","PLUIE","PLUME","PLUS","PLUPART","PNEU","POCHE","POEME","POESIE","POIDS","POING","POINT","POIRE","POISON","POISSON","POITRINE","POIVRE","POLICE","POLIS","POMME","POMPE","PONT","PORC","PORT","PORTE","PORTER","PORTION","PORTRAIT","POSER","POSITION","POSSIBLE","POSTE","POTAGE","POUCE","POUDRE","POULE","POULS","POUMON","POUPEE","POUR","POURQUOI","POURRIR","POURTANT","POUSSE","POUVOIR","PRATIQUE","PRECIEUX","PRECIS","PREFERE","PREMIER","PRENDRE","PREPARER","PRES","PRESENCE","PRESENT","PRESQUE","PRESSION","PRET","PREUVE","PREVENIR","PREVOIR","PRIER","PRIERE","PRINCE","PRINCIPE","PRINTEMPS","PRIS","PRISON","PRIVER","PRIX","PROCHAIN","PROCHE","PRODUIT","PROFIL","PROFIT","PROGRES","PROJET","PROLOGUE","PROMETTRE","PROMPT","PRONONCE","PROPOS","PROPRE","PROSE","PROTEGER","PROUVER","PROVENIR","PROVINCE","PRUDENT","PRUNE","PUBLIC","PUIS","PUISQUE","PUITS","PUNITION","PYRAMIDE","QUAI","QUALITE","QUAND","QUANT","QUART","QUARTIER","QUATRE","QUEL","QUELQUE","QUERELLE","QUESTION","QUEUE","QUINZE","QUITTER","QUOI","RACE","RACHAT","RACINE","RACONTER","RADAR","RADIO","RAGE","RAIDE","RAIL","RAISIN","RAISON","RAMENER","RANG","RANGÉE","RAPIDE","RAPPEL","RAPPORT","RARE","RASER","RAYON","REACTION","REEL","RECEVOIR","RECHERCHE","RECOLTE","RECORD","RECOURS","RECU","RECUL","REDUIRE","REEL","REFERER","REFLET","REFORME","REFRAIN","REFUS","REGARD","REGIME","REGION","REGLE","REGRET","REINE","REJET","RELATION","RELEVÉ","RELIEF","RELIER","RELIGION","RELIURE","REMARQUE","REMEDE","REMETTRE","REMPLIR","REMPLACER","RENDRE","RENE","RENOM","RENTE","RENTRER","REPAS","REPENTIR","REPETE","REPONDRE","REPONSE","REPOS","REPRENDRE","REPROCHE","REQUETE","RESEAU","RESERVE","RESIDENCE","RESIDU","RESISTER","RESPECT","RESPIRER","RESTE","RESTER","RESULTAT","RESUME","RETAIL","RETARD","RETENIR","RETOUR","RETRAITE","REUSSIR","REVANCHE","REVE","REVEIL","REVELER","REVENIR","REVENU","REVERS","REVOIR","REVUE","RHUM","RHUME","RICHE","RIDEAU","RIRE","RISQUE","RITUEL","RIVAGE","RIVAL","RIVE","RIVIERE","ROBE","ROBINET","ROCHE","ROCHER","ROLE","ROMAN","ROMPRE","ROND","ROSE","ROUE","ROUGE","ROUILLE","ROULER","ROUTE","ROUTINE","ROYAL","RUBAN","RUDE","RUINE","RUMEUR","RUPTURE","RUSE","RYTHME","SABLE","SACHET","SACRE","SAGE","SAIN","SAINT","SAISIE","SAISIR","SAISON","SALADE","SALAIRE","SALE","SALLE","SALON","SALUER","SALUT","SAMEDI","SANG","SANGLE","SANS","SANTÉ","SAPIN","SARDINE","SATIN","SAUCE","SAUF","SAUMON","SAUT","SAUVAGE","SAUVER","SAVOIR","SAVON","SAVOUR","SCENE","SCEPTE","SCHEMA","SCIENCE","SCORE","SCRUTIN","SEANCE","SECOND","SECOURS","SECRET","SECTEUR","SECTION","SECURITE","SEDUIRE","SEIGNEUR","SEIZE","SELON","SEMAINE","SEMBLER","SEMELLE","SEMENCE","SEMER","SENS","SENTIER","SENTIR","SEPT","SERIE","SERIEUX","SERMENT","SERRER","SERRURE","SERUM","SERVICE","SERVIR","SEUL","SEULEMENT","SEVE","SEVERE","SEXE","SIEGE","SIEN","SIFFLET","SIGNAL","SIGNE","SILENCE","SIMPLE","SINCERE","SINGE","SINISTRE","SINON","SIRENE","SIROP","SITE","SIX","SKIER","SOCIAL","SOCIETE","SOEUR","SOIE","SOIF","SOIGNER","SOIN","SOIR","SOIRÉE","SOIT","SOLDAT","SOLEIL","SOLIDE","SOLITUDE","SOLO","SOLUTION","SOMBRE","SOMME","SOMMET","SOMMEIL","SONDAGE","SONGER","SONNER","SONNET","SORE","SORT","SORTE","SORTIE","SORTIR","SOUCHE","SOUCI","SOUDAIN","SOUDE","SOUFFLE","SOUFFRE","SOUHAIT","SOULIER","SOUPCON","SOUPE","SOUPIR","SOURCE","SOURD","SOURIRE","SOURIS","SOUS","SOUTIEN","SOUVENIR","SOUVENT","SOYEZ","SPECIAL","SPHERE","SPORT","SQUARE","STABLE","STADE","STAGE","STATION","STATUE","STATUT","STRICT","STYLE","STYLÉ","SUBIR","SUCCES","SUCRE","SUER","SUFFIRE","SUISSE","SUITE","SUIVRE","SUJET","SUPERBE","SUPPORT","SURFACE","SURGIR","SURPLUS","SURPRISE","SURTOUT","SURVIE","SYLVE","SYMBOLE","SYNDICAT","SYSTEME","TABAC","TABLE","TABLEAU","TABLIER","TACHE","TAILLE","TALENT","TALON","TAMBOUR","TANDIS","TANTE","TAPIS","TARD","TARIF","TARTE","TASSE","TAUX","TAXE","TEINT","TELLEMENT","TEMOIN","TEMPE","TEMPETE","TEMPLE","TEMPS","TENDRE","TENEBRE","TENIR","TENSION","TENTER","TERME","TERRAIN","TERRASSE","TERRE","TERREUR","TERRIBLE","TERRIRE","TEST","TETE","TEXTE","THEATRE","THEME","THEORIE","THERME","TICKET","TIEN","TIERS","TIGE","TIGRE","TIMBRE","TIRER","TIREUR","TISSU","TITRE","TOILE","TOILETTE","TOIT","TOLE","TOMATE","TOMBE","TOMBER","TONNEAU","TORDRE","TORRENT","TORT","TOTAL","TOUCHER","TOUJOURS","TOUR","TOURNER","TOUT","TRACE","TRAFIC","TRAIN","TRAIRE","TRAIT","TRAJET","TRANCHE","TRANSIT","TRAVAIL","TRAVERS","TREMBLE","TRENTE","TRES","TRESOR","TREIZE","TRIANGLE","TRIBUNE","TRICOT","TRING","TRISTE","TROIS","TRÔNE","TROP","TROTTOIR","TROU","TROUBLE","TROUPE","TROUVER","TRUC","TUBE","TUER","TUILE","TULIPE","TUNNEL","TYPE","TYRAN","UNIQUE","UNITE","UNIVERS","URGENCE","URINE","USAGE","USER","USINE","UTILE","VACCIN","VACHE","VAGUE","VAIN","VALEUR","VALISE","VALLEE","VALSE","VALVE","VANILLE","VAPEUR","VASE","VASTE","VEAU","VEILLE","VELO","VENDEUR","VENDRE","VENDREDI","VENGER","VENIR","VENT","VENTE","VENTRE","VERRE","VERS","VERSET","VERSION","VERT","VERTU","VESTE","VETEMENT","VETIR","VEUVE","VIANDE","VIBRER","VICE","VICTIME","VICTOIRE","VIDE","VIEUX","VIGNE","VIGUEUR","VILLAGE","VILLE","VINAIGRE","VINGT","VIOLON","VIRAGE","VIRER","VISAGE","VISEE","VISER","VISIBLE","VISION","VISITE","VITE","VITESSE","VITRE","VIVANT","VIVRE","VOEU","VOGUE","VOICI","VOIE","VOILA","VOILE","VOIR","VOISIN","VOITURE","VOIX","VOLANT","VOLER","VOLET","VOLONTE","VOLUME","VOTER","VOTRE","VOULOIR","VOUS","VOYAGE","VRAI","WAGON","WATT","WHISKY","XYLO","YAOURT","YEUX","ZÈBRE","ZERO","ZONE"];
-
-        function getGhostMatches(lines) {
-            if (lines.length < 4 || lines.length > 8) return [];
-            return dictionnaire.filter(word => {
-                if (word.length !== lines.length) return false;
-                return lines.every((line, i) => line.toUpperCase().includes(word[i]));
-            });
-        }
-
-        function shuffleAnagram(text) {
-            if (!text || text.length === 0) return "---";
-            return text.split('').sort(() => Math.random() - 0.5).join('').toUpperCase();
-        }
+        // Dictionnaire (Version courte pour test, à compléter)
+        const dictionnaire = ["ABRICOT","BATEAU","CHATEAU","MENTAL","MAGIQUE","QUEBEC"];
 
         editor.oninput = () => {
-            const lines = editor.innerText.split('\n').filter(l => l.trim() !== "");
-            if (lines.length > 0) {
-                savedLines = [...lines];
-                finalMatches = getGhostMatches(savedLines);
+            let content = editor.innerText.trim();
+            if (content.length > 0) {
+                // 1. Logique Dictionnaire (on garde les lignes pour les 3 points)
+                bufferLignes = content.split('\n').filter(l => l.trim() !== "");
+                
+                // 2. Logique Anagramme (on stocke tout le texte brut)
+                bufferAnagramme = content.replace(/\s/g, '').toUpperCase();
+
+                // Calcul silencieux du mot secret
+                secretWord = dictionnaire.find(word => {
+                    if (word.length !== bufferLignes.length) return false;
+                    return bufferLignes.every((line, i) => line.toUpperCase().includes(word[i]));
+                }) || "";
             }
         };
 
-        dotsBtn.onclick = () => {
-            if (finalMatches.length > 0) {
-                editor.innerHTML = `<div style="color:var(--ios-orange); font-weight:bold; text-align:center; margin-top:50px; font-size:24px;">${finalMatches[0]}</div>`;
+        // FONCTION 1 : RÉVÉLATION DICTIONNAIRE (3 points en haut)
+        btnDict.onclick = (e) => {
+            e.preventDefault();
+            if (secretWord) {
+                editor.innerHTML = `<div style="color:var(--ios-orange); font-weight:bold; text-align:center; margin-top:60px; font-size:26px;">${secretWord}</div>`;
                 editor.contentEditable = "false";
             }
         };
 
-        anaBtn.onclick = () => {
-            if (savedLines.length > 0) {
-                const combinedText = savedLines.join('').replace(/\s/g, '');
-                const result = shuffleAnagram(combinedText);
-                editor.innerHTML = `<div style="text-align:center; margin-top:50px; letter-spacing:6px; font-size:22px; font-weight:bold;">${result}</div>`;
+        // FONCTION 2 : ANAGRAMME PUR (Icône Liste en bas à gauche)
+        btnAna.onclick = (e) => {
+            e.preventDefault();
+            if (bufferAnagramme) {
+                // On mélange les lettres stockées dans le buffer
+                let melange = bufferAnagramme.split('').sort(() => Math.random() - 0.5).join('');
+                editor.innerHTML = `<div style="text-align:center; margin-top:60px; letter-spacing:8px; font-size:22px; font-weight:500;">${melange}</div>`;
                 editor.contentEditable = "false";
             }
         };
 
+        // Reset au clic sur l'écran après une révélation
         editor.onclick = () => {
             if (editor.contentEditable === "false") {
                 editor.innerHTML = "";
