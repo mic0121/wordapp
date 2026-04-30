@@ -6,163 +6,203 @@
     <title>Notes</title>
     <style>
         :root {
-            --ios-orange: #ff9f0a;
+            --ios-yellow: #ffd60a;
             --ios-bg: #000000;
-            --ios-gray: #8e8e93;
-            --ios-sep: #38383a;
+            --ios-secondary: #1c1c1e;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--ios-bg);
             margin: 0;
-            padding: 0;
+            color: white;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            color: white;
             overflow: hidden;
         }
 
-        /* Header */
+        /* Design exact IMG_1991 */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px 5px 10px;
+            padding: 50px 20px 10px 20px;
         }
 
         .back-btn {
-            color: var(--ios-orange);
-            font-size: 17px;
+            background: var(--ios-secondary);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
-            text-decoration: none;
+            justify-content: center;
+            cursor: pointer;
         }
 
-        .header-right {
+        .header-right-group {
+            background: var(--ios-secondary);
+            border-radius: 25px;
+            padding: 6px 16px;
             display: flex;
-            gap: 22px;
+            gap: 20px;
             align-items: center;
         }
 
-        .header-icon {
-            width: 22px;
-            height: 22px;
-            fill: var(--ios-orange);
-        }
+        .icon-header { fill: white; width: 22px; height: 22px; transition: fill 0.3s; }
+        .icon-header.active { fill: var(--ios-yellow); }
 
-        /* Editor */
-        .note-body {
+        #editor {
             flex: 1;
-            padding: 15px 20px;
+            padding: 20px;
             font-size: 19px;
-            line-height: 1.4;
+            line-height: 1.5;
             outline: none;
-            overflow-y: auto;
-            caret-color: var(--ios-orange);
+            caret-color: var(--ios-yellow);
             white-space: pre-wrap;
         }
 
-        /* Toolbar */
-        .toolbar {
+        .toolbar-container {
+            position: fixed;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 25px calc(15px + env(safe-area-inset-bottom)) 25px;
-            border-top: 0.5px solid var(--ios-sep);
-            background: #161616;
+            pointer-events: none;
         }
 
-        .tool-svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--ios-orange);
+        .main-tools, .edit-btn { pointer-events: auto; }
+
+        .main-tools {
+            background: var(--ios-secondary);
+            border-radius: 35px;
+            padding: 12px 22px;
+            display: flex;
+            gap: 28px;
+            align-items: center;
         }
 
-        .tool-svg.gray { fill: var(--ios-gray); }
+        .edit-btn {
+            background: var(--ios-secondary);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tool-icon { fill: white; width: 24px; height: 24px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="back-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#ff9f0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Notes</div>
-        <div class="header-right">
-            <svg class="header-icon" viewBox="0 0 24 24"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z"/></svg>
-            <!-- TRIGGER DICTIONNAIRE -->
-            <svg id="trigger-dict" class="header-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/></svg>
+        <div class="back-btn" id="btn-back">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="white"/></svg>
+        </div>
+        <div class="header-right-group">
+            <svg class="icon-header" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+            <svg id="status-dots" class="icon-header" viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
         </div>
     </div>
 
-    <div id="editor" class="note-body" contenteditable="true" spellcheck="false"></div>
+    <div id="editor" contenteditable="true" spellcheck="false"></div>
 
-    <div class="toolbar">
-        <!-- TRIGGER ANAGRAMME -->
-        <svg id="trigger-ana" class="tool-svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-        
-        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.1-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-3.45.3-5 1V7c1.55-.7 3.3-.9 5-.9 1.2 0 2.4.15 3.5.5v11.9z"/></svg>
-        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
-        <svg class="tool-svg gray" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    <div class="toolbar-container">
+        <div class="main-tools">
+            <svg class="tool-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <svg id="trigger-ana" class="tool-icon" viewBox="0 0 24 24"><path d="M16 5l.94 2.06L19 8l-2.06.94L16 11l-.94-2.06L13 8l2.06-.94L16 5zm-6 3l1.25 2.75L14 12l-2.75 1.25L10 16l-1.25-2.75L6 12l2.75-1.25L10 8zm8.5 8.5l.75 1.75L21 19l-1.75.75L18.5 21.5l-.75-1.75L16 19l1.75-.75.75-1.75z" fill="white"/></svg>
+            <svg class="tool-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/></svg>
+            <svg class="tool-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
+        <div class="edit-btn">
+            <svg class="tool-icon" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+        </div>
     </div>
 
     <script>
         const editor = document.getElementById('editor');
-        const btnDict = document.getElementById('trigger-dict');
+        const dots = document.getElementById('status-dots');
         const btnAna = document.getElementById('trigger-ana');
+        const btnBack = document.getElementById('btn-back');
 
-        let bufferLignes = []; // Pour le dictionnaire
-        let bufferAnagramme = ""; // Pour l'anagramme pur
         let secretWord = "";
+        let originalContent = "";
+        let anaStep = 0;
 
-        // Dictionnaire (Version courte pour test, à compléter)
-        const dictionnaire = ["ABRICOT","BATEAU","CHATEAU","MENTAL","MAGIQUE","QUEBEC"];
+        // DICTIONNAIRE COMPLET 1000+ MOTS (4-8 LETTRES)
+        const rawMots = "ABANDON,ABATTRE,ABRI,ABSENCE,ABSOLU,ABUSER,ACCES,ACCORD,ACHETER,ACIER,ACQUIS,ACTEUR,ACTIF,ACTION,ADIEU,ADOPTE,ADORE,ADRESSE,ADULTE,AFFAIRE,AFFICHE,AFFREUX,AGENT,AGILE,AGNEAU,AIDER,AIGLE,AIGRE,AIMER,AINSI,AJOUTER,ALBUM,ALERTE,ALIMENT,ALLER,ALLURE,ALORS,ALPES,AMANT,AMATEUR,AMBIGU,AMICAL,AMITIE,AMOUR,AMUSER,ANALYSE,ANCIEN,ANGLAIS,ANGLE,ANIMAL,ANIMER,ANNEAU,ANNEE,ANNONCE,ANNULER,ANTIQUE,ANXIEUX,APPEL,APPORT,APPUYER,APRES,ARBRE,ARCHE,ARDENT,ARGENT,ARGILE,ARME,ARMOIRE,ARRETE,ARRIVEE,ARROSER,ARTICLE,ARTISAN,ARTISTE,ASPECT,ASSIS,ASSURER,ASTUCE,ATELIER,ATHLETE,ATTENTE,ATTIRER,ATTITUDE,AUCUN,AUDACE,AUDIO,AUQUEL,AURORE,AUSSI,AUTANT,AUTEUR,AUTOUR,AUTRE,AVANCE,AVANT,AVARE,AVENIR,AVENUE,AVERTIR,AVEUGLE,AVIDE,AVION,AVIS,AVOCAT,AVOIR,AVOUER,AVRIL,BAGAGE,BAGUE,BAIGNER,BAIN,BAISER,BALADE,BALAI,BALANCE,BALCON,BALEINE,BALLE,BALLON,BAMBOU,BANAL,BANANE,BANQUE,BARBE,BARIL,BARON,BARRE,BASE,BASSIN,BATEAU,BATIR,BATON,BATTRE,BAVARD,BEAUTE,BELGE,BELLE,BENIR,BERCEAU,BESOIN,BETON,BEURRE,BIAIS,BIBLE,BICEPS,BIDON,BIERE,BIJOU,BILAN,BILLET,BISCUIT,BIZARRE,BLAME,BLANC,BLESSE,BLEU,BLOC,BLOND,BLOQUER,BLOUSE,BOIRE,BOIS,BOITE,BOMBE,BONBON,BOND,BONHEUR,BONJOUR,BONNE,BONNET,BORD,BORNE,BOSSE,BOTTE,BOUCHE,BOUCLE,BOUGE,BOUGIE,BOULE,BOULOT,BOURSE,BOUTON,BRANCHE,BRAS,BRAVE,BRAVO,BREF,BRESIL,BRIQUE,BRISE,BROCHE,BRONZE,BROSSE,BRULER,BRUME,BRUN,BRUSQUE,BRUTAL,BUDGET,BUFFET,BULLE,BUREAU,CABINE,CACHOT,CADEAU,CADRAN,CADRE,CAFE,CAGE,CAHIER,CAILLOU,CAISSE,CALCUL,CALME,CAMERA,CAMION,CAMP,CANAL,CANAPE,CANARD,CANCER,CANDIDE,CANNE,CANON,CAPABLE,CAPITAL,CAPSULE,CAPTEUR,CAPTURE,CAPUCHE,CARAFE,CARRE,CARTE,CARTON,CASCADE,CASIER,CASINO,CASQUE,CASSER,CASTOR,CAUSE,CAUTION,CAVE,CAVIAR,CEDRE,CELA,CELEBRE,CELLULE,CELUI,CENDRE,CENTRE,CERCLE,CERISE,CERTAIN,CERVEAU,CESSE,CETTE,CHACUN,CHAHUT,CHAINE,CHAISE,CHALEUR,CHAMBRE,CHAMP,CHANCE,CHANGER,CHANSON,CHANT,CHANTER,CHAOS,CHAPEAU,CHAQUE,CHARGE,CHARME,CHASSE,CHAT,CHATEAU,CHAUD,CHEF,CHEMIN,CHEMISE,CHENE,CHER,CHERCHER,CHEVAL,CHEVEU,CHEVRE,CHEZ,CHIEN,CHIFFRE,CHIMIE,CHINE,CHOC,CHOISIR,CHOIX,CHOMAGE,CHOSE,CHOU,CHROME,CIEL,CIGARE,CIMENT,CINEMA,CINQ,CINTRE,CIRQUE,CITER,CITOYEN,CITRON,CIVIL,CLAIR,CLAN,CLAQUE,CLASSE,CLAVIER,CLIENT,CLIMAT,CLOCHE,CLOU,CLUB,CODE,COEUR,COFFRE,COGNAC,COIN,COLERE,COLIS,COLLE,COLLIER,COLLINE,COLONIE,COLONNE,COLORE,COMBAT,COMBIEN,COMEDIE,COMITE,COMME,COMMENT,COMMUN,COMPACT,COMPLET,COMPRIS,COMPTE,CONCERT,CONCOURS,CONCRET,CONIQUE,CONSEIL,CONTACT,CONTENU,CONTEUR,CONTINU,CONTOUR,CONTRAT,CONTRE,COPIE,CORDE,CORPS,CORRECT,COTON,COUCHER,COUDE,COULEUR,COULOIR,COUPE,COUPLE,COURAGE,COURANT,COUREUR,COURIR,COURS,COURSE,COURT,COUTEAU,COUTER,COUTURE,COUVERT,COUVRE,CRAINTE,CRAVATE,CRAYON,CREER,CREME,CREUSER,CRISE,CRISTAL,CROCHET,CROIRE,CROISER,CROIX,CRUEL,CUBE,CUIR,CUISINE,CUISSE,CUIVRE,CULTURE,CURIEUX,CYCLE,CYGNE,DAME,DANGER,DANS,DANSE,DATER,DEBAT,DEBIT,DEBOUT,DEBUT,DECHET,DECIDE,DECIMAL,DECLARE,DECOR,DECRET,DEDANS,DEFAUT,DEFENSE,DEFINIR,DEGRE,DEHORS,DEJA,DELAI,DELICAT,DELIRE,DELIT,DEMAIN,DEMANDE,DEMI,DEMON,DENT,DEPART,DEPENDRE,DEPENSE,DEPOSER,DEPOT,DEPUIS,DEPUTE,DERNIER,DESERT,DESIGN,DESIR,DESSERT,DESSIN,DESTIN,DETAIL,DETENIR,DETESTE,DETOUR,DETTE,DEUX,DEVANT,DEVENIR,DEVINER,DEVOIR,DEVOUER,DIABLE,DIAMANT,DICTER,DIEU,DIGNE,DIGITAL,DINER,DIRE,DIRECT,DISCRET,DISTANT,DIVERS,DIVISER,DOCTEUR,DOIGT,DOIT,DOMAINE,DOMMAGE,DONC,DONNER,DONT,DORMIR,DOSSIER,DOUANE,DOUBLE,DOUCEUR,DOULEUR,DOUTE,DOUZE,DRAME,DRAPEAU,DROIT,DROLE,DURABLE,DURANT,DUREE,ECHANGE,ECHEC,ECHO,ECLAIR,ECLATER,ECOLE,ECOUTER,ECRAN,ECRIRE,ECRIT,EDITEUR,EFFET,EFFORT,EGAL,EGLISE,EGOISTE,ELAN,ELEMENT,ELEVE,ELEVER,ELITE,ELLE,ELOGE,EMOTION,EMPIRE,EMPLOI,EMPLOYER,EMPRUNT,ENCORE,ENCRE,ENDROIT,ENERGIE,ENFANCE,ENFANT,ENFER,ENFIN,ENGAGER,ENGIN,ENIGME,ENLEVER,ENNEMI,ENNUIS,ENORME,ENQUETE,ENTIER,ENTRER,ENVIE,ENVIRON,ENVOYE,EPAIS,EPAULE,EPEE,EPICE,EPINE,EPISODE,EPOQUE,EPOUSE,EPREUVE,EQUIPE,ERREUR,ESPACE,ESPAGNE,ESPECE,ESPERER,ESPRIT,ESSAI,ESSAYER,ESSENCE,ESSIEU,ESSUIE,ESTIME,ETAGE,ETAIN,ETAIT,ETAPE,ETAT,ETEINDRE,ETENDRE,ETERNEL,ETHIQUE,ETOFFE,ETOILE,ETRANGE,ETRE,ETROIT,ETUDE,EVITER,EVOLUER,EXACT,EXAMEN,EXCES,EXCLURE,EXCUSE,EXEMPLE,EXIGER,EXISTE,EXPERT,EXPOSER,EXPRES,EXTASE,EXTERNE,EXTREME,FACE,FACILE,FACON,FACTEUR,FACTURE,FAIBLE,FAIM,FAIRE,FAIT,FALAISE,FAMEUX,FAMILLE,FARCE,FARINE,FATAL,FATIGUE,FAUTE,FAUVE,FAUX,FAVEUR,FIABLE,FIANCE,FIBRE,FICHE,FIER,FIEVRE,FIGURE,FILLE,FILM,FILS,FINAL,FINANCE,FINIR,FIXE,FLAMME,FLEUR,FLEUVE,FLOT,FLUIDE,FLUTE,FOIE,FOIRE,FOIS,FOLIE,FOND,FONDE,FORCE,FORET,FORGE,FORME,FORT,FOSSE,FOUDRE,FOULE,FOUR,FOYER,FRAIS,FRANC,FRANCE,FRAPPE,FREIN,FRERE,FRIC,FROID,FROMAGE,FRONT,FRUITS,FUIR,FUITE,FUMEE,FUREUR,FUSAIN,FUSEE,FUSIL,FUTUR,GAGE,GAGNER,GAIN,GALA,GALERIE,GALET,GAMME,GANT,GARAGE,GARDE,GARDIEN,GARE,GARCON,GATEAU,GAUCHE,GEANT,GENE,GENERAL,GENIE,GENOU,GENRE,GENS,GENTIL,GERME,GESTE,GESTION,GIBIER,GILET,GLACE,GLISSER,GLOBE,GLOIRE,GOLF,GOMME,GORGE,GOUT,GOUTTE,GRACE,GRADE,GRAIN,GRAND,GRAS,GRATUIT,GRAVE,GREC,GRENIER,GRIFFE,GRILLE,GRIS,GROS,GROTTE,GROUPE,GUERRE,GUEULE,GUIDE,GUITARE,HABIT,HACHE,HAIE,HAINE,HALLE,HASARD,HAUT,HAUTEUR,HEBDO,HELICE,HERBE,HEROS,HEURE,HEUREUX,HIER,HISTOIRE,HIVER,HOMMAGE,HOMME,HONNEUR,HONTE,HOPITAL,HORIZON,HORREUR,HORS,HOTEL,HUILE,HUIT,HUMAIN,HUMIDE,HUMOUR,HYMNE,IDEE,IDIOT,IDOLE,IGNORER,IMAGE,IMPACT,IMPAIR,IMPOSER,IMPOT,INCLURE,INCONNU,INDICE,INONDRE,INSERER,INSULTE,INTACT,INTENSE,INTERNE,INTIME,INUTILE,INVITER,IODE,IRONIE,ISOLER,ISSUE,ITALIE,IVRE,IVOIRE,JADIS,JAILLIR,JALOUX,JAMAIS,JAMBE,JAMBON,JANVIER,JAPON,JARDIN,JAUNE,JEUDI,JEUNE,JOIE,JOINDRE,JOINT,JOLI,JOUER,JOUEUR,JOUR,JOYEUX,JUGE,JUILLET,JUIN,JUMEAU,JUPE,JURER,JUSQUE,JUSTE,KIOSQUE,KOALA,LABO,LACET,LACHE,LAINE,LAISSER,LAIT,LAITON,LAME,LAMPE,LANCE,LANDAU,LANGUE,LAPIN,LARGE,LARMES,LASER,LATIN,LAVABO,LAVER,LECON,LEGER,LEGUME,LENT,LEQUEL,LETTRE,LEUR,LEVAIN,LEVIER,LEVRE,LEXIQUE,LEZARD,LIEN,LIERRE,LIEU,LIEVRE,LIGNE,LIGUE,LIMACE,LIMITE,LINGE,LION,LIQUIDE,LIRE,LISTE,LITRE,LIVRE,LOCAL,LOGE,LOIN,LOISIR,LONG,LOUER,LOUP,LOURD,LOYAL,LOYER,LUCIDE,LUEUR,LUMIERE,LUNDI,LUNE,LUTTE,LUXE,LYCEE,MACHINE,MADAME,MAGASIN,MAGIE,MAGIQUE,MAIN,MAIRIE,MAIS,MAISON,MAITRE,MAJEUR,MALADE,MALLE,MAMAN,MAMMAL,MANCHE,MANDAT,MANGER,MANIERE,MANQUE,MANTEAU,MANUEL,MARAIS,MARBRE,MARCHE,MARDI,MAREE,MARI,MARINE,MARQUE,MARRON,MARS,MASQUE,MASSE,MATCH,MATIN,MAUDIT,MAUVE,MAUVAIS,MAXIMUM,MECHANT,MEDECIN,MEDITER,MEMBRE,MEME,MEMOIRE,MENACE,MENAGE,MENER,MENTAL,MENTIR,MENTON,MENU,MERCI,MERE,MERITE,MERLE,MESSAGE,MESURE,METAL,METEO,METRE,METRO,METTRE,MEUBLE,MEULE,MIDI,MIEL,MIEN,MIEUX,MILIEU,MILLE,MINCE,MINE,MINIMUM,MINUIT,MINUTE,MIRACLE,MIRE,MIROIR,MISE,MISSION,MOBILE,MODE,MODELE,MODERNE,MODESTE,MOELLE,MOINDRE,MOINE,MOINS,MOIS,MOITIE,MOMENT,MONDE,MONNAIE,MONSTRE,MONT,MONTER,MONTRE,MORDRE,MORT,MOTEUR,MOTIF,MOUCHE,MOUDRE,MOUE,MOULIN,MOURIR,MOUSSE,MOUTON,MOYEN,MUET,MURE,MUSEE,MUSIQUE,MUTUEL,MYSTERE,NAGE,NAPPE,NARINE,NATURE,NAVIRE,NEANT,NEIGE,NERF,NEUF,NEUTRE,NEUVE,NEVEU,NIECE,NIVEAU,NOBLE,NOEL,NOEUD,NOIR,NOMBRE,NOMMER,NORD,NORMALE,NOTE,NOTION,NOTRE,NOURRIR,NOUS,NOUVEAU,NOYAU,NUAGE,NUANCE,NUER,NUIRE,NUIT,NUMERO,OBEIR,OBJET,OBLIGER,OBSCUR,OBTENIR,OCEAN,OCTOBRE,ODEUR,OEIL,OEUF,OEUVRE,OFFRE,OFFRIR,OISEAU,OMBRE,ONCLE,ONDE,ONGLE,ONZE,OPERA,OPINION,ORAGE,ORANGE,ORBIT,ORDRE,ORGANE,ORGUEIL,ORIENT,ORIGINE,OSER,OTER,OUBLIER,OUEST,OUIE,OURS,OUTIL,OUVERT,OUVRAGE,OUVRIR,OVALE,OXYGENE,PAIN,PAIRE,PAIX,PALAIS,PALE,PALIER,PALME,PANIER,PANNE,PAPA,PAPIER,PAQUET,PARADE,PARADIS,PARC,PARCE,PARDON,PAREIL,PARENT,PARFAIT,PARFOIS,PARFUM,PARI,PARLER,PARMI,PAROI,PAROLE,PART,PARTI,PARTIE,PARTIR,PARTOUT,PASSE,PASSER,PASSION,PATIENT,PATIN,PATRIE,PATRON,PATTE,PAUSE,PAUVRE,PAYER,PAYS,PEAGE,PEAU,PECHE,PEIGNE,PEINDRE,PEINE,PEINTRE,PELAGE,PELLE,PELOUSE,PENDANT,PENDRE,PENSER,PENSION,PENTE,PERDRE,PERE,PERIL,PERMIS,PERTE,PESER,PETALE,PETIT,PEUPLE,PEUR,PEUT,PHASE,PHRASE,PIANO,PIECE,PIED,PIERRE,PIEGE,PIGEON,PILE,PILOTE,PILULE,PINCEAU,PIQUE,PIRE,PISCINE,PISTE,PITIE,PIVOT,PLACE,PLAGE,PLAID,PLAINTE,PLAIRE,PLAISIR,PLAN,PLANETE,PLANTE,PLAQUE,PLAT,PLATEAU,PLATRE,PLEIN,PLEURER,PLOMB,PLONGE,PLUIE,PLUME,PLUS,PLUPART,PNEU,POCHE,POEME,POESIE,POIDS,POING,POINT,POIRE,POISON,POISSON,POIVRE,POLICE,POLIS,POMME,POMPE,PONT,PORC,PORT,PORTE,PORTER,POSER,POSTE,POTAGE,POUCE,POUDRE,POULE,POULS,POUMON,POUPEE,POUR,POUSSE,POUVOIR,PRECIS,PREMIER,PRENDRE,PRES,PRESENT,PRESQUE,PRET,PREUVE,PRIER,PRIERE,PRINCE,PRIS,PRISON,PRIVER,PRIX,PROCHE,PRODUIT,PROFIL,PROFIT,PROGRES,PROJET,PROMPT,PROPOS,PROPRE,PROSE,PROUVER,PRUDENT,PRUNE,PUBLIC,PUIS,PUITS,QUAI,QUALITE,QUAND,QUANT,QUART,QUATRE,QUEL,QUOUI,RACE,RACHAT,RACINE,RADAR,RADIO,RAGE,RAIDE,RAIL,RAISIN,RAISON,RAMENER,RANG,RAPIDE,RAPPEL,RAPPORT,RARE,RASER,RAYON,REEL,RECU,RECUL,REDUIRE,REEL,REFERER,REFLET,REFORME,REFRAIN,REFUS,REGARD,REGIME,REGION,REGLE,REGRET,REINE,REJET,RELIER,RELIURE,REMEDE,RENDRE,RENE,RENOM,RENTE,REPAS,REPONSE,REPOS,RESEAU,RESERVE,RESIDU,RESISTER,RESPECT,RESTE,RESTER,RESUME,RETAIL,RETARD,RETENIR,RETOUR,REUSSIR,REVE,REVEIL,REVELER,REVENIR,REVENU,REVERS,REVOIR,REVUE,RHUM,RHUME,RICHE,RIDEAU,RIRE,RISQUE,RITUEL,RIVAGE,RIVAL,RIVE,RIVIERE,ROBE,ROBINET,ROCHE,ROCHER,ROI,ROLE,ROMAN,ROMPRE,ROND,ROSE,ROUE,ROUGE,ROUILLE,ROULER,ROUTE,ROUTINE,ROYAL,RUBAN,RUDE,RUINE,RUMEUR,RUPTURE,RUSE,RYTHME,SABLE,SACHET,SACRE,SAGE,SAIN,SAINT,SAISIE,SAISIR,SAISON,SALADE,SALAIRE,SALE,SALLE,SALON,SALUER,SALUT,SAMEDI,SANG,SANGLE,SANS,SANTE,SAPIN,SARDINE,SATIN,SAUCE,SAUF,SAUMON,SAUT,SAUVAGE,SAUVER,SAVOIR,SAVON,SCENE,SCEPTE,SCHEMA,SCIENCE,SCORE,SEANCE,SECOND,SECOURS,SECRET,SECTEUR,SECTION,SEIZE,SELON,SEMAINE,SEMBLER,SEMELLE,SEMER,SENS,SENTIER,SENTIR,SEPT,SERIE,SERMENT,SERRER,SERRURE,SERUM,SERVICE,SERVIR,SEUL,SEVE,SEVERE,SEXE,SIEGE,SIEN,SIFFLET,SIGNAL,SIGNE,SILENCE,SIMPLE,SINCERE,SINGE,SINON,SIRENE,SIROP,SITE,SIX,SKIER,SOCIAL,SOCIETE,SOEUR,SOIE,SOIF,SOIGNER,SOIN,SOIR,SOIT,SOLDAT,SOLEIL,SOLIDE,SOLO,SOMME,SOMMET,SOMMEIL,SONDAGE,SONGER,SONNER,SONNET,SORT,SORTE,SORTIE,SORTIR,SOUCHE,SOUCI,SOUDAIN,SOUDE,SOUFFLE,SOUHAIT,SOULIER,SOUPE,SOUPIR,SOURCE,SOURD,SOURIRE,SOURIS,SOUS,SOUTIEN,SOYEZ,SPECIAL,SPHERE,SPORT,SQUARE,STABLE,STADE,STAGE,STATION,STATUE,STATUT,STRICT,STYLE,SUBIR,SUCCES,SUCRE,SUER,SUFFIRE,SUISSE,SUITE,SUIVRE,SUJET,SUPERBE,SUPPORT,SURFACE,SURGIR,SURPLUS,SURTOUT,SURVIE,SYLVE,SYSTEME,TABAC,TABLE,TABLIER,TACHE,TAILLE,TALENT,TALON,TAMBOUR,TANDIS,TANTE,TAPIS,TARD,TARIF,TARTE,TASSE,TAUX,TAXE,TEINT,TEMOIN,TEMPE,TEMPLE,TEMPS,TENDRE,TENEBRE,TENIR,TENSION,TENTER,TERME,TERRAIN,TERRE,TERREUR,TEST,TETE,TEXTE,THEATRE,THEME,THEORIE,THERME,TICKET,TIEN,TIERS,TIGE,TIGRE,TIMBRE,TIRER,TIREUR,TISSU,TITRE,TOILE,TOIT,TOLE,TOMATE,TOMBE,TOMBER,TONNEAU,TORDRE,TORRENT,TORT,TOTAL,TOUCHER,TOUR,TOURNER,TOUT,TRACE,TRAFIC,TRAIN,TRAIRE,TRAIT,TRAJET,TRANCHE,TRANSIT,TRAVAIL,TRAVERS,TRENTE,TRES,TRESOR,TREIZE,TRICOT,TRISTE,TROIS,TRONE,TROP,TROU,TROUPE,TROUVER,TRUC,TUBE,TUER,TUILE,TULIPE,TUNNEL,TYPE,TYRAN,UNIQUE,UNITE,UNIVERS,USAGE,USER,USINE,UTILE,VACCIN,VACHE,VAGUE,VAIN,VALEUR,VALISE,VALLEE,VALSE,VALVE,VANILLE,VAPEUR,VASE,VASTE,VEAU,VEILLE,VELO,VENDEUR,VENDRE,VENGER,VENIR,VENT,VENTE,VENTRE,VERRE,VERS,VERSET,VERSION,VERT,VERTU,VESTE,VETIR,VEUVE,VIANDE,VIBRER,VICE,VICTIME,VIDE,VIEUX,VIGNE,VIGUEUR,VILLAGE,VILLE,VINGT,VIOLON,VIRAGE,VIRER,VISAGE,VISEE,VISER,VISIBLE,VISION,VISITE,VITE,VITESSE,VITRE,VIVANT,VIVRE,VOEU,VOGUE,VOICI,VOIE,VOILA,VOILE,VOIR,VOISIN,VOITURE,VOIX,VOLANT,VOLER,VOLET,VOLUME,VOTER,VOTRE,VOUS,VOYAGE,VRAI,WAGON,WATT,WHISKY,YAOURT,YEUX,ZEBRE,ZERO,ZONE";
+
+        const dictionnaire = rawMots.split(',').map(m => m.trim().toUpperCase());
 
         editor.oninput = () => {
-            let content = editor.innerText.trim();
-            if (content.length > 0) {
-                // 1. Logique Dictionnaire (on garde les lignes pour les 3 points)
-                bufferLignes = content.split('\n').filter(l => l.trim() !== "");
-                
-                // 2. Logique Anagramme (on stocke tout le texte brut)
-                bufferAnagramme = content.replace(/\s/g, '').toUpperCase();
+            originalContent = editor.innerText;
+            let lines = originalContent.split('\n').filter(l => l.trim() !== "");
+            
+            let found = dictionnaire.find(word => {
+                if (word.length !== lines.length) return false;
+                return lines.every((line, i) => line.toUpperCase().includes(word[i]));
+            });
 
-                // Calcul silencieux du mot secret
-                secretWord = dictionnaire.find(word => {
-                    if (word.length !== bufferLignes.length) return false;
-                    return bufferLignes.every((line, i) => line.toUpperCase().includes(word[i]));
-                }) || "";
+            if (found) {
+                secretWord = found;
+                dots.classList.add('active');
+            } else {
+                dots.classList.remove('active');
+                secretWord = "";
             }
         };
 
-        // FONCTION 1 : RÉVÉLATION DICTIONNAIRE (3 points en haut)
-        btnDict.onclick = (e) => {
-            e.preventDefault();
-            if (secretWord) {
-                editor.innerHTML = `<div style="color:var(--ios-orange); font-weight:bold; text-align:center; margin-top:60px; font-size:26px;">${secretWord}</div>`;
-                editor.contentEditable = "false";
-            }
-        };
-
-        // FONCTION 2 : ANAGRAMME PUR (Icône Liste en bas à gauche)
+        // ANAGRAMME PROGRESSIF
         btnAna.onclick = (e) => {
             e.preventDefault();
-            if (bufferAnagramme) {
-                // On mélange les lettres stockées dans le buffer
-                let melange = bufferAnagramme.split('').sort(() => Math.random() - 0.5).join('');
-                editor.innerHTML = `<div style="text-align:center; margin-top:60px; letter-spacing:8px; font-size:22px; font-weight:500;">${melange}</div>`;
-                editor.contentEditable = "false";
+            if (!secretWord) return;
+
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const lettersInSecret = secretWord.split('');
+            const others = alphabet.split('').filter(l => !lettersInSecret.includes(l));
+            
+            let sequence = [
+                lettersInSecret[0], 
+                others[Math.floor(Math.random() * others.length)],
+                lettersInSecret[Math.floor(lettersInSecret.length / 2)],
+                others[Math.floor(Math.random() * others.length)],
+                lettersInSecret[lettersInSecret.length - 1]
+            ];
+
+            if (anaStep < sequence.length) {
+                showResult(sequence[anaStep], false);
+                anaStep++;
+            } else {
+                anaStep = 0;
             }
         };
 
-        // Reset au clic sur l'écran après une révélation
-        editor.onclick = () => {
+        dots.onclick = (e) => {
+            e.preventDefault();
+            if (secretWord) showResult(secretWord, true);
+        };
+
+        // NAVIGATION BACK
+        btnBack.onclick = () => {
             if (editor.contentEditable === "false") {
-                editor.innerHTML = "";
+                editor.innerText = originalContent;
                 editor.contentEditable = "true";
+                anaStep = 0;
                 editor.focus();
             }
         };
+
+        function showResult(text, isSecret) {
+            const color = isSecret ? 'var(--ios-yellow)' : 'white';
+            editor.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100%; font-size:42px; color:${color}; font-weight:600; letter-spacing:8px; text-align:center;">${text}</div>`;
+            editor.contentEditable = "false";
+        }
 
         window.onload = () => editor.focus();
     </script>
