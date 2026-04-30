@@ -44,7 +44,7 @@
         </div>
     </div>
     <div class="note-body">
-        <div class="note-editor" id="editor" contenteditable="true" spellcheck="false" placeholder="Note"></div>
+        <div id="editor" class="note-editor" contenteditable="true" spellcheck="false" placeholder="Note"></div>
     </div>
     <div class="toolbar">
         <div class="tb-pill">
@@ -58,7 +58,7 @@
 </div>
 
 <script>
-// --- DICTIONNAIRE ---
+// --- LISTE DICTIONNAIRE COMPLETE ---
 const DICTIONARY = ["ABORD", "ABRI", "ACCES", "ADIEU", "ADULTES", "AFFAIRE", "AGENT", "AIDER", "AIMER", "AILLEURS", "AJOUTER", "ALBUM", "ALLER", "ALORS", "AMERIQUE", "AMI", "AMOUR", "AMUSER", "ANCIEN", "ANGLAIS", "ANIMAL", "ANNEE", "ANNONCER", "APPELER", "APPORTER", "APPRENDRE", "APRES", "ARBRE", "ARGENT", "ARRETER", "ARRIVER", "ARTICLE", "ASSEZ", "ASSIER", "ATTENDRE", "AUCUN", "AUJOURDUI", "AUSSI", "AUTANT", "AUTOUR", "AUTRE", "AVANT", "AVEC", "AVION", "AVIS", "AVOIR", "AVRIL", "BALLE", "BANQUE", "BASE", "BATEAU", "BEAU", "BEAUCOUP", "BESOIN", "BETE", "BIEN", "BIENTOT", "BILLET", "BLANC", "BLEU", "BOIRE", "BOIS", "BOITE", "BON", "BONHEUR", "BONJOUR", "BONNE", "BORD", "BOUCHE", "BOUT", "BRAS", "BRUIT", "BUREAU", "BUT", "CADEAU", "CAFE", "CAISSE", "CALME", "CAMP", "CANADA", "CAPABLE", "CARRE", "CARTE", "CASSES", "CAUSE", "CELA", "CELUI", "CENTRE", "CERCLE", "CERTAIN", "CETTE", "CHAMBRE", "CHAMP", "CHANCE", "CHANGER", "CHANSON", "CHANTER", "CHAQUE", "CHARGE", "CHASSE", "CHAT", "CHAUD", "CHEF", "CHEMIN", "CHER", "CHERCHER", "CHEVAL", "CHEVEUX", "CHEZ", "CHIEN", "CHIFFRE", "CHOISIR", "CHOSE", "CIEL", "CINQ", "CLASSE", "CLEF", "COEUR", "COIN", "COLERE", "COMME", "COMMENT", "COMPRIS", "COMPTE", "CONTRE", "CORPS", "COTE", "COUP", "COURIR", "COURS", "COURT", "COUTE", "CROIRE", "CUISINE", "DAME", "DANGER", "DANS", "DANSER", "DATE", "DEBUT", "DECEMBRE", "DECIDER", "DEHORS", "DEJA", "DEMAIN", "DEMANDER", "DENT", "DEPART", "DEPUIS", "DERNIER", "DERRIERE", "DES", "DESCENDRE", "DESERT", "DESIRE", "DESOLÉ", "DESSIN", "DESSOUS", "DESSUS", "DEVANT", "DEVENIR", "DEVOIR", "DIEU", "DIFFERENT", "DIFFICILE", "DIMANCHE", "DIRE", "DIRECT", "DISCOURS", "DISPARAIT", "DISTRICT", "DIX", "DOCTEUR", "DOIGT", "DOMMAGE", "DONNER", "DONT", "DORMIR", "DOS", "DOUBLE", "DOUTE", "DOUX", "DROIT", "DROLE", "DUR", "EAU", "ECOLE", "ECOUTER", "ECRIRE", "EFFET", "EGAL", "EGLISE", "ELEMENT", "ELEVE", "ELLE", "EMOTION", "EMPECHER", "EMPLOYER", "ENCORE", "ENFANT", "ENFIN", "ENLEVER", "ENNEMI", "ENSEMBLE", "ENTENDRE", "ENTIER", "ENTRE", "ENTRER", "ENVIE", "ENVIRON", "ENVOYER", "ERREUR", "ESCALIER", "ESPACE", "ESPERER", "ESPRIT", "EST", "ETAGE", "ETAT", "ETE", "ETEINDRE", "ETRE", "ETUDE", "EVITER", "EXEMPLE", "EXISTE", "FACILE", "FAÇON", "FAIBLE", "FAIM", "FAIRE", "FAIT", "FALLOIR", "FAMILLE", "FAUTE", "FAUX", "FEMME", "FENETRE", "FERME", "FERMER", "FETE", "FEU", "FEUILLE", "FEVRIER", "FILLE", "FILM", "FILS", "FINIR", "FLEUR", "FLEUVE", "FOIS", "FOND", "FORCE", "FORET", "FORME", "FORT", "FOU", "FOULE", "FRAIS", "FRANÇAIS", "FRAPPER", "FRERE", "FROID", "FRONT", "FRUIT", "GAGNER", "GARÇON", "GARDER", "GAUCHE", "GENRE", "GENS", "GENTIL", "GLACE", "GOUT", "GRAND", "GRAVE", "GRIS", "GROS", "GROUPE", "GUERRE", "HABITER", "HAUT", "HEURE", "HEUREUX", "HIER", "HISTOIRE", "HIVER", "HOMME", "HONNEUR", "HORS", "HOTEL", "HUIT", "HUMAIN", "ICI", "IDEE", "IMAGE", "IMAGINER", "IMPORTANT", "IMPOSSIBLE", "INSTANT", "INTERET", "INVENTER", "INVITE", "JAMAIS", "JAMBE", "JANVIER", "JARDIN", "JAUNE", "JETER", "JEU", "JEUDI", "JEUNE", "JOIE", "JOLI", "JOUER", "JOUR", "JOURNAL", "JUILLET", "JUIN", "JUSQUE", "JUSTE", "LAISSER", "LAIT", "LANGUE", "LARGE", "LAVAGE", "LEÇON", "LEGER", "LENDEMAIN", "LENT", "LEQUEL", "LETTRE", "LEUR", "LEVER", "LIBRE", "LIEU", "LIGNE", "LIRE", "LISTE", "LIT", "LIVRE", "LOI", "LOIN", "LONG", "LORSQUE", "LUMIERE", "LUNDI", "LUNE", "MACHINE", "MADAME", "MAGASIN", "MAGIQUE", "MAIN", "MAINTENANT", "MAIRIE", "MAIS", "MAISON", "MAITRE", "MALADE", "MALGRÉ", "MALHEUR", "MANGER", "MANIERE", "MANQUER", "MARCHÉ", "MARCHER", "MARDI", "MARI", "MARIAGE", "MARS", "MATIN", "MAUVAIS", "MECHANT", "MEDECIN", "MEILLEUR", "MEME", "MEMOIRE", "MENER", "MENTIR", "MERCI", "MERE", "MERITE", "MESSAGE", "MESURE", "METTRE", "MIDI", "MIEUX", "MILIEU", "MILLE", "MINIMUM", "MINUTE", "MIROIR", "MISE", "MOI", "MOINS", "MOIS", "MOMENT", "MONDE", "MONSIEUR", "MONTAGNE", "MONTER", "MONTRE", "MONTRER", "MORCEAU", "MORT", "MOT", "MOURIR", "MOUTON", "MOYEN", "MUR", "MUSIQUE", "NAITRE", "NATURE", "NEUF", "NEZ", "NIVEAU", "NOEL", "NOIR", "NOM", "NOMBRE", "NON", "NORD", "NOTE", "NOTRE", "NOUS", "NOUVEAU", "NOVEMBRE", "NUAGE", "NUIT", "NUMERO", "OBJET", "OCCUPER", "OCTOBRE", "OEIL", "OEUF", "OFFRIR", "OISEAU", "OMBRE", "ONCLE", "ORANGE", "ORDRE", "OREILLE", "OSER", "OUBLIER", "OUEST", "OUI", "OUVERT", "OUVRIR", "PAGE", "PAIN", "PAIX", "PAPIER", "PAQUET", "PARADIS", "PARAITRE", "PARCE", "PARDON", "PAREIL", "PARENT", "PARFOIS", "PARLER", "PARMI", "PAROLE", "PARTIE", "PARTIR", "PARTOUT", "PASSAGE", "PASSE", "PASSER", "PATRON", "PAYER", "PAYS", "PEINE", "PENDANT", "PENSER", "PERDRE", "PERE", "PERMETTRE", "PERSONNE", "PETIT", "PEU", "PEUR", "PHOTO", "PHRASE", "PIECE", "PIED", "PIERRE", "PLACE", "PLAGE", "PLAINDRE", "PLAIRE", "PLAISIR", "PLAN", "PLANTE", "PLEIN", "PLEURER", "PLUS", "PLUIE", "POCHE", "POEME", "POINT", "POISSON", "POLICE", "POMME", "PONT", "PORTE", "PORTER", "POSER", "POSITION", "POSSIBLE", "POSTE", "POUR", "POURQUOI", "POURRIR", "POURTANT", "POUSSER", "POUVOIR", "PREMIER", "PRENDRE", "PREPARER", "PRES", "PRESENT", "PRESQUE", "PRET", "PREUVE", "PREVENIR", "PRIX", "PROCHAIN", "PRODUIT", "PROJET", "PROMETTRE", "PROPOS", "PROPRE", "PUIS", "QUAND", "QUART", "QUEL", "QUELQUE", "QUESTION", "QUITTER", "QUOI", "RACONTER", "RAISON", "RAMASSER", "RAPIDE", "RAPPEL", "RAPPELER", "RAPPORT", "RASSURER", "RAYON", "REALITE", "RECEVOIR", "RECHERCHE", "RECONNAIT", "REGARD", "REGARDER", "REGLE", "REGRET", "REJOINDRE", "REMARQUER", "REMETTRE", "REMPLIR", "RENDRE", "RENTRER", "REPAS", "REPONDRE", "REPONSE", "REPOSER", "REPRENDRE", "RESTER", "RETARD", "RETOUR", "REUSSIR", "REVEIL", "REVENIR", "REVER", "REVOIR", "RIDEAU", "RIEN", "RIRE", "RIVIERE", "ROBE", "ROI", "ROLE", "ROMAN", "ROSE", "ROUGE", "ROUE", "ROUTE", "RUE", "SABLE", "SAC", "SAINT", "SAISIR", "SAISON", "SALLE", "SAMEDI", "SANG", "SANS", "SANTÉ", "SAVOIR", "SCENE", "SCIENCE", "SECOND", "SECRET", "SELON", "SEMAINE", "SEMBLER", "SENTIR", "SEPARER", "SEPT", "SERIEUX", "SERVICE", "SERVIR", "SEUL", "SEULEMENT", "SIECLE", "SIGNE", "SILENCE", "SIMPLE", "SINON", "SIX", "SOCIETE", "SOEUR", "SOIF", "SOIR", "SOLEIL", "SOMME", "SORTIR", "SOUCI", "SOUDAIN", "SOUFFRIR", "SOUHAIT", "SOURIRE", "SOUVENT", "SPORT", "STATION", "STYLE", "SUITE", "SUIVRE", "SUJET", "SUPERBE", "SUR", "SURTOUT", "TABLE", "TAILLE", "TANT", "TARD", "TASSE", "TEL", "TELLEMENT", "TEMPS", "TENDRE", "TENIR", "TENTER", "TERRE", "TETE", "TEXTE", "TIRER", "TITRE", "TOMBER", "TON", "TOUCHER", "TOUJOURS", "TOUR", "TOURNER", "TOUT", "TRAIN", "TRAVAIL", "TRAVERS", "TREIZE", "TRENTE", "TRES", "TRISTE", "TROIS", "TROP", "TROU", "TROUVER", "TRUC", "TUER", "TYPE", "UNION", "UNIQUE", "USAGE", "USER", "VACHE", "VALEUR", "VENDRE", "VENDREDI", "VENIR", "VENT", "VERITÉ", "VERRE", "VERS", "VERT", "VETEMENT", "VIDE", "VIE", "VIEUX", "VIF", "VILLAGE", "VILLE", "VIN", "VINGT", "VISAGE", "VISITE", "VITE", "VIVRE", "VOEU", "VOICI", "VOIE", "VOILA", "VOIR", "VOISIN", "VOITURE", "VOIX", "VOLER", "VOTRE", "VOULOIR", "VOYAGE", "VRAI", "VRAIMENT", "VUE", "YEUX", "ZERO", "ZONE"];
 
 let ghostCandidates = []; 
@@ -69,104 +69,120 @@ const dotsBtn = document.getElementById('dotsBtn');
 const anaBtn = document.getElementById('anaBtn');
 const backBtn = document.getElementById('backBtn');
 
-function normalize(str) { return str.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function normalize(str) { 
+    return str.trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); 
+}
 
+// --- LOGIQUE DE SAISIE ---
 editor.oninput = () => {
     const text = editor.innerText;
-    const rawLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    // On ignore les lignes vides au milieu
+    const rawLines = text.split('\n').filter(l => l.trim() !== "");
     
     if (rawLines.length > 0) {
         ghostList = [...rawLines];
         const sets = rawLines.map(l => new Set(normalize(l).split('')));
         
-        const currentCandidates = DICTIONARY.filter(word => {
-            const norm = normalize(word);
-            // CORRECTION: Vérification stricte de la longueur du mot
-            if (norm.length !== rawLines.length) return false;
-            for (let i = 0; i < norm.length; i++) {
-                if (!sets[i].has(norm[i])) return false;
+        // RECHERCHE DANS LE DICO
+        const matches = DICTIONARY.filter(word => {
+            const normWord = normalize(word);
+            // DOIT faire la même longueur que le nombre de lignes
+            if (normWord.length !== rawLines.length) return false;
+            // Chaque lettre du mot doit être présente dans la ligne correspondante
+            for (let i = 0; i < normWord.length; i++) {
+                if (!sets[i].has(normWord[i])) return false;
             }
             return true;
         });
 
-        if (currentCandidates.length > 0) {
-            ghostCandidates = currentCandidates;
+        if (matches.length > 0) {
+            ghostCandidates = matches;
             dotsBtn.classList.add('active');
         } else {
-            // On ne désactive pas si on a déjà des candidats en mémoire (mode ghost)
+            // On garde le dernier succès en mémoire
             if (ghostCandidates.length === 0) dotsBtn.classList.remove('active');
         }
     }
 };
 
-function getBestLetter(wordList, usedLetters) {
+// --- LOGIQUE ANAGRAMME ---
+function getLetterToEliminate(wordList, usedLetters) {
     let counts = {};
     wordList.forEach(w => {
         let uniqueChars = new Set(normalize(w).split(''));
-        uniqueChars.forEach(c => { if (!usedLetters.has(c)) counts[c] = (counts[c] || 0) + 1; });
+        uniqueChars.forEach(c => { 
+            if (!usedLetters.has(c)) counts[c] = (counts[c] || 0) + 1; 
+        });
     });
-    
-    let bestChar = null; let minDiff = Infinity;
+
+    let bestChar = null;
+    let maxEliminated = -1;
+
     for (let char in counts) {
-        let noCount = wordList.filter(w => !normalize(w).includes(char)).length;
-        // CORRECTION: Logique plus permissive pour forcer l'affichage des lignes
-        if (noCount > 0 && noCount < minDiff) { 
-            minDiff = noCount; 
-            bestChar = char; 
+        // Combien de mots ne contiennent PAS cette lettre ?
+        let eliminated = wordList.filter(w => !normalize(w).includes(char)).length;
+        if (eliminated > 0 && eliminated < wordList.length) {
+            if (eliminated > maxEliminated) {
+                maxEliminated = eliminated;
+                bestChar = char;
+            }
         }
     }
-    return bestChar || Object.keys(counts)[0];
+    return bestChar;
 }
 
 function runAnagram() {
-    let currentText = editor.innerText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    let listToUse = (currentText.length > 0) ? currentText : ghostList;
+    let currentInput = editor.innerText.split('\n').filter(l => l.trim() !== "");
+    let workingList = (currentInput.length > 0) ? currentInput : ghostList;
     
-    if (listToUse.length < 1) return;
+    if (workingList.length < 1) return;
 
-    let currentWords = [...listToUse];
+    let candidates = [...workingList];
     let usedLetters = new Set();
-    let displayHTML = "";
+    let stepsHTML = "";
 
-    // Sécurité: Si un seul mot possible dès le début
-    if (currentWords.length === 1) {
-        editor.innerHTML = `<div class="ana-final">${currentWords[0].toLowerCase()}</div>`;
+    // Si un seul mot dès le départ
+    if (candidates.length === 1) {
+        editor.innerHTML = `<div class="ana-final">${candidates[0].toLowerCase()}</div>`;
         editor.contentEditable = "false";
         return;
     }
 
-    // On limite à 8 étapes max pour garder l'effet
-    for (let i = 0; i < 8; i++) {
-        let char = getBestLetter(currentWords, usedLetters);
+    // Boucle de filtrage
+    for (let i = 0; i < 10; i++) {
+        let char = getLetterToEliminate(candidates, usedLetters);
         if (!char) break;
-        
+
         usedLetters.add(char);
-        let noWords = currentWords.filter(w => !normalize(w).includes(char));
+        let failures = candidates.filter(w => !normalize(w).includes(char));
         
-        if (noWords.length > 0) {
-            displayHTML += `<div class="ana-line"><span class="ana-key">${char} - </span><span class="ana-val">${noWords.map(w => w.toLowerCase()).join(', ')}</span></div>`;
-            currentWords = currentWords.filter(w => normalize(w).includes(char));
+        if (failures.length > 0) {
+            stepsHTML += `<div class="ana-line"><span class="ana-key">${char} - </span><span class="ana-val">${failures.map(w => w.toLowerCase()).join(', ')}</span></div>`;
+            candidates = candidates.filter(w => normalize(w).includes(char));
         }
-        
-        // Si on a isolé le mot final, on arrête la boucle
-        if (currentWords.length <= 1) break;
+
+        if (candidates.length <= 1) break;
     }
 
-    if (currentWords.length > 0) {
-        displayHTML += `<div class="ana-final">${currentWords[0].toLowerCase()}</div>`;
+    if (candidates.length > 0) {
+        stepsHTML += `<div class="ana-final">${candidates[0].toLowerCase()}</div>`;
     }
     
-    editor.innerHTML = displayHTML;
+    editor.innerHTML = stepsHTML;
     editor.contentEditable = "false";
 }
 
+// --- BOUTONS ---
 dotsBtn.onclick = () => {
     if (ghostCandidates.length === 0) return;
     editor.innerHTML = ghostCandidates.slice(0, 3).map(w => `<span class="replaced-word">${w}</span>`).join('');
     editor.contentEditable = "false";
 };
 
-anaBtn.onclick = (e) => { e.preventDefault(); runAnagram(); };
+anaBtn.onclick = (e) => { 
+    e.preventDefault(); 
+    runAnagram(); 
+};
 
 backBtn.onclick = () => { 
     editor.contentEditable = "true"; 
