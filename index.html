@@ -238,6 +238,7 @@ function getBestLetter(wordList, usedLetters) {
 anaBtn.onclick = (e) => { 
     e.preventDefault(); 
     if (vaultAnagram.html !== "") {
+        sauverNote();
         editor.innerHTML = vaultAnagram.html;
         editor.contentEditable = "false";
     }
@@ -245,19 +246,32 @@ anaBtn.onclick = (e) => {
 
 dictBtn.onclick = () => {
     if (vaultDictionary.word !== "") {
+        sauverNote();
         editor.innerHTML = `<span class="replaced-word">${vaultDictionary.word}</span>`;
         editor.contentEditable = "false";
     }
 };
 
+// Garde le texte du spectateur pour pouvoir y revenir avec la flèche
+let noteSauvee = null;
+function sauverNote() {
+    if (editor.contentEditable !== "false") noteSauvee = editor.innerHTML;
+}
+
 backBtn.onclick = () => { 
     editor.contentEditable = "true"; 
-    editor.innerHTML = ""; 
+    if (noteSauvee !== null) {
+        editor.innerHTML = noteSauvee;   // retour à la note écrite
+        noteSauvee = null;
+    } else {
+        editor.innerHTML = ""; 
+    }
 };
 
 newNoteBtn.onclick = () => {
     editor.innerHTML = "";
     editor.contentEditable = "true";
+    noteSauvee = null;
     ghostCandidates = [];
     ghostList = [];
     vaultDictionary = { word: "", lines: 0 };
