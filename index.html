@@ -201,7 +201,7 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
 <!-- Antisèche secrète (mode 2) -->
 <div class="crib" id="crib" hidden></div>
 
-<!-- Réglages cachés : maintenir la flèche 3 secondes -->
+<!-- Réglages cachés : double-toucher l'icône à 3 barres en bas à gauche -->
 <div class="sheet-bg" id="relaySheet" hidden>
     <div class="sheet">
         <div class="sheet-grab"></div>
@@ -216,7 +216,7 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
                 <label class="rang"><span>Mots dans la liste</span><input type="number" id="m2Nb" min="10" max="80" inputmode="numeric"></label>
                 <label class="rang"><span>Garder sa note</span><input type="checkbox" class="interrupteur" id="m2Garder"></label>
             </div>
-            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : maintenir la flèche 3 secondes.</p>
+            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : double-toucher l'icône à 3 barres en bas à gauche.</p>
             <button class="lien-crib" id="voirCrib">Voir l'antisèche</button>
         </div>
         <div class="sous-titre">Appareil externe</div>
@@ -668,7 +668,14 @@ function appuiMenu(elm) {
     ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => elm.addEventListener(ev, stop));
     elm.addEventListener('contextmenu', e => e.preventDefault());
 }
-[backBtn, document.getElementById('m2Retour'), document.querySelector('#m2Accueil .nav-back-pill')].forEach(appuiMenu);
+// Menu : double-toucher l'icône « liste » (3 barres) en bas à gauche, dans les deux modes
+document.querySelectorAll('.toolbar .tb-btn:first-child').forEach(btn => {
+    let dernier = 0;
+    btn.addEventListener('click', () => {
+        const t = Date.now();
+        if (t - dernier < 400) { dernier = 0; ouvrirReglages(); } else dernier = t;
+    });
+});
 // Après un appui de 3 s, on annule le « clic » de la flèche (sinon la note serait effacée)
 document.addEventListener('click', e => {
     if (menuOuvertParAppui && e.target.closest && e.target.closest('.nav-back-pill')) {
@@ -677,14 +684,17 @@ document.addEventListener('click', e => {
 }, true);
 
 // ---- Changement de mode ----
+function majMenuMode() {
+    document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === reglages.mode));
+    document.getElementById('optListe').style.display = reglages.mode === 'liste' ? '' : 'none';
+}
 function appliquerMode() {
     const liste = reglages.mode === 'liste';
     m2.hidden = !liste;
-    document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === reglages.mode));
-    document.getElementById('optListe').style.display = liste ? '' : 'none';
+    majMenuMode();
     if (liste) { m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil(); }
 }
-document.querySelectorAll('#modeSeg button').forEach(b => b.onclick = () => { reglages.mode = b.dataset.mode; saveReglages(); appliquerMode(); });
+document.querySelectorAll('#modeSeg button').forEach(b => b.onclick = () => { if (reglages.mode === b.dataset.mode) return; reglages.mode = b.dataset.mode; saveReglages(); appliquerMode(); });
 const m2Nb = document.getElementById('m2Nb'), m2Garder = document.getElementById('m2Garder');
 m2Nb.onchange = () => {
     reglages.nbMots = Math.max(10, Math.min(80, parseInt(m2Nb.value, 10) || 40)); m2Nb.value = reglages.nbMots; saveReglages();
@@ -693,7 +703,7 @@ m2Nb.onchange = () => {
 m2Garder.onchange = () => { reglages.garder = m2Garder.checked; saveReglages(); };
 document.getElementById('voirCrib').onclick = () => { sheet.hidden = true; afficherCrib(); };
 const _ouvrirReglages = ouvrirReglages;
-ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; appliquerMode(); _ouvrirReglages(); };
+ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; majMenuMode(); _ouvrirReglages(); };
 
 // Démarrage
 initNotes(); construireListe(''); majNoteMots(); appliquerMode();
