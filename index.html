@@ -120,7 +120,7 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
             <label class="rang"><span>Envoyer le mot</span><input type="checkbox" class="interrupteur" id="relayOn"></label>
             <label class="rang"><span>Canal</span><input type="text" id="relayTopic" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
         </div>
-        <p class="indice">Lien API à coller dans l'app de ton mini écran (renvoie le dernier mot en texte brut) :</p>
+        <p class="indice">Lien API à coller dans l'app de ton mini écran (format JSON, compatible AWP Lumen) :</p>
         <div class="groupe"><div class="rang"><span id="relayUrl" class="lien-api"></span><button id="relayCopy" class="copier">Copier</button></div></div>
         <p class="indice">Une nouvelle note envoie « - » pour vider l'écran.<span id="relayTopicEcho" hidden></span></p>
         <div class="sheet-btns"><button id="relayTest">Tester</button><button id="relayClose">OK</button></div>
@@ -300,7 +300,7 @@ newNoteBtn.addEventListener('click', () => {
     relayLast = ''; clearTimeout(relayTimer); majDate();
     if (relay.on) sendRelay('-').catch(() => {});   // vide le mini écran
 });
-function lienApi() { return 'https://ntfy.sh/' + encodeURIComponent(relay.topic) + '/raw?poll=1&since=latest'; }
+function lienApi() { return 'https://ntfy.sh/' + encodeURIComponent(relay.topic) + '/json?poll=1&since=latest'; }
 backBtn.addEventListener('click', majDate);
 
 // Réglages : appui long (0,8 s) sur la date
