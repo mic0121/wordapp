@@ -15,51 +15,115 @@
 <meta name="theme-color" content="#000000">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-:root { --bg: #000; --s2: #1C1C1E; --txt: #FFFFFF; --txt-back: #FFD60A; }
-body { background: #000; display: flex; justify-content: center; font-family: -apple-system, sans-serif; overflow: hidden; height: 100vh; }
-.phone { width: 393px; height: 100%; background: var(--bg); position: relative; display: flex; flex-direction: column; }
-.navbar { min-height: 52px; padding: max(50px, env(safe-area-inset-top)) 16px 6px; display: flex; align-items: center; justify-content: space-between; z-index: 30; }
-.nav-back-pill { width: 42px; height: 42px; border-radius: 50%; background: var(--s2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.nav-right-pill { display: flex; align-items: center; gap: 14px; background: var(--s2); border-radius: 22px; padding: 8px 16px; }
-.dots { display: flex; align-items: center; gap: 3.5px; padding: 5px; opacity: 0.2; transition: 0.3s; }
-.dots.active { opacity: 1; }
-.dot { width: 4.5px; height: 4.5px; border-radius: 50%; background: var(--txt); }
+:root {
+  --bg: #000; --s2: #1C1C1E; --txt: #FFFFFF; --txt-back: #FFD60A;
+  --gris: #8E8E93;
+  --verre: rgba(44,44,46,0.72);
+  --verre-bord: rgba(255,255,255,0.10);
+}
+html, body { height: 100%; }
+body { background: #000; display: flex; justify-content: center; font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; overflow: hidden; height: 100vh; height: 100dvh; -webkit-font-smoothing: antialiased; }
+.phone { width: 100%; max-width: 500px; height: 100%; background: var(--bg); position: relative; display: flex; flex-direction: column; }
+
+/* Boutons « verre liquide » façon iOS 26 */
+.verre {
+  background: var(--verre);
+  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid var(--verre-bord);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 6px 18px rgba(0,0,0,0.35);
+}
+.verre:active { transform: scale(0.94); }
+
+/* Barre du haut */
+.navbar { padding: max(50px, calc(env(safe-area-inset-top) + 4px)) 16px 8px; display: flex; align-items: center; justify-content: space-between; z-index: 30; }
+.nav-back-pill { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .15s; }
+.nav-right-pill { display: flex; align-items: center; height: 44px; border-radius: 22px; padding: 0 6px; transition: transform .15s; }
+.nav-ico { width: 40px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.dots { display: flex; align-items: center; justify-content: center; gap: 3.5px; width: 40px; height: 44px; transition: 0.3s; }
+.dot { width: 4.5px; height: 4.5px; border-radius: 50%; background: var(--txt); transition: background .3s; }
 .dots.active .dot { background: var(--txt-back); }
-.note-body { flex: 1; overflow-y: auto; padding: 4px 20px 280px; }
-.note-editor { width: 100%; min-height: 300px; font-size: 17px; line-height: 1.5; color: var(--txt); background: transparent; border: none; outline: none; caret-color: var(--txt-back); white-space: pre-wrap; font-weight: 400; letter-spacing: -0.1px; }
+
+/* Note */
+.note-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 20px 280px; }
+.note-date { text-align: center; color: var(--gris); font-size: 13px; font-weight: 500; margin: 2px 0 14px; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.note-editor { width: 100%; min-height: 300px; font-size: 17px; line-height: 1.32; color: var(--txt); background: transparent; border: none; outline: none; caret-color: var(--txt-back); white-space: pre-wrap; font-weight: 400; letter-spacing: -0.2px; }
+.note-editor[contenteditable="true"]::first-line { font-size: 28px; font-weight: 700; letter-spacing: 0.2px; line-height: 1.25; }
 .ana-line { display: block; margin-bottom: 2px; font-size: 21px; }
 .ana-key { font-weight: 700; text-transform: uppercase; color: var(--txt-back); }
 .ana-val { color: #828286; font-weight: 400; }
 .ana-final { display: block; margin-top: 15px; font-weight: 600; color: #fff; font-size: 24px; text-transform: capitalize; border-top: 1px solid #333; padding-top: 10px; }
 .replaced-word { font-size: 28px; font-weight: 800; color: var(--txt-back); text-transform: uppercase; display: block; margin-bottom: 12px; border-left: 3px solid var(--txt-back); padding-left: 15px; line-height: 1.2; }
-.toolbar { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px 15px calc(70px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-.tb-pill { background: var(--s2); border-radius: 30px; padding: 12px 20px; display: flex; gap: 22px; align-items: center; }
-.tb-icon { width: 22px; height: 22px; stroke: #FFF; fill: none; stroke-width: 1.6; cursor: pointer; }
-.new-note-circle { background: var(--s2); border-radius: 50%; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+/* Barre d'outils du bas */
+.toolbar { position: absolute; bottom: 0; left: 0; width: 100%; padding: 26px 16px calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to top, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0)); pointer-events: none; }
+.toolbar > * { pointer-events: auto; }
+.tb-pill { border-radius: 26px; height: 52px; padding: 0 8px; display: flex; align-items: center; transition: transform .15s; }
+.tb-btn { width: 48px; height: 52px; display: flex; align-items: center; justify-content: center; }
+.tb-icon { width: 23px; height: 23px; stroke: #FFF; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; cursor: pointer; }
+.new-note-circle { border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .15s; }
+
+/* Réglages cachés : appareil externe */
+.sheet-bg { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-bg[hidden] { display: none; }
+.sheet { width: 100%; max-width: 500px; background: #1C1C1E; border-radius: 14px 14px 0 0; padding: 8px 16px calc(20px + env(safe-area-inset-bottom)); color: #fff; }
+.sheet-grab { width: 36px; height: 5px; border-radius: 3px; background: #48484A; margin: 0 auto 14px; }
+.sheet h3 { font-size: 17px; font-weight: 600; text-align: center; margin-bottom: 16px; }
+.groupe { background: #2C2C2E; border-radius: 10px; overflow: hidden; }
+.rang { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 6px 16px; font-size: 17px; }
+.rang + .rang { border-top: 0.5px solid #3A3A3C; }
+.rang input[type="text"] { flex: 1; min-width: 0; text-align: right; background: none; border: 0; outline: none; color: var(--gris); font: inherit; font-size: 16px; }
+.interrupteur { appearance: none; -webkit-appearance: none; width: 51px; height: 31px; border-radius: 16px; background: #39393D; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+.interrupteur::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 2px 4px rgba(0,0,0,.3); }
+.interrupteur:checked { background: #34C759; }
+.interrupteur:checked::after { transform: translateX(20px); }
+.indice { color: var(--gris); font-size: 13px; line-height: 1.4; padding: 8px 16px 18px; }
+.sheet-btns { display: flex; gap: 10px; }
+.sheet-btns button { flex: 1; height: 50px; border-radius: 12px; border: 0; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; }
+.lien-api { flex: 1; min-width: 0; font-size: 13px; color: var(--gris); word-break: break-all; line-height: 1.35; -webkit-user-select: all; user-select: all; }
+.copier { border: 0; background: none; color: var(--txt-back); font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+#relayTest { background: #2C2C2E; color: var(--txt-back); }
+#relayClose { background: var(--txt-back); color: #000; }
 </style>
 </head>
 <body>
 <div class="phone">
     <div class="navbar">
-        <div class="nav-back-pill" id="backBtn">
-            <svg width="11" height="18" viewBox="0 0 11 18"><path d="M9.5 1.5L2 9L9.5 16.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="nav-back-pill verre" id="backBtn">
+            <svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2L2.5 10L10 18" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div class="nav-right-pill">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white"><path d="M12 15V3m-4 4l4-4 4 4M4 12v8h16v-8"/></svg>
+        <div class="nav-right-pill verre">
+            <div class="nav-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V3.5M8 7l4-4 4 4"/><path d="M8.5 10H6.5a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-8a1.5 1.5 0 0 0-1.5-1.5h-2"/></svg></div>
             <div id="dotsBtn" class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
         </div>
     </div>
     <div class="note-body">
+        <div class="note-date" id="noteDate"></div>
         <div id="editor" class="note-editor" contenteditable="true" spellcheck="false"></div>
     </div>
     <div class="toolbar">
-        <div class="tb-pill">
-            <svg class="tb-icon" viewBox="0 0 24 24"><circle cx="4.5" cy="6" r="1.6" fill="#FFF" stroke="none"/><path d="M9 6h11"/><circle cx="4.5" cy="12" r="1.6" fill="#FFF" stroke="none"/><path d="M9 12h11"/><circle cx="4.5" cy="18" r="1.6" fill="none"/><path d="M9 18h11"/></svg>
-            <svg class="tb-icon" id="anaBtn" viewBox="0 0 24 24"><path d="M16.5 6.5L8 15a3 3 0 1 0 4.24 4.24l8-8a5 5 0 1 0-7.07-7.07L4.5 12.83"/></svg>
-            <svg class="tb-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M8.5 15.5c1-3 2-6 3.5-9 1.5 3 2.5 6 3.5 9M9.6 12.2h4.8"/></svg>
-            <svg id="newNoteBtn" class="tb-icon" viewBox="0 0 24 24"><path d="M2 17c2-1 3-3 5-3s2 4 4 4 2-6 4-6 2 5 4 5 2-3 3-3"/></svg>
+        <div class="tb-pill verre">
+            <div class="tb-btn"><svg class="tb-icon" viewBox="0 0 24 24"><circle cx="5" cy="6.5" r="2.2"/><path d="M10.5 6.5h10"/><circle cx="5" cy="13" r="2.2"/><path d="M10.5 13h10"/><path d="M3.2 19.5l1.4 1.4 2.6-2.8"/><path d="M10.5 19.5h10"/></svg></div>
+            <div class="tb-btn"><svg class="tb-icon" id="anaBtn" viewBox="0 0 24 24"><path d="M16.5 6.5L8 15a3 3 0 1 0 4.24 4.24l8-8a5 5 0 1 0-7.07-7.07L4.5 12.83"/></svg></div>
+            <div class="tb-btn"><svg class="tb-icon" viewBox="0 0 24 24"><path d="M3.5 18L9 5l5.5 13M5.4 13.5h7.2"/><path d="M15.5 13.5c0-1.6 1.2-2.5 2.7-2.5s2.6.9 2.6 2.4V18M20.8 15.2c-.5-.3-1.3-.5-2.2-.5-1.6 0-2.8.8-2.8 1.9 0 1 .8 1.6 2 1.6 1.5 0 3-1 3-2.4"/></svg></div>
+            <div class="tb-btn"><svg id="newNoteBtn" class="tb-icon" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5L9 20H4v-5z"/><path d="M12.5 6.5l5 5"/></svg></div>
         </div>
-        <div class="new-note-circle" id="dictBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+        <div class="new-note-circle verre" id="dictBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5.5A2.5 2.5 0 0 0 3 6.5v12A2.5 2.5 0 0 0 5.5 21h12a2.5 2.5 0 0 0 2.5-2.5V13"/><path d="M18.4 2.6a2 2 0 0 1 2.9 2.9L12 14.8l-3.8 1 1-3.8z"/></svg></div>
+    </div>
+</div>
+
+<!-- Réglages cachés : appui long sur la date -->
+<div class="sheet-bg" id="relaySheet" hidden>
+    <div class="sheet">
+        <div class="sheet-grab"></div>
+        <h3>Appareil externe</h3>
+        <div class="groupe">
+            <label class="rang"><span>Envoyer le mot</span><input type="checkbox" class="interrupteur" id="relayOn"></label>
+            <label class="rang"><span>Canal</span><input type="text" id="relayTopic" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+        </div>
+        <p class="indice">Lien API à coller dans l'app de ton mini écran (renvoie le dernier mot en texte brut) :</p>
+        <div class="groupe"><div class="rang"><span id="relayUrl" class="lien-api"></span><button id="relayCopy" class="copier">Copier</button></div></div>
+        <p class="indice">Une nouvelle note envoie « - » pour vider l'écran.<span id="relayTopicEcho" hidden></span></p>
+        <div class="sheet-btns"><button id="relayTest">Tester</button><button id="relayClose">OK</button></div>
     </div>
 </div>
 
@@ -115,6 +179,7 @@ editor.oninput = () => {
             if (lineCount >= vaultDictionary.lines) {
                 vaultDictionary.word = ghostCandidates.join(' / ');
                 vaultDictionary.lines = lineCount;
+                relayWord(vaultDictionary.word);
             }
         } else {
             dotsBtn.classList.remove('active');
@@ -197,6 +262,81 @@ newNoteBtn.onclick = () => {
     dotsBtn.classList.remove('active');
     editor.focus();
 };
+
+// ===== Date en haut de la note (comme dans Notes) =====
+const noteDate = document.getElementById('noteDate');
+function majDate() {
+    const d = new Date();
+    const jour = d.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' });
+    const heure = d.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit', hour12: false }).replace(' h ', ':');
+    noteDate.textContent = jour + ' à ' + heure;
+}
+majDate();
+
+// ===== Appareil externe : envoi du mot trouvé via ntfy.sh =====
+const RELAY_KEY = 'notagram-relay';
+let relay = { on: false, topic: '' };
+try { relay = Object.assign(relay, JSON.parse(localStorage.getItem(RELAY_KEY) || '{}')); } catch (e) {}
+if (!relay.topic) relay.topic = 'ng-' + Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 8);
+function saveRelay() { try { localStorage.setItem(RELAY_KEY, JSON.stringify(relay)); } catch (e) {} }
+saveRelay();
+
+let relayTimer = null, relayLast = '';
+function sendRelay(text) {
+    if (!relay.topic) return Promise.reject();
+    return fetch('https://ntfy.sh/' + encodeURIComponent(relay.topic), { method: 'POST', body: text });
+}
+// Attend 1,5 s sans changement avant d'envoyer, pour ne pas envoyer chaque lettre
+function relayWord(word) {
+    if (!relay.on || !word) return;
+    clearTimeout(relayTimer);
+    relayTimer = setTimeout(() => {
+        if (word === relayLast) return;
+        relayLast = word;
+        sendRelay(word).catch(() => { relayLast = ''; });
+    }, 1500);
+}
+newNoteBtn.addEventListener('click', () => {
+    relayLast = ''; clearTimeout(relayTimer); majDate();
+    if (relay.on) sendRelay('-').catch(() => {});   // vide le mini écran
+});
+function lienApi() { return 'https://ntfy.sh/' + encodeURIComponent(relay.topic) + '/raw?poll=1&since=latest'; }
+backBtn.addEventListener('click', majDate);
+
+// Réglages : appui long (0,8 s) sur la date
+const sheet = document.getElementById('relaySheet');
+const relayOn = document.getElementById('relayOn');
+const relayTopic = document.getElementById('relayTopic');
+const relayEcho = document.getElementById('relayTopicEcho');
+const relayTest = document.getElementById('relayTest');
+function ouvrirReglages() {
+    relayOn.checked = relay.on; relayTopic.value = relay.topic; relayEcho.textContent = relay.topic; document.getElementById('relayUrl').textContent = lienApi();
+    relayTest.textContent = 'Tester';
+    sheet.hidden = false;
+}
+let pressTimer = null;
+const debutAppui = (e) => { pressTimer = setTimeout(ouvrirReglages, 800); };
+const finAppui = () => clearTimeout(pressTimer);
+noteDate.addEventListener('touchstart', debutAppui, { passive: true });
+noteDate.addEventListener('mousedown', debutAppui);
+['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => noteDate.addEventListener(ev, finAppui));
+
+relayOn.onchange = () => { relay.on = relayOn.checked; saveRelay(); };
+relayTopic.oninput = () => { relay.topic = relayTopic.value.trim().replace(/[^A-Za-z0-9_-]/g, ''); relayEcho.textContent = relay.topic; document.getElementById('relayUrl').textContent = lienApi(); saveRelay(); };
+relayTest.onclick = () => {
+    relayTest.textContent = 'Envoi…';
+    sendRelay('Test Notagram ✓')
+        .then(r => { relayTest.textContent = r.ok ? 'Envoyé ✓' : 'Échec'; })
+        .catch(() => { relayTest.textContent = 'Échec'; });
+};
+document.getElementById('relayCopy').onclick = () => {
+    const b = document.getElementById('relayCopy');
+    const ok = () => { b.textContent = 'Copié ✓'; setTimeout(() => b.textContent = 'Copier', 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(lienApi()).then(ok).catch(() => {});
+    else { const r = document.createRange(); r.selectNodeContents(document.getElementById('relayUrl')); getSelection().removeAllRanges(); getSelection().addRange(r); }
+};
+document.getElementById('relayClose').onclick = () => { sheet.hidden = true; };
+sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };
 </script>
 </body>
 </html>
