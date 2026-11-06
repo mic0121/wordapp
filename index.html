@@ -186,6 +186,15 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
             <div class="note-date" id="m2Date"></div>
             <div id="m2Editeur" contenteditable="true" spellcheck="false"></div>
         </div>
+    <div class="toolbar">
+        <div class="tb-pill verre">
+            <div class="tb-btn"><svg class="tb-icon" viewBox="0 0 24 24"><circle cx="5" cy="6.5" r="2.2"/><path d="M10.5 6.5h10"/><circle cx="5" cy="13" r="2.2"/><path d="M10.5 13h10"/><path d="M3.2 19.5l1.4 1.4 2.6-2.8"/><path d="M10.5 19.5h10"/></svg></div>
+            <div class="tb-btn"><svg class="tb-icon" viewBox="0 0 24 24"><path d="M16.5 6.5L8 15a3 3 0 1 0 4.24 4.24l8-8a5 5 0 1 0-7.07-7.07L4.5 12.83"/></svg></div>
+            <div class="tb-btn"><svg class="tb-icon" viewBox="0 0 24 24"><path d="M3.5 18L9 5l5.5 13M5.4 13.5h7.2"/><path d="M15.5 13.5c0-1.6 1.2-2.5 2.7-2.5s2.6.9 2.6 2.4V18M20.8 15.2c-.5-.3-1.3-.5-2.2-.5-1.6 0-2.8.8-2.8 1.9 0 1 .8 1.6 2 1.6 1.5 0 3-1 3-2.4"/></svg></div>
+            <div class="tb-btn"><svg class="tb-icon" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5L9 20H4v-5z"/><path d="M12.5 6.5l5 5"/></svg></div>
+        </div>
+        <div class="new-note-circle verre" id="m2Nouvelle2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5.5A2.5 2.5 0 0 0 3 6.5v12A2.5 2.5 0 0 0 5.5 21h12a2.5 2.5 0 0 0 2.5-2.5V13"/><path d="M18.4 2.6a2 2 0 0 1 2.9 2.9L12 14.8l-3.8 1 1-3.8z"/></svg></div>
+    </div>
     </div>
 </div>
 
@@ -207,7 +216,7 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
                 <label class="rang"><span>Mots dans la liste</span><input type="number" id="m2Nb" min="10" max="80" inputmode="numeric"></label>
                 <label class="rang"><span>Garder sa note</span><input type="checkbox" class="interrupteur" id="m2Garder"></label>
             </div>
-            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : maintenir la flèche 3 secondes.</p>
+            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : maintenir la flèche 3 secondes.</p>
             <button class="lien-crib" id="voirCrib">Voir l'antisèche</button>
         </div>
         <div class="sous-titre">Appareil externe</div>
@@ -477,7 +486,7 @@ let listeMots = [], motSecret = '', motSecretAffiche = '';
 function construireListe(secret) {
     const total = Math.max(10, Math.min(80, parseInt(reglages.nbMots, 10) || 40));
     const lettres = normalize(secret || '').split('');
-    const utilises = new Set([normalize(secret || '')]);
+    const utilises = new Set([normalize(secret || ''), 'KIWI']);
     const parFin = {};
     MOTS_LISTE.forEach(w => { const n = normalize(w); (parFin[n[n.length - 1]] = parFin[n[n.length - 1]] || []).push(w); });
     const out = [];
@@ -486,6 +495,7 @@ function construireListe(secret) {
         const w = choix[0] || l.toLowerCase();       // (ne devrait jamais arriver)
         utilises.add(normalize(w)); out.push(w);
     });
+    if (lettres.length && out.length < total) out.push('kiwi');   // signal : le mot est terminé
     const reste = melanger(MOTS_LISTE.filter(w => !utilises.has(normalize(w))));
     const bouffe = reste.filter(w => ALIMENTS.has(normalize(w))), autre = reste.filter(w => !ALIMENTS.has(normalize(w)));
     while (out.length < total && (bouffe.length || autre.length)) {
@@ -562,15 +572,23 @@ let noteOuverte = null, noteNouvelle = false;
 function ouvrirNote(n, nouvelle) {
     noteOuverte = n; noteNouvelle = !!nouvelle;
     m2Date.textContent = dateLongue(n.date);
-    m2Editeur.textContent = n.texte;
+    if (n.id === 'mots') {
+        m2Editeur.innerHTML = '';
+        n.texte.split('\n').forEach(l => { const d = document.createElement('div'); d.textContent = l; m2Editeur.appendChild(d); });
+    } else {
+        m2Editeur.textContent = n.texte;
+    }
     m2Accueil.hidden = true; m2Note.hidden = false;
     m2Editeur.scrollTop = 0;
-    if (nouvelle) setTimeout(() => m2Editeur.focus(), 60);
+    if (nouvelle) m2Editeur.focus();   // synchrone : iOS ouvre le clavier en même temps
 }
-document.getElementById('m2Nouvelle').onclick = () => {
+function nouvelleNote() {
+    if (noteOuverte) document.getElementById('m2Retour').click();   // range la note en cours
     const n = { id: 'n' + Date.now(), titre: '', texte: '', date: new Date(), duSpectateur: true };
     ouvrirNote(n, true);
-};
+}
+document.getElementById('m2Nouvelle').onclick = nouvelleNote;
+document.getElementById('m2Nouvelle2').onclick = nouvelleNote;
 m2Editeur.addEventListener('focus', () => { m2Ok.hidden = false; });
 m2Editeur.addEventListener('blur', () => { setTimeout(() => { if (document.activeElement !== m2Editeur) m2Ok.hidden = true; }, 50); });
 m2Ok.addEventListener('mousedown', e => e.preventDefault());
@@ -584,7 +602,7 @@ function terminerNote() {
         const premiere = noteOuverte.texte.split('\n')[0].trim();
         const n = normalize(premiere);
         if (n && n !== normalize(motSecret)) {
-            motSecret = n; motSecretAffiche = premiere;
+            motSecret = n; motSecretAffiche = premiere; motChoisi = '';
             construireListe(n); majNoteMots();
             if (relay.on) sendRelay(premiere).catch(() => {});
         }
@@ -602,26 +620,27 @@ document.getElementById('m2Retour').onclick = () => {
     afficherAccueil();
 };
 
-// Antisèche : mot codé + mots groupés par nombre de lettres
+// Peek : le mot de la liste que le spectateur touche (pour le modifier ou l'effacer)
+let motChoisi = '';
+function capterMotTouche(e) {
+    if (!noteOuverte || noteOuverte.id !== 'mots') return;
+    const ligne = e.target.closest ? e.target.closest('#m2Editeur > div') : null;
+    if (!ligne || ligne === m2Editeur.firstElementChild) return;
+    const w = ligne.textContent.trim();
+    if (!w || w === motChoisi) return;
+    motChoisi = w;
+    if (relay.on) sendRelay((motSecretAffiche ? motSecretAffiche + ' · ' : '') + w).catch(() => {});
+}
+m2Editeur.addEventListener('click', capterMotTouche);
+
+// Antisèche : mot écrit + mot touché dans la liste
 function afficherCrib() {
     crib.innerHTML = '';
     const add = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; crib.appendChild(e); return e; };
     add('h4', null, 'Mot écrit');
     add('div', 'mot', motSecretAffiche || '—');
-    const groupes = {};
-    listeMots.forEach((w, i) => { const l = normalize(w).length; (groupes[l] = groupes[l] || []).push(w); });
-    add('h4', null, 'Par nombre de lettres — 🍽 = ça se mange');
-    Object.keys(groupes).map(Number).sort((a, b) => a - b).forEach(l => {
-        const r = add('div', 'ligne');
-        const b = document.createElement('b'); b.textContent = l; r.appendChild(b);
-        const tri = groupes[l].sort((a, b) => a.localeCompare(b, 'fr'));
-        const mange = tri.filter(w => ALIMENTS.has(normalize(w))), autres = tri.filter(w => !ALIMENTS.has(normalize(w)));
-        const sp = document.createElement('span');
-        if (mange.length) { const m = document.createElement('i'); m.className = 'mange'; m.textContent = '🍽 ' + mange.join(', '); sp.appendChild(m); }
-        if (mange.length && autres.length) sp.appendChild(document.createElement('br'));
-        if (autres.length) sp.appendChild(document.createTextNode(autres.join(', ')));
-        r.appendChild(sp);
-    });
+    add('h4', null, 'Mot touché dans la liste');
+    add('div', 'mot', motChoisi || '—');
     add('div', 'fermer', 'Toucher pour fermer');
     crib.hidden = false;
 }
