@@ -62,6 +62,49 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
 .tb-icon { width: 23px; height: 23px; stroke: #FFF; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; cursor: pointer; }
 .new-note-circle { border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .15s; }
 
+/* ===== Mode 2 : liste des notes ===== */
+.m2 { position: fixed; inset: 0; background: #000; display: flex; justify-content: center; z-index: 50; }
+.m2[hidden], .m2-ecran[hidden] { display: none; }
+.m2-ecran { width: 100%; max-width: 500px; height: 100%; position: relative; display: flex; flex-direction: column; }
+.m2-haut { padding: max(50px, calc(env(safe-area-inset-top) + 4px)) 16px 4px; display: flex; justify-content: space-between; align-items: center; }
+.m2-titre { font-size: 34px; font-weight: 700; letter-spacing: .3px; padding: 6px 20px 10px; color: #fff; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.m2-liste { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 16px 150px; }
+.m2-section { color: #fff; font-size: 20px; font-weight: 700; margin: 18px 4px 8px; }
+.m2-groupe { background: #1C1C1E; border-radius: 12px; overflow: hidden; }
+.m2-rang { padding: 11px 16px 11px; position: relative; cursor: pointer; }
+.m2-rang + .m2-rang::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; border-top: 0.5px solid #38383A; }
+.m2-rang:active { background: #2C2C2E; }
+.m2-rang b { display: block; color: #fff; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m2-rang span { display: block; color: var(--gris); font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.m2-rang span em { font-style: normal; color: #c7c7cc; margin-right: 6px; }
+.m2-bas { position: absolute; bottom: 0; left: 0; right: 0; padding: 26px 16px calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 12px; align-items: center; background: linear-gradient(to top, rgba(0,0,0,.92) 45%, rgba(0,0,0,0)); }
+.m2-recherche { flex: 1; height: 52px; border-radius: 26px; display: flex; align-items: center; gap: 8px; padding: 0 18px; color: var(--gris); font-size: 17px; }
+.m2-compte { text-align: center; color: var(--gris); font-size: 12px; margin-top: 18px; }
+.m2-ok { height: 44px; padding: 0 18px; border-radius: 22px; display: flex; align-items: center; color: var(--txt-back); font-size: 17px; font-weight: 600; cursor: pointer; }
+.m2-ok[hidden] { display: none; }
+#m2Editeur { width: 100%; min-height: 300px; font-size: 17px; line-height: 1.32; color: #fff; outline: none; caret-color: var(--txt-back); white-space: pre-wrap; letter-spacing: -0.2px; }
+#m2Editeur::first-line { font-size: 28px; font-weight: 700; letter-spacing: .2px; line-height: 1.25; }
+
+/* Antisèche */
+.crib { position: fixed; inset: 0; z-index: 120; background: #000; overflow-y: auto; padding: calc(env(safe-area-inset-top) + 40px) 22px 40px; color: #8E8E93; font-size: 14px; }
+.crib[hidden] { display: none; }
+.crib h4 { color: #636366; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin: 18px 0 6px; font-weight: 600; }
+.crib .mot { color: var(--txt-back); font-size: 26px; font-weight: 700; letter-spacing: .04em; }
+.crib .ligne { display: flex; gap: 10px; padding: 5px 0; border-bottom: 0.5px solid #1c1c1e; line-height: 1.35; }
+.crib .ligne b { color: #fff; min-width: 22px; }
+.crib .ligne span { color: #aeaeb2; }
+.crib .ligne .mange { font-style: normal; color: #FFD60A; }
+.crib .fermer { margin-top: 26px; color: #636366; font-size: 13px; text-align: center; }
+
+/* Sélecteur de mode */
+.segment { display: flex; background: #2C2C2E; border-radius: 9px; padding: 2px; margin-bottom: 14px; }
+.segment button { flex: 1; height: 32px; border: 0; border-radius: 7px; background: none; color: #fff; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+.segment button.on { background: #636366; font-weight: 600; }
+.sheet { max-height: 90vh; overflow-y: auto; }
+.sous-titre { color: var(--gris); font-size: 13px; text-transform: uppercase; letter-spacing: .02em; padding: 0 16px 6px; margin-top: 4px; }
+.rang input[type="number"] { width: 70px; text-align: right; background: none; border: 0; outline: none; color: var(--gris); font: inherit; font-size: 16px; }
+.lien-crib { width: 100%; margin-bottom: 18px; height: 44px; border-radius: 10px; border: 0; background: #2C2C2E; color: var(--txt-back); font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+
 /* Réglages cachés : appareil externe */
 .sheet-bg { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; justify-content: center; }
 .sheet-bg[hidden] { display: none; }
@@ -111,11 +154,63 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
     </div>
 </div>
 
-<!-- Réglages cachés : appui long sur la date -->
+<!-- ===== MODE 2 : liste des notes ===== -->
+<div class="m2" id="m2" hidden>
+    <!-- Accueil : toutes les notes -->
+    <div class="m2-ecran" id="m2Accueil">
+        <div class="m2-haut">
+            <div class="nav-back-pill verre"><svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2L2.5 10L10 18" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="nav-right-pill verre"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+        </div>
+        <div class="m2-titre" id="m2Titre">Notes</div>
+        <div class="m2-liste" id="m2Liste"></div>
+        <div class="m2-bas">
+            <div class="m2-recherche verre">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>
+                <span style="flex:1">Rechercher</span>
+                <svg width="16" height="20" viewBox="0 0 16 22" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round"><rect x="4.5" y="1.5" width="7" height="12" rx="3.5"/><path d="M1.5 10.5a6.5 6.5 0 0 0 13 0M8 17v3.5"/></svg>
+            </div>
+            <div class="new-note-circle verre" id="m2Nouvelle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD60A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H5.5A2.5 2.5 0 0 0 3 6.5v12A2.5 2.5 0 0 0 5.5 21h12a2.5 2.5 0 0 0 2.5-2.5V13"/><path d="M18.4 2.6a2 2 0 0 1 2.9 2.9L12 14.8l-3.8 1 1-3.8z"/></svg></div>
+        </div>
+    </div>
+    <!-- Une note -->
+    <div class="m2-ecran" id="m2Note" hidden>
+        <div class="m2-haut">
+            <div class="nav-back-pill verre" id="m2Retour"><svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2L2.5 10L10 18" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div style="display:flex;gap:10px;align-items:center">
+                <div class="nav-right-pill verre"><div class="nav-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14.5V3.5M8 7l4-4 4 4"/><path d="M8.5 10H6.5a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-8a1.5 1.5 0 0 0-1.5-1.5h-2"/></svg></div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+                <div class="m2-ok verre" id="m2Ok" hidden>OK</div>
+            </div>
+        </div>
+        <div class="note-body">
+            <div class="note-date" id="m2Date"></div>
+            <div id="m2Editeur" contenteditable="true" spellcheck="false"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Antisèche secrète (mode 2) -->
+<div class="crib" id="crib" hidden></div>
+
+<!-- Réglages cachés : maintenir la flèche 3 secondes -->
 <div class="sheet-bg" id="relaySheet" hidden>
     <div class="sheet">
         <div class="sheet-grab"></div>
-        <h3>Appareil externe</h3>
+        <h3>Réglages</h3>
+        <div class="segment" id="modeSeg">
+            <button data-mode="anagramme">Anagramme</button>
+            <button data-mode="liste">Liste</button>
+        </div>
+        <div id="optListe">
+            <div class="sous-titre">Mode Liste</div>
+            <div class="groupe">
+                <label class="rang"><span>Mots dans la liste</span><input type="number" id="m2Nb" min="10" max="80" inputmode="numeric"></label>
+                <label class="rang"><span>Garder sa note</span><input type="checkbox" class="interrupteur" id="m2Garder"></label>
+            </div>
+            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : maintenir la flèche 3 secondes.</p>
+            <button class="lien-crib" id="voirCrib">Voir l'antisèche</button>
+        </div>
+        <div class="sous-titre">Appareil externe</div>
         <div class="groupe">
             <label class="rang"><span>Envoyer le mot</span><input type="checkbox" class="interrupteur" id="relayOn"></label>
             <label class="rang"><span>Canal</span><input type="text" id="relayTopic" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
@@ -334,9 +429,7 @@ function ouvrirReglages() {
 let pressTimer = null;
 const debutAppui = (e) => { pressTimer = setTimeout(ouvrirReglages, 800); };
 const finAppui = () => clearTimeout(pressTimer);
-noteDate.addEventListener('touchstart', debutAppui, { passive: true });
-noteDate.addEventListener('mousedown', debutAppui);
-['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => noteDate.addEventListener(ev, finAppui));
+// (le menu s'ouvre maintenant par un appui de 3 s sur la flèche — voir plus bas)
 
 relayOn.onchange = () => { relay.on = relayOn.checked; saveRelay(); };
 relayTopic.oninput = () => { relay.topic = relayTopic.value.trim().replace(/[^A-Za-z0-9_-]/g, ''); relayEcho.textContent = relay.topic; document.getElementById('relayUrl').textContent = lienApi(); saveRelay(); };
@@ -354,6 +447,237 @@ document.getElementById('relayCopy').onclick = () => {
 };
 document.getElementById('relayClose').onclick = () => { sheet.hidden = true; };
 sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };
+
+// =====================================================================
+// ===== MODE 2 : LISTE (« Mots aléatoires » codée par les dernières lettres)
+// =====================================================================
+const MOTS_LISTE = ["rame",    "barque", "voile", "voilier", "canot", "kayak", "radeau", "navire", "bateau", "pirogue", "ancre", "quai", "port", "phare", "bouée", "vague", "marée", "plage", "sable", "dune", "côte", "île", "lac", "étang", "mare", "rivière", "fleuve", "ruisseau", "source", "cascade", "chute", "rive", "berge", "pont", "écluse", "canal", "digue", "arbre", "bois", "forêt", "feuille", "racine", "tronc", "branche", "écorce", "fleur", "rose", "tulipe", "lys", "lilas", "iris", "muguet", "violette", "pétale", "tige", "graine", "herbe", "gazon", "mousse", "fougère", "lierre", "vigne", "sapin", "chêne", "érable", "bouleau", "saule", "pin", "cèdre", "hêtre", "frêne", "orme", "tilleul", "palmier", "cactus", "bambou", "buisson", "haie", "jardin", "potager", "verger", "serre", "pomme", "poire", "prune", "pêche", "cerise", "fraise", "framboise", "mûre", "bleuet", "cassis", "raisin", "citron", "orange", "banane", "ananas", "mangue", "kiwi", "melon", "figue", "datte", "noix", "noisette", "amande", "olive", "tomate", "carotte", "navet", "radis", "poireau", "oignon", "ail", "chou", "laitue", "salade", "épinard", "céleri", "concombre", "courge", "citrouille", "patate", "pois", "fève", "maïs", "riz", "blé", "orge", "avoine", "pain", "beurre", "fromage", "lait", "crème", "oeuf", "sucre", "sel", "poivre", "miel", "farine", "pâte", "tarte", "gâteau", "biscuit", "crêpe", "gaufre", "soupe", "sauce", "viande", "poulet", "boeuf", "porc", "veau", "agneau", "jambon", "saucisse", "bacon", "poisson", "saumon", "thon", "morue", "truite", "crevette", "homard", "crabe", "moule", "huître", "steak", "frite", "pizza", "burger", "sandwich", "café", "thé", "jus", "vin", "bière", "cidre", "eau", "soda", "sirop", "chocolat", "bonbon", "glace", "sorbet", "caramel", "vanille", "cannelle", "menthe", "chat", "chien", "cheval", "vache", "cochon", "mouton", "chèvre", "lapin", "poule", "coq", "canard", "oie", "dinde", "âne", "mule", "taureau", "souris", "rat", "écureuil", "castor", "ours", "loup", "renard", "lynx", "orignal", "cerf", "biche", "chevreuil", "lièvre", "hibou", "aigle", "faucon", "corbeau", "pigeon", "moineau", "merle", "mouette", "pingouin", "manchot", "cygne", "héron", "pélican", "perroquet", "lion", "tigre", "panthère", "jaguar", "léopard", "guépard", "zèbre", "girafe", "éléphant", "rhinocéros", "hippo", "singe", "gorille", "chameau", "kangourou", "koala", "panda", "phoque", "baleine", "dauphin", "requin", "pieuvre", "méduse", "tortue", "lézard", "serpent", "grenouille", "crapaud", "abeille", "guêpe", "mouche", "moustique", "fourmi", "papillon", "chenille", "araignée", "scorpion", "escargot", "ver", "puce", "maison", "chalet", "cabane", "villa", "château", "tour", "palais", "temple", "église", "école", "usine", "bureau", "magasin", "boutique", "hôtel", "hôpital", "musée", "théâtre", "cinéma", "stade", "gare", "aéroport", "garage", "grange", "ferme", "atelier", "cave", "grenier", "salon", "cuisine", "chambre", "toilette", "douche", "bain", "couloir", "escalier", "balcon", "terrasse", "toit", "mur", "porte", "fenêtre", "volet", "plafond", "plancher", "sol", "tapis", "rideau", "lampe", "lustre", "miroir", "cadre", "horloge", "pendule", "table", "chaise", "banc", "tabouret", "fauteuil", "canapé", "sofa", "lit", "matelas", "oreiller", "drap", "couverture", "armoire", "tiroir", "étagère", "coffre", "boîte", "panier", "sac", "valise", "malle", "caisse", "bouteille", "verre", "tasse", "bol", "assiette", "plat", "fourchette", "couteau", "cuillère", "poêle", "casserole", "marmite", "four", "frigo", "évier", "robinet", "livre", "cahier", "crayon", "stylo", "plume", "gomme", "règle", "ciseaux", "colle", "papier", "carte", "lettre", "enveloppe", "timbre", "journal", "revue", "page", "tableau", "craie", "dossier", "agenda", "calendrier", "téléphone", "cellulaire", "ordi", "écran", "clavier", "câble", "radio", "télé", "caméra", "photo", "appareil", "montre", "réveil", "batterie", "pile", "ampoule", "moteur", "roue", "pneu", "volant", "frein", "vélo", "moto", "auto", "voiture", "camion", "autobus", "métro", "train", "tramway", "avion", "fusée", "hélice", "taxi", "tracteur", "chemise", "pantalon", "jupe", "robe", "veste", "manteau", "gilet", "chandail", "pull", "tuque", "bonnet", "chapeau", "casquette", "foulard", "écharpe", "gant", "mitaine", "bas", "chaussette", "soulier", "botte", "sandale", "ceinture", "cravate", "bijou", "bague", "collier", "bracelet", "perle", "diamant", "lunettes", "parapluie", "tête", "visage", "oeil", "yeux", "nez", "bouche", "lèvre", "dent", "langue", "oreille", "cou", "épaule", "bras", "coude", "main", "doigt", "pouce", "ongle", "poing", "dos", "ventre", "jambe", "genou", "pied", "orteil", "coeur", "cerveau", "poumon", "foie", "peau", "sang", "muscle", "cheveu", "barbe", "front", "joue", "menton", "père", "mère", "frère", "soeur", "fils", "fille", "oncle", "tante", "cousin", "cousine", "neveu", "nièce", "bébé", "enfant", "garçon", "homme", "femme", "ami", "amie", "voisin", "roi", "reine", "prince", "princesse", "chevalier", "pirate", "sorcier", "sorcière", "fée", "géant", "nain", "ange", "diable", "fantôme", "vampire", "dragon", "licorne", "sirène", "ogre", "lutin", "elfe", "docteur", "médecin", "avocat", "juge", "policier", "pompier", "soldat", "marin", "pilote", "chauffeur", "boulanger", "boucher", "fermier", "pêcheur", "chasseur", "cuisinier", "serveur", "facteur", "artiste", "peintre", "chanteur", "danseur", "acteur", "auteur", "poète", "magicien", "clown", "professeur", "élève", "étudiant", "patron", "soleil", "lune", "étoile", "planète", "comète", "ciel", "nuage", "pluie", "neige", "grêle", "orage", "éclair", "tonnerre", "vent", "brume", "brouillard", "arc", "givre", "gel", "froid", "chaleur", "été", "hiver", "printemps", "automne", "matin", "midi", "soir", "nuit", "aube", "aurore", "jour", "semaine", "mois", "année", "siècle", "heure", "minute", "seconde", "montagne", "colline", "vallée", "plaine", "désert", "jungle", "prairie", "champ", "falaise", "grotte", "volcan", "rocher", "caillou", "pierre", "roche", "glacier", "océan", "mer", "baie", "golfe", "rouge", "bleu", "vert", "jaune", "noir", "blanc", "gris", "brun", "mauve", "violet", "beige", "doré", "argent", "amour", "paix", "joie", "peur", "colère", "rêve", "espoir", "chance", "destin", "secret", "mystère", "magie", "esprit", "âme", "mémoire", "pensée", "idée", "vérité", "mensonge", "silence", "musique", "chanson", "danse", "fête", "jeu", "sport", "match", "équipe", "ballon", "balle", "but", "filet", "raquette", "piste", "course", "guitare", "piano", "violon", "flûte", "tambour", "trompette", "harpe", "orgue", "clarinette", "saxophone", "banjo", "fer", "cuivre", "acier", "bronze", "plomb", "zinc", "cuir", "laine", "soie", "coton", "plastique", "marbre", "béton", "brique", "monnaie", "dollar", "euro", "sou", "banque", "prix", "cadeau", "trésor", "clé", "clef", "serrure", "chaîne", "corde", "fil", "aiguille", "bouton", "ruban", "ficelle", "feu", "flamme", "fumée", "cendre", "braise", "bougie", "chandelle", "allumette", "lanterne", "torche", "roman", "conte", "poème", "film", "série", "histoire", "légende", "mythe", "fable", "énigme", "puzzle", "échecs", "domino", "ville", "village", "pays", "nation", "monde", "terre", "route", "rue", "chemin", "sentier", "avenue", "boulevard", "parc", "place", "tunnel", "frontière", "nombre", "chiffre", "zéro", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "cent", "mille", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre", "hockey", "soccer", "tennis", "golf", "baseball", "boxe", "ski", "patin", "nage", "yoga", "fusil", "épée", "sabre", "flèche", "bouclier", "armure", "casque", "canon", "nid", "aile", "bec", "griffe", "patte", "queue", "corne", "sabot", "crinière", "fourrure", "huile", "vinaigre", "moutarde", "ketchup", "mayo", "mot", "nom", "phrase", "voix", "cri", "rire", "larme", "sourire", "baiser", "câlin", "regard", "geste", "loi", "droit", "ordre", "guerre", "victoire", "défaite", "combat", "bataille", "anorak", "yak", "bifteck", "hadj", "taj", "show", "bungalow", "poney", "jockey", "rugby", "whisky", "gaz", "chez", "quartz", "choux", "faux", "roux", "flash", "coach", "long", "hareng", "camping", "parking", "club", "snob", "kebab", "toubib", "coup", "galop", "chef", "nef", "soif", "bac", "choc", "leitmotiv", "tard", "nord", "sud", "bord", "fond", "gland", "marchand", "chaud", "lourd", "col", "travail", "rail", "email", "métal", "animal", "cour", "désir", "enfer", "hier", "fruit", "bruit", "bout", "goût", "pot", "repas", "colis", "temps", "corps", "velours", "album", "parfum", "forum", "rhum", "maximum", "opéra", "puma", "véranda", "samba"];
+const ALIMENTS = new Set(["AGNEAU", "AIL", "AMANDE", "ANANAS", "AVOINE", "BACON", "BANANE", "BEURRE", "BIERE", "BIFTECK", "BISCUIT", "BLE", "BLEUET", "BOEUF", "BONBON", "BURGER", "CAFE", "CANNELLE", "CARAMEL", "CAROTTE", "CASSIS", "CELERI", "CERISE", "CHOCOLAT", "CHOU", "CHOUX", "CIDRE", "CITRON", "CITROUILLE", "CONCOMBRE", "COURGE", "CRABE", "CREME", "CREPE", "CREVETTE", "DATTE", "EAU", "EPINARD", "FARINE", "FEVE", "FIGUE", "FRAISE", "FRAMBOISE", "FRITE", "FROMAGE", "GATEAU", "GAUFRE", "GLACE", "HARENG", "HOMARD", "HUILE", "HUITRE", "JAMBON", "JUS", "KEBAB", "KETCHUP", "KIWI", "LAIT", "LAITUE", "MAIS", "MANGUE", "MAYO", "MELON", "MENTHE", "MIEL", "MORUE", "MOULE", "MOUTARDE", "MURE", "NAVET", "NOISETTE", "NOIX", "OEUF", "OIGNON", "OLIVE", "ORANGE", "ORGE", "PAIN", "PATATE", "PATE", "PECHE", "PIZZA", "POIRE", "POIREAU", "POIS", "POISSON", "POIVRE", "POMME", "PORC", "POULET", "PRUNE", "RADIS", "RAISIN", "RHUM", "RIZ", "SALADE", "SANDWICH", "SAUCE", "SAUCISSE", "SAUMON", "SEL", "SIROP", "SODA", "SORBET", "SOUPE", "STEAK", "SUCRE", "TARTE", "THE", "THON", "TOMATE", "TRUITE", "VANILLE", "VEAU", "VIANDE", "VIN", "VINAIGRE"]);
+const REGLAGES_KEY = 'notagram-reglages';
+let reglages = { mode: 'anagramme', nbMots: 40, garder: true };
+try { reglages = Object.assign(reglages, JSON.parse(localStorage.getItem(REGLAGES_KEY) || '{}')); } catch (e) {}
+function saveReglages() { try { localStorage.setItem(REGLAGES_KEY, JSON.stringify(reglages)); } catch (e) {} }
+
+const m2 = document.getElementById('m2');
+const m2Accueil = document.getElementById('m2Accueil');
+const m2Note = document.getElementById('m2Note');
+const m2Liste = document.getElementById('m2Liste');
+const m2Editeur = document.getElementById('m2Editeur');
+const m2Ok = document.getElementById('m2Ok');
+const m2Date = document.getElementById('m2Date');
+const crib = document.getElementById('crib');
+
+function hasard(n) { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } }
+function melanger(t) { for (let i = t.length - 1; i > 0; i--) { const j = hasard(i + 1); [t[i], t[j]] = [t[j], t[i]]; } return t; }
+function majuscule(w) { return w.charAt(0).toUpperCase() + w.slice(1); }
+function deux(n) { return (n < 10 ? '0' : '') + n; }
+
+// Construit la liste : les N premiers mots se terminent par les lettres du mot secret
+let listeMots = [], motSecret = '', motSecretAffiche = '';
+function construireListe(secret) {
+    const total = Math.max(10, Math.min(80, parseInt(reglages.nbMots, 10) || 40));
+    const lettres = normalize(secret || '').split('');
+    const utilises = new Set([normalize(secret || '')]);
+    const parFin = {};
+    MOTS_LISTE.forEach(w => { const n = normalize(w); (parFin[n[n.length - 1]] = parFin[n[n.length - 1]] || []).push(w); });
+    const out = [];
+    lettres.slice(0, total).forEach(l => {
+        const choix = melanger((parFin[l] || []).filter(w => !utilises.has(normalize(w))));
+        const w = choix[0] || l.toLowerCase();       // (ne devrait jamais arriver)
+        utilises.add(normalize(w)); out.push(w);
+    });
+    const reste = melanger(MOTS_LISTE.filter(w => !utilises.has(normalize(w))));
+    const bouffe = reste.filter(w => ALIMENTS.has(normalize(w))), autre = reste.filter(w => !ALIMENTS.has(normalize(w)));
+    while (out.length < total && (bouffe.length || autre.length)) {
+        const prendBouffe = bouffe.length && (hasard(4) === 0 || !autre.length);
+        out.push(prendBouffe ? bouffe.pop() : autre.pop());
+    }
+    listeMots = out.map(majuscule);
+}
+
+// Fausses notes réalistes pour l'accueil
+function ilYa(jours, h, m) { const d = new Date(); d.setDate(d.getDate() - jours); d.setHours(h, m, 0, 0); return d; }
+let notesM2 = [];
+function initNotes() {
+    notesM2 = [
+        { id: 'epicerie', titre: 'Épicerie', texte: 'Épicerie\nLait 2 %\nŒufs\nPain tranché\nBananes\nCafé\nFromage cheddar\nSac de glace', date: ilYa(0, 8, 47) },
+        { id: 'mots', titre: 'Mots aléatoires', texte: '', date: ilYa(1, 21, 14) },
+        { id: 'cadeaux', titre: 'Idées cadeaux Noël', texte: 'Idées cadeaux Noël\nMaman : foulard + livre de recettes\nPapa : lampe frontale\nJulie : jeu de société\nÉchange au bureau (max 30 $)', date: ilYa(2, 19, 3) },
+        { id: 'wifi', titre: 'Wifi chalet', texte: 'Wifi chalet\nRéseau : Chalet-Lac\nMot de passe : bouleau2024', date: ilYa(4, 16, 22) },
+        { id: 'garage', titre: 'Garage', texte: 'Garage\nChangement de pneus jeudi 8 h\nDemander pour le bruit dans la roue avant', date: ilYa(6, 11, 5) },
+        { id: 'films', titre: 'Films à voir', texte: 'Films à voir\nDune 2\nLe dernier de la liste de Pierre\nUn bon film d\'horreur pour l\'Halloween', date: ilYa(12, 22, 40) },
+        { id: 'pizza', titre: 'Pâte à pizza', texte: 'Pâte à pizza\n500 g de farine\n325 ml d\'eau tiède\n1 sachet de levure\n2 c. à thé de sel\nUn filet d\'huile d\'olive\nLaisser lever 2 h', date: ilYa(23, 18, 12) },
+        { id: 'citations', titre: 'Citations', texte: 'Citations\n« Le hasard ne favorise que les esprits préparés. »', date: ilYa(41, 9, 30) }
+    ];
+}
+function noteMots() { return notesM2.find(n => n.id === 'mots'); }
+function majNoteMots() { const n = noteMots(); n.texte = 'Mots aléatoires\n' + listeMots.join('\n'); }
+
+function dateCourte(d) {
+    const auj = new Date(); auj.setHours(0, 0, 0, 0);
+    const j = Math.round((auj - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+    if (j === 0) return deux(d.getHours()) + ':' + deux(d.getMinutes());
+    if (j === 1) return 'Hier';
+    if (j < 7) return d.toLocaleDateString('fr-CA', { weekday: 'long' });
+    return d.toLocaleDateString('fr-CA', { day: 'numeric', month: 'short', year: 'numeric' }).replace('.', '');
+}
+function dateLongue(d) {
+    return d.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' }) + ' à ' + deux(d.getHours()) + ':' + deux(d.getMinutes());
+}
+function section(d) {
+    const auj = new Date(); auj.setHours(0, 0, 0, 0);
+    const j = Math.round((auj - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+    if (j === 0) return "Aujourd'hui";
+    if (j === 1) return 'Hier';
+    if (j < 7) return '7 jours précédents';
+    if (j < 30) return '30 jours précédents';
+    return d.toLocaleDateString('fr-CA', { month: 'long', year: 'numeric' }).replace(/^./, c => c.toUpperCase());
+}
+function afficherAccueil() {
+    m2Liste.innerHTML = '';
+    const tri = notesM2.slice().sort((a, b) => b.date - a.date);
+    let sec = null, grp = null;
+    tri.forEach(n => {
+        const s = section(n.date);
+        if (s !== sec) {
+            sec = s;
+            const h = document.createElement('div'); h.className = 'm2-section'; h.textContent = s; m2Liste.appendChild(h);
+            grp = document.createElement('div'); grp.className = 'm2-groupe'; m2Liste.appendChild(grp);
+        }
+        const r = document.createElement('div'); r.className = 'm2-rang';
+        const lignes = n.texte.split('\n').map(l => l.trim()).filter(Boolean);
+        const b = document.createElement('b'); b.textContent = lignes[0] || 'Nouvelle note';
+        const sp = document.createElement('span');
+        const em = document.createElement('em'); em.textContent = dateCourte(n.date);
+        sp.appendChild(em); sp.appendChild(document.createTextNode(lignes.slice(1).join(' ') || 'Aucun texte supplémentaire'));
+        r.appendChild(b); r.appendChild(sp);
+        r.onclick = () => ouvrirNote(n);
+        grp.appendChild(r);
+    });
+    const c = document.createElement('div'); c.className = 'm2-compte'; c.textContent = notesM2.length + ' notes'; m2Liste.appendChild(c);
+}
+
+// Ouvrir / créer une note
+let noteOuverte = null, noteNouvelle = false;
+function ouvrirNote(n, nouvelle) {
+    noteOuverte = n; noteNouvelle = !!nouvelle;
+    m2Date.textContent = dateLongue(n.date);
+    m2Editeur.textContent = n.texte;
+    m2Accueil.hidden = true; m2Note.hidden = false;
+    m2Editeur.scrollTop = 0;
+    if (nouvelle) setTimeout(() => m2Editeur.focus(), 60);
+}
+document.getElementById('m2Nouvelle').onclick = () => {
+    const n = { id: 'n' + Date.now(), titre: '', texte: '', date: new Date(), duSpectateur: true };
+    ouvrirNote(n, true);
+};
+m2Editeur.addEventListener('focus', () => { m2Ok.hidden = false; });
+m2Editeur.addEventListener('blur', () => { setTimeout(() => { if (document.activeElement !== m2Editeur) m2Ok.hidden = true; }, 50); });
+m2Ok.addEventListener('mousedown', e => e.preventDefault());
+m2Ok.onclick = () => { m2Editeur.blur(); m2Ok.hidden = true; terminerNote(); };
+
+// La magie : quand le spectateur appuie sur OK
+function terminerNote() {
+    if (!noteOuverte) return;
+    noteOuverte.texte = m2Editeur.innerText.replace(/ /g, ' ').trim();
+    if (noteOuverte.duSpectateur && noteOuverte.texte) {
+        const premiere = noteOuverte.texte.split('\n')[0].trim();
+        const n = normalize(premiere);
+        if (n && n !== normalize(motSecret)) {
+            motSecret = n; motSecretAffiche = premiere;
+            construireListe(n); majNoteMots();
+            if (relay.on) sendRelay(premiere).catch(() => {});
+        }
+    }
+}
+document.getElementById('m2Retour').onclick = () => {
+    if (document.activeElement === m2Editeur) { m2Editeur.blur(); terminerNote(); }
+    else if (noteOuverte && noteOuverte.id !== 'mots') noteOuverte.texte = m2Editeur.innerText.trim() || noteOuverte.texte;
+    if (noteOuverte && noteOuverte.duSpectateur) {
+        const deja = notesM2.includes(noteOuverte);
+        if (noteOuverte.texte && reglages.garder && !deja) notesM2.push(noteOuverte);
+    }
+    noteOuverte = null;
+    m2Note.hidden = true; m2Accueil.hidden = false;
+    afficherAccueil();
+};
+
+// Antisèche : mot codé + mots groupés par nombre de lettres
+function afficherCrib() {
+    crib.innerHTML = '';
+    const add = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; crib.appendChild(e); return e; };
+    add('h4', null, 'Mot écrit');
+    add('div', 'mot', motSecretAffiche || '—');
+    const groupes = {};
+    listeMots.forEach((w, i) => { const l = normalize(w).length; (groupes[l] = groupes[l] || []).push(w); });
+    add('h4', null, 'Par nombre de lettres — 🍽 = ça se mange');
+    Object.keys(groupes).map(Number).sort((a, b) => a - b).forEach(l => {
+        const r = add('div', 'ligne');
+        const b = document.createElement('b'); b.textContent = l; r.appendChild(b);
+        const tri = groupes[l].sort((a, b) => a.localeCompare(b, 'fr'));
+        const mange = tri.filter(w => ALIMENTS.has(normalize(w))), autres = tri.filter(w => !ALIMENTS.has(normalize(w)));
+        const sp = document.createElement('span');
+        if (mange.length) { const m = document.createElement('i'); m.className = 'mange'; m.textContent = '🍽 ' + mange.join(', '); sp.appendChild(m); }
+        if (mange.length && autres.length) sp.appendChild(document.createElement('br'));
+        if (autres.length) sp.appendChild(document.createTextNode(autres.join(', ')));
+        r.appendChild(sp);
+    });
+    add('div', 'fermer', 'Toucher pour fermer');
+    crib.hidden = false;
+}
+crib.onclick = () => { crib.hidden = true; };
+
+// Appui long (0,8 s) : sur « Notes » = réglages ; sur la date = antisèche (dans Mots aléatoires) ou réglages
+function appuiLong(elm, action) {
+    let t = null;
+    const go = () => { t = setTimeout(action, 800); };
+    const stop = () => clearTimeout(t);
+    elm.addEventListener('touchstart', go, { passive: true });
+    elm.addEventListener('mousedown', go);
+    ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => elm.addEventListener(ev, stop));
+}
+appuiLong(m2Date, () => { if (noteOuverte && noteOuverte.id === 'mots') afficherCrib(); });
+
+// Menu / changement de mode : maintenir la flèche en haut à gauche 3 secondes (tous les modes)
+let menuOuvertParAppui = false;
+function appuiMenu(elm) {
+    let t = null;
+    const go = () => { menuOuvertParAppui = false; clearTimeout(t); t = setTimeout(() => { menuOuvertParAppui = true; ouvrirReglages(); }, 3000); };
+    const stop = () => clearTimeout(t);
+    elm.addEventListener('touchstart', go, { passive: true });
+    elm.addEventListener('mousedown', go);
+    ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => elm.addEventListener(ev, stop));
+    elm.addEventListener('contextmenu', e => e.preventDefault());
+}
+[backBtn, document.getElementById('m2Retour'), document.querySelector('#m2Accueil .nav-back-pill')].forEach(appuiMenu);
+// Après un appui de 3 s, on annule le « clic » de la flèche (sinon la note serait effacée)
+document.addEventListener('click', e => {
+    if (menuOuvertParAppui && e.target.closest && e.target.closest('.nav-back-pill')) {
+        e.stopPropagation(); e.preventDefault(); menuOuvertParAppui = false;
+    }
+}, true);
+
+// ---- Changement de mode ----
+function appliquerMode() {
+    const liste = reglages.mode === 'liste';
+    m2.hidden = !liste;
+    document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === reglages.mode));
+    document.getElementById('optListe').style.display = liste ? '' : 'none';
+    if (liste) { m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil(); }
+}
+document.querySelectorAll('#modeSeg button').forEach(b => b.onclick = () => { reglages.mode = b.dataset.mode; saveReglages(); appliquerMode(); });
+const m2Nb = document.getElementById('m2Nb'), m2Garder = document.getElementById('m2Garder');
+m2Nb.onchange = () => {
+    reglages.nbMots = Math.max(10, Math.min(80, parseInt(m2Nb.value, 10) || 40)); m2Nb.value = reglages.nbMots; saveReglages();
+    construireListe(motSecret); majNoteMots(); if (reglages.mode === 'liste') afficherAccueil();
+};
+m2Garder.onchange = () => { reglages.garder = m2Garder.checked; saveReglages(); };
+document.getElementById('voirCrib').onclick = () => { sheet.hidden = true; afficherCrib(); };
+const _ouvrirReglages = ouvrirReglages;
+ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; appliquerMode(); _ouvrirReglages(); };
+
+// Démarrage
+initNotes(); construireListe(''); majNoteMots(); appliquerMode();
 </script>
 </body>
 </html>
