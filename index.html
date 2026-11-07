@@ -97,39 +97,62 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
 .crib .fermer { margin-top: 26px; color: #636366; font-size: 13px; text-align: center; }
 
 /* ===== Mode 3 : BUG (faux redémarrage) ===== */
-.bug { position: fixed; top: 0; left: 0; right: 0; bottom: auto; height: 100vh; height: 100lvh; z-index: 200; background: #000; display: flex; justify-content: center; overflow: hidden; }
 html { background: #000; }
-.demarrage { position: absolute; top: 50%; left: 50%; width: 30vw; max-width: 130px; transform: translate(-50%, -58%); opacity: 0; transition: opacity 1.2s; pointer-events: none; }
+/* L'écran dépasse sous le bas de l'écran pour qu'aucune bande noire n'apparaisse */
+.bug { position: fixed; top: 0; left: 0; right: 0; height: calc(100vh + 160px); height: calc(100lvh + 160px); z-index: 200; background: #000; display: flex; justify-content: center; overflow: hidden; }
+.bug[hidden] { display: none; }
+.demarrage { position: absolute; top: 50vh; left: 50%; width: 30vw; max-width: 130px; transform: translate(-50%, -58%); opacity: 0; transition: opacity 1.2s; pointer-events: none; }
 .demarrage.visible { opacity: 1; }
 .demarrage[hidden] { display: none; }
-.verrou-fond { position: absolute; top: -40px; left: -40px; right: -40px; bottom: calc(-40px - env(safe-area-inset-bottom)); background-size: cover; background-position: center; filter: blur(26px) saturate(1.2); }
-.verrou-fond::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.32); }
+
+.verrou { position: relative; width: 100%; max-width: 500px; height: 100vh; height: 100lvh; display: flex; flex-direction: column; align-items: center; color: #fff;
+  padding: calc(env(safe-area-inset-top) + 82px) 0 calc(env(safe-area-inset-bottom) + 34px); opacity: 0; transition: opacity .8s;
+  -webkit-user-select: none; user-select: none; font-family: -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif; }
+.verrou.visible { opacity: 1; }
+.verrou[hidden] { display: none; }
 .verrou > *:not(.verrou-fond) { position: relative; z-index: 1; }
-.btn-image { display: flex; gap: 8px; }
+/* Fond : net, légèrement assombri (comme iOS) ; dégradé si aucune image */
+.verrou-fond { position: absolute; top: 0; left: -20px; right: -20px; bottom: -200px; z-index: 0;
+  background: radial-gradient(120% 70% at 30% 15%, #3a4a7a 0%, #1a2142 45%, #05060c 100%); background-size: cover; background-position: center; }
+.verrou-fond::after { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,.22); }
+.verrou h2 { font-size: 22px; font-weight: 400; letter-spacing: .1px; line-height: 1.25; text-align: center; max-width: 330px; min-height: 28px; text-shadow: 0 1px 6px rgba(0,0,0,.25); }
+.verrou .sous { font-size: 15px; color: rgba(255,255,255,.88); text-align: center; max-width: 300px; line-height: 1.3; margin-top: 6px; text-shadow: 0 1px 6px rgba(0,0,0,.25); }
+.points { display: flex; gap: 23px; margin: 26px 0 66px; }
+.points i { width: 13px; height: 13px; border-radius: 50%; border: 1.3px solid #fff; transition: background .12s; box-shadow: 0 0 4px rgba(0,0,0,.15); }
+.points i.plein { background: #fff; }
+.pave, .verrou .pied { display: grid; grid-template-columns: repeat(3, 75px); column-gap: 25px; }
+.pave { row-gap: 19px; }
+
+/* Touches « Liquid Glass » : verre clair, bord lumineux, reflets, léger effet de lentille */
+.touche { width: 75px; height: 75px; border-radius: 50%; position: relative; overflow: hidden; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background:
+    radial-gradient(110% 80% at 28% 14%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.03) 40%, rgba(255,255,255,0) 60%),
+    radial-gradient(90% 70% at 74% 94%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 55%),
+    rgba(255,255,255,.035);
+  -webkit-backdrop-filter: blur(1px) saturate(135%) brightness(1.07);
+  backdrop-filter: blur(1px) saturate(135%) brightness(1.07);
+  box-shadow:
+    inset 0 0 0 0.8px rgba(255,255,255,.30),
+    inset 1.2px 1.6px 0.8px -0.8px rgba(255,255,255,.70),
+    inset -1.2px -1.6px 0.8px -0.8px rgba(255,255,255,.30),
+    inset 0 0 10px rgba(255,255,255,.06),
+    0 3px 10px rgba(0,0,0,.12);
+  transition: transform .12s, background .12s, box-shadow .12s; }
+.touche::after { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: linear-gradient(160deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 72%, rgba(255,255,255,.07) 100%); mix-blend-mode: screen; }
+.touche:active, .touche.appuye { transform: scale(1.06); background:
+    radial-gradient(120% 90% at 30% 18%, rgba(255,255,255,.55) 0%, rgba(255,255,255,.2) 45%, rgba(255,255,255,.1) 70%), rgba(255,255,255,.22); }
+.touche b { font-size: 38px; font-weight: 400; line-height: 1; letter-spacing: 0; text-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.touche small { font-size: 10.5px; font-weight: 600; letter-spacing: 2.6px; margin: 1px 0 0 2.6px; min-height: 13px; text-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.touche.zero { grid-column: 2; }
+.verrou .pied { margin-top: auto; font-size: 18px; }
+.verrou .pied span { cursor: pointer; padding: 10px 0; text-align: center; white-space: nowrap; -webkit-touch-callout: none; text-shadow: 0 1px 6px rgba(0,0,0,.25); }
+.verrou .pied span:last-child { grid-column: 3; }
+.btn-image { display: flex; gap: 8px; align-items: center; }
 .btn-image button { border: 0; background: none; color: var(--txt-back); font: inherit; font-size: 16px; cursor: pointer; padding: 0; }
 .btn-image button.retirer { color: #ff453a; }
 .apercu-img { width: 30px; height: 30px; border-radius: 6px; background: #000 center / cover no-repeat; border: 0.5px solid #48484a; flex-shrink: 0; }
-.bug[hidden] { display: none; }
-.verrou { position: relative; overflow: visible; width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; align-items: center; color: #fff;
-  background: radial-gradient(120% 80% at 30% 10%, #2b3a67 0%, #141a33 45%, #05060c 100%);
-  padding: calc(env(safe-area-inset-top) + 70px) 0 calc(env(safe-area-inset-bottom) + 24px); opacity: 0; transition: opacity .8s; -webkit-user-select: none; user-select: none; }
-.verrou.visible { opacity: 1; }
-.verrou[hidden] { display: none; }
-.verrou .cadenas { width: 22px; height: 22px; margin-bottom: 14px; opacity: .9; }
-.verrou h2 { font-size: 20px; font-weight: 500; letter-spacing: .2px; min-height: 26px; }
-.verrou .sous { font-size: 13px; color: rgba(255,255,255,.75); text-align: center; max-width: 270px; line-height: 1.35; margin-top: 8px; min-height: 36px; }
-.points { display: flex; gap: 22px; margin: 26px 0 40px; }
-.points i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #fff; transition: background .1s; }
-.points i.plein { background: #fff; }
-.pave { display: grid; grid-template-columns: repeat(3, 78px); gap: 16px 26px; }
-.touche { width: 78px; height: 78px; border-radius: 50%; background: rgba(255,255,255,.16); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: background .15s; }
-.touche:active, .touche.appuye { background: rgba(255,255,255,.45); }
-.touche b { font-size: 36px; font-weight: 300; line-height: 1; }
-.touche small { font-size: 10px; font-weight: 600; letter-spacing: 2px; margin-top: 2px; }
-.touche.zero { grid-column: 2; }
-.verrou .pied { margin-top: auto; width: 100%; max-width: 330px; display: flex; justify-content: space-between; font-size: 17px; padding: 0 10px; }
-.verrou .pied span { cursor: pointer; padding: 10px; -webkit-touch-callout: none; }
 
 /* Sélecteur de mode */
 .segment { display: flex; background: #2C2C2E; border-radius: 9px; padding: 2px; margin-bottom: 14px; }
@@ -238,9 +261,8 @@ html { background: #000; }
     <img class="demarrage" id="demarrage" alt="" hidden>
     <div class="verrou" id="verrou" hidden>
         <div class="verrou-fond" id="verrouFond"></div>
-        <svg class="cadenas" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.2" fill="#fff" stroke="none"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
         <h2 id="verrouTitre">Saisissez le code</h2>
-        <div class="sous" id="verrouSous">Votre code est requis après le redémarrage de l'iPhone</div>
+        <div class="sous" id="verrouSous">Votre code est requis pour activer Face ID</div>
         <div class="points" id="verrouPoints"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="pave" id="pave"></div>
         <div class="pied"><span id="urgence">Urgence</span><span id="verrouEffacer">Annuler</span></div>
@@ -880,8 +902,7 @@ let cibleImage = null;
 function lireImage(cle) { try { return localStorage.getItem(cle) || ''; } catch (e) { return ''; } }
 function majImages() {
     const fond = lireImage(CLE_FOND), logo = lireImage(CLE_LOGO);
-    verrouFond.style.backgroundImage = fond ? 'url("' + fond + '")' : 'none';
-    verrouFond.style.display = fond ? '' : 'none';
+    verrouFond.style.backgroundImage = fond ? 'url("' + fond + '")' : '';
     document.getElementById('apercuFond').style.backgroundImage = fond ? 'url("' + fond + '")' : 'none';
     document.getElementById('apercuLogo').style.backgroundImage = logo ? 'url("' + logo + '")' : 'none';
     document.getElementById('apercuLogo').style.backgroundSize = 'contain';
