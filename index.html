@@ -124,7 +124,7 @@ html { background: #000; }
 .pave { row-gap: 19px; }
 
 /* Touches « Liquid Glass » : verre clair, bord lumineux, reflets, léger effet de lentille */
-.touche { width: 75px; height: 75px; border-radius: 50%; position: relative; overflow: hidden; cursor: pointer;
+.touche { width: 75px; height: 75px; border-radius: 50%; position: relative; overflow: hidden; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   background:
     radial-gradient(110% 80% at 28% 14%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.03) 40%, rgba(255,255,255,0) 60%),
@@ -147,7 +147,7 @@ html { background: #000; }
 .touche small { font-size: 10.5px; font-weight: 600; letter-spacing: 2.6px; margin: 1px 0 0 2.6px; min-height: 13px; text-shadow: 0 1px 4px rgba(0,0,0,.2); }
 .touche.zero { grid-column: 2; }
 .verrou .pied { margin-top: auto; font-size: 18px; }
-.verrou .pied span { cursor: pointer; padding: 10px 0; text-align: center; white-space: nowrap; -webkit-touch-callout: none; text-shadow: 0 1px 6px rgba(0,0,0,.25); }
+.verrou .pied span { touch-action: manipulation; cursor: pointer; padding: 10px 0; text-align: center; white-space: nowrap; -webkit-touch-callout: none; text-shadow: 0 1px 6px rgba(0,0,0,.25); }
 .verrou .pied span:last-child { grid-column: 3; }
 .btn-image { display: flex; gap: 8px; align-items: center; }
 .btn-image button { border: 0; background: none; color: var(--txt-back); font: inherit; font-size: 16px; cursor: pointer; padding: 0; }
@@ -840,6 +840,7 @@ function planter() {
     const noir = (reglages.bugNoir || 6) * 1000;
     const logo = lireImage(CLE_LOGO);
     const montrerCode = () => {
+        teinterBas(true);
         verrou.hidden = false;
         requestAnimationFrame(() => requestAnimationFrame(() => verrou.classList.add('visible')));
     };
@@ -864,12 +865,18 @@ const pave = document.getElementById('pave');
     const t = document.createElement('div'); t.className = 'touche' + (n === 0 ? ' zero' : '');
     const b = document.createElement('b'); b.textContent = n; t.appendChild(b);
     const sm = document.createElement('small'); sm.textContent = LETTRES[n] || (n === 1 ? ' ' : ''); t.appendChild(sm);
-    const presse = () => { t.classList.add('appuye'); };
-    const relache = () => { setTimeout(() => t.classList.remove('appuye'), 90); };
-    t.addEventListener('touchstart', presse, { passive: true });
-    t.addEventListener('mousedown', presse);
-    ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => t.addEventListener(ev, relache));
-    t.addEventListener('click', () => toucheCode());
+    let depuis = 0;
+    t.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        depuis = Date.now();
+        t.classList.add('appuye');
+        toucheCode();
+    });
+    const relache = () => {
+        const reste = Math.max(0, 170 - (Date.now() - depuis));   // la touche reste allumée au moins 0,17 s
+        setTimeout(() => t.classList.remove('appuye'), reste);
+    };
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => t.addEventListener(ev, relache));
     pave.appendChild(t);
 });
 function majPoints() {
@@ -882,8 +889,17 @@ function toucheCode() {
     if (code === 6) setTimeout(deverrouiller, 250);
 }
 document.getElementById('verrouEffacer').onclick = () => { if (code) { code--; majPoints(); } };
+function teinterBas(actif) {
+    let coul = '#000';
+    if (actif) { try { coul = localStorage.getItem('notagram-fond-couleur') || '#05060c'; } catch (e) {} }
+    document.documentElement.style.background = coul;
+    document.body.style.background = coul;
+    bugEcran.style.background = coul;
+    const m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', coul);
+}
 function deverrouiller() {
     bugTimers.forEach(clearTimeout); bugTimers = [];
+    teinterBas(false);
     verrou.classList.remove('visible');
     setTimeout(() => { bugEcran.hidden = true; verrou.hidden = true; demarrage.hidden = true; demarrage.classList.remove('visible'); code = 0; majPoints(); }, 300);
 }
@@ -906,8 +922,21 @@ const fichierImage = document.getElementById('fichierImage');
 const CLE_FOND = 'notagram-fond', CLE_LOGO = 'notagram-logo';
 let cibleImage = null;
 function lireImage(cle) { try { return localStorage.getItem(cle) || ''; } catch (e) { return ''; } }
+function couleurBasDepuis(data) {
+    const img = new Image();
+    img.onload = () => {
+        const c = document.createElement('canvas'); c.width = 60; c.height = Math.max(10, Math.round(60 * img.height / img.width));
+        const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, c.width, c.height);
+        const h = Math.max(1, Math.round(c.height * 0.08)), px = ctx.getImageData(0, c.height - h, c.width, h).data;
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let k = 0; k < px.length; k += 4) { r += px[k]; g += px[k + 1]; b += px[k + 2]; n++; }
+        try { localStorage.setItem('notagram-fond-couleur', 'rgb(' + Math.round(r / n * .78) + ',' + Math.round(g / n * .78) + ',' + Math.round(b / n * .78) + ')'); } catch (e) {}
+    };
+    img.src = data;
+}
 function majImages() {
     const fond = lireImage(CLE_FOND), logo = lireImage(CLE_LOGO);
+    if (fond && !lireImage('notagram-fond-couleur')) couleurBasDepuis(fond);
     verrouFond.style.backgroundImage = fond ? 'url("' + fond + '")' : '';
     document.getElementById('apercuFond').style.backgroundImage = fond ? 'url("' + fond + '")' : 'none';
     document.getElementById('apercuLogo').style.backgroundImage = logo ? 'url("' + logo + '")' : 'none';
@@ -916,7 +945,7 @@ function majImages() {
 bugImageDuree.onchange = () => { reglages.bugImageDuree = Math.max(1, Math.min(30, parseInt(bugImageDuree.value, 10) || 6)); bugImageDuree.value = reglages.bugImageDuree; saveReglages(); };
 document.getElementById('choisirFond').onclick = () => { cibleImage = CLE_FOND; fichierImage.value = ''; fichierImage.click(); };
 document.getElementById('choisirLogo').onclick = () => { cibleImage = CLE_LOGO; fichierImage.value = ''; fichierImage.click(); };
-document.getElementById('retirerFond').onclick = () => { try { localStorage.removeItem(CLE_FOND); } catch (e) {} majImages(); };
+document.getElementById('retirerFond').onclick = () => { try { localStorage.removeItem(CLE_FOND); localStorage.removeItem('notagram-fond-couleur'); } catch (e) {} majImages(); };
 document.getElementById('retirerLogo').onclick = () => { try { localStorage.removeItem(CLE_LOGO); } catch (e) {} majImages(); };
 // L'image est réduite avant d'être gardée dans le téléphone (pour ne pas dépasser la mémoire permise)
 fichierImage.onchange = () => {
@@ -934,6 +963,15 @@ fichierImage.onchange = () => {
             if (cle === CLE_LOGO) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height); }
             ctx.drawImage(img, 0, 0, c.width, c.height);
             const data = c.toDataURL('image/jpeg', cle === CLE_FOND ? 0.82 : 0.9);
+            if (cle === CLE_FOND) {
+                // couleur moyenne des 8 % du bas, assombrie comme le voile de l'écran de code
+                const h = Math.max(1, Math.round(c.height * 0.08));
+                const px = ctx.getImageData(0, c.height - h, c.width, h).data;
+                let r = 0, g = 0, b = 0, n = 0;
+                for (let k = 0; k < px.length; k += 16) { r += px[k]; g += px[k + 1]; b += px[k + 2]; n++; }
+                const f = 0.78;
+                try { localStorage.setItem('notagram-fond-couleur', 'rgb(' + Math.round(r / n * f) + ',' + Math.round(g / n * f) + ',' + Math.round(b / n * f) + ')'); } catch (e) {}
+            }
             try { localStorage.setItem(cle, data); }
             catch (e) { alert("L'image est trop lourde pour être gardée. Essaie une image plus petite."); }
             majImages();
