@@ -96,6 +96,30 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
 .crib .ligne .mange { font-style: normal; color: #FFD60A; }
 .crib .fermer { margin-top: 26px; color: #636366; font-size: 13px; text-align: center; }
 
+/* ===== Mode 3 : BUG (faux redémarrage) ===== */
+.bug { position: fixed; inset: 0; z-index: 200; background: #000; display: flex; justify-content: center; }
+.bug[hidden] { display: none; }
+.verrou { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; align-items: center; color: #fff;
+  background: radial-gradient(120% 80% at 30% 10%, #2b3a67 0%, #141a33 45%, #05060c 100%);
+  padding: calc(env(safe-area-inset-top) + 70px) 0 calc(env(safe-area-inset-bottom) + 24px); opacity: 0; transition: opacity .8s; -webkit-user-select: none; user-select: none; }
+.verrou.visible { opacity: 1; }
+.verrou[hidden] { display: none; }
+.verrou .cadenas { width: 22px; height: 22px; margin-bottom: 14px; opacity: .9; }
+.verrou h2 { font-size: 20px; font-weight: 500; letter-spacing: .2px; min-height: 26px; }
+.verrou .sous { font-size: 13px; color: rgba(255,255,255,.75); text-align: center; max-width: 270px; line-height: 1.35; margin-top: 8px; min-height: 36px; }
+.points { display: flex; gap: 22px; margin: 26px 0 40px; }
+.points i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #fff; transition: background .1s; }
+.points i.plein { background: #fff; }
+.pave { display: grid; grid-template-columns: repeat(3, 78px); gap: 16px 26px; }
+.touche { width: 78px; height: 78px; border-radius: 50%; background: rgba(255,255,255,.16); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: background .15s; }
+.touche:active, .touche.appuye { background: rgba(255,255,255,.45); }
+.touche b { font-size: 36px; font-weight: 300; line-height: 1; }
+.touche small { font-size: 10px; font-weight: 600; letter-spacing: 2px; margin-top: 2px; }
+.touche.zero { grid-column: 2; }
+.verrou .pied { margin-top: auto; width: 100%; max-width: 330px; display: flex; justify-content: space-between; font-size: 17px; padding: 0 10px; }
+.verrou .pied span { cursor: pointer; padding: 10px; -webkit-touch-callout: none; }
+
 /* Sélecteur de mode */
 .segment { display: flex; background: #2C2C2E; border-radius: 9px; padding: 2px; margin-bottom: 14px; }
 .segment button { flex: 1; height: 32px; border: 0; border-radius: 7px; background: none; color: #fff; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
@@ -198,6 +222,18 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
     </div>
 </div>
 
+<!-- ===== MODE 3 : faux redémarrage ===== -->
+<div class="bug" id="bug" hidden>
+    <div class="verrou" id="verrou" hidden>
+        <svg class="cadenas" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.2" fill="#fff" stroke="none"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+        <h2 id="verrouTitre">Saisissez le code</h2>
+        <div class="sous" id="verrouSous">Votre code est requis après le redémarrage de l'iPhone</div>
+        <div class="points" id="verrouPoints"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="pave" id="pave"></div>
+        <div class="pied"><span id="urgence">Urgence</span><span id="verrouEffacer">Annuler</span></div>
+    </div>
+</div>
+
 <!-- Antisèche secrète (mode 2) -->
 <div class="crib" id="crib" hidden></div>
 
@@ -209,6 +245,7 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
         <div class="segment" id="modeSeg">
             <button data-mode="anagramme">Anagramme</button>
             <button data-mode="liste">Liste</button>
+            <button data-mode="bug">Bug</button>
         </div>
         <div id="optListe">
             <div class="sous-titre">Mode Liste</div>
@@ -218,6 +255,14 @@ body { background: #000; display: flex; justify-content: center; font-family: -a
             </div>
             <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : double-toucher l'icône à 3 barres en bas à gauche.</p>
             <button class="lien-crib" id="voirCrib">Voir l'antisèche</button>
+        </div>
+        <div id="optBug">
+            <div class="sous-titre">Mode Bug</div>
+            <div class="groupe">
+                <label class="rang"><span>Délai avant le bug (s)</span><input type="number" id="bugDelai" min="1" max="30" inputmode="numeric"></label>
+                <label class="rang"><span>Écran noir (s)</span><input type="number" id="bugNoir" min="2" max="30" inputmode="numeric"></label>
+            </div>
+            <p class="indice">Le spectateur écrit un mot dans une nouvelle note. Quand le clavier se baisse, l'app « plante » après le délai, l'écran reste noir, puis l'écran de code apparaît. Peek : garde le doigt sur « Urgence » pour voir le mot à la place de « Saisissez le code ». N'importe quel code à 6 chiffres déverrouille, et sa note n'existe plus.</p>
         </div>
         <div class="sous-titre">Appareil externe</div>
         <div class="groupe">
@@ -394,7 +439,8 @@ function majDate() {
 }
 majDate();
 
-// ===== Appareil externe : envoi du mot trouvé via ntfy.sh =====
+// ===== Appareil externe : envoi du mot trouvé via ton relais Cloudflare =====
+const RELAIS = 'https://relais.michaeldemers2003.workers.dev';
 const RELAY_KEY = 'notagram-relay';
 let relay = { on: false, topic: '' };
 try { relay = Object.assign(relay, JSON.parse(localStorage.getItem(RELAY_KEY) || '{}')); } catch (e) {}
@@ -405,7 +451,7 @@ saveRelay();
 let relayTimer = null, relayLast = '';
 function sendRelay(text) {
     if (!relay.topic) return Promise.reject();
-    return fetch('https://ntfy.sh/' + encodeURIComponent(relay.topic), { method: 'POST', body: text });
+    return fetch(RELAIS + '/' + encodeURIComponent(relay.topic), { method: 'POST', body: text });
 }
 // Attend 1,5 s sans changement avant d'envoyer, pour ne pas envoyer chaque lettre
 function relayWord(word) {
@@ -421,7 +467,7 @@ newNoteBtn.addEventListener('click', () => {
     relayLast = ''; clearTimeout(relayTimer); majDate();
     if (relay.on) sendRelay('-').catch(() => {});   // vide le mini écran
 });
-function lienApi() { return 'https://ntfy.sh/' + encodeURIComponent(relay.topic) + '/json?poll=1&since=latest'; }
+function lienApi() { return RELAIS + '/' + encodeURIComponent(relay.topic) + '/json'; }
 backBtn.addEventListener('click', majDate);
 
 // Réglages : appui long (0,8 s) sur la date
@@ -463,7 +509,7 @@ sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };
 const MOTS_LISTE = ["rame",    "barque", "voile", "voilier", "canot", "kayak", "radeau", "navire", "bateau", "pirogue", "ancre", "quai", "port", "phare", "bouée", "vague", "marée", "plage", "sable", "dune", "côte", "île", "lac", "étang", "mare", "rivière", "fleuve", "ruisseau", "source", "cascade", "chute", "rive", "berge", "pont", "écluse", "canal", "digue", "arbre", "bois", "forêt", "feuille", "racine", "tronc", "branche", "écorce", "fleur", "rose", "tulipe", "lys", "lilas", "iris", "muguet", "violette", "pétale", "tige", "graine", "herbe", "gazon", "mousse", "fougère", "lierre", "vigne", "sapin", "chêne", "érable", "bouleau", "saule", "pin", "cèdre", "hêtre", "frêne", "orme", "tilleul", "palmier", "cactus", "bambou", "buisson", "haie", "jardin", "potager", "verger", "serre", "pomme", "poire", "prune", "pêche", "cerise", "fraise", "framboise", "mûre", "bleuet", "cassis", "raisin", "citron", "orange", "banane", "ananas", "mangue", "kiwi", "melon", "figue", "datte", "noix", "noisette", "amande", "olive", "tomate", "carotte", "navet", "radis", "poireau", "oignon", "ail", "chou", "laitue", "salade", "épinard", "céleri", "concombre", "courge", "citrouille", "patate", "pois", "fève", "maïs", "riz", "blé", "orge", "avoine", "pain", "beurre", "fromage", "lait", "crème", "oeuf", "sucre", "sel", "poivre", "miel", "farine", "pâte", "tarte", "gâteau", "biscuit", "crêpe", "gaufre", "soupe", "sauce", "viande", "poulet", "boeuf", "porc", "veau", "agneau", "jambon", "saucisse", "bacon", "poisson", "saumon", "thon", "morue", "truite", "crevette", "homard", "crabe", "moule", "huître", "steak", "frite", "pizza", "burger", "sandwich", "café", "thé", "jus", "vin", "bière", "cidre", "eau", "soda", "sirop", "chocolat", "bonbon", "glace", "sorbet", "caramel", "vanille", "cannelle", "menthe", "chat", "chien", "cheval", "vache", "cochon", "mouton", "chèvre", "lapin", "poule", "coq", "canard", "oie", "dinde", "âne", "mule", "taureau", "souris", "rat", "écureuil", "castor", "ours", "loup", "renard", "lynx", "orignal", "cerf", "biche", "chevreuil", "lièvre", "hibou", "aigle", "faucon", "corbeau", "pigeon", "moineau", "merle", "mouette", "pingouin", "manchot", "cygne", "héron", "pélican", "perroquet", "lion", "tigre", "panthère", "jaguar", "léopard", "guépard", "zèbre", "girafe", "éléphant", "rhinocéros", "hippo", "singe", "gorille", "chameau", "kangourou", "koala", "panda", "phoque", "baleine", "dauphin", "requin", "pieuvre", "méduse", "tortue", "lézard", "serpent", "grenouille", "crapaud", "abeille", "guêpe", "mouche", "moustique", "fourmi", "papillon", "chenille", "araignée", "scorpion", "escargot", "ver", "puce", "maison", "chalet", "cabane", "villa", "château", "tour", "palais", "temple", "église", "école", "usine", "bureau", "magasin", "boutique", "hôtel", "hôpital", "musée", "théâtre", "cinéma", "stade", "gare", "aéroport", "garage", "grange", "ferme", "atelier", "cave", "grenier", "salon", "cuisine", "chambre", "toilette", "douche", "bain", "couloir", "escalier", "balcon", "terrasse", "toit", "mur", "porte", "fenêtre", "volet", "plafond", "plancher", "sol", "tapis", "rideau", "lampe", "lustre", "miroir", "cadre", "horloge", "pendule", "table", "chaise", "banc", "tabouret", "fauteuil", "canapé", "sofa", "lit", "matelas", "oreiller", "drap", "couverture", "armoire", "tiroir", "étagère", "coffre", "boîte", "panier", "sac", "valise", "malle", "caisse", "bouteille", "verre", "tasse", "bol", "assiette", "plat", "fourchette", "couteau", "cuillère", "poêle", "casserole", "marmite", "four", "frigo", "évier", "robinet", "livre", "cahier", "crayon", "stylo", "plume", "gomme", "règle", "ciseaux", "colle", "papier", "carte", "lettre", "enveloppe", "timbre", "journal", "revue", "page", "tableau", "craie", "dossier", "agenda", "calendrier", "téléphone", "cellulaire", "ordi", "écran", "clavier", "câble", "radio", "télé", "caméra", "photo", "appareil", "montre", "réveil", "batterie", "pile", "ampoule", "moteur", "roue", "pneu", "volant", "frein", "vélo", "moto", "auto", "voiture", "camion", "autobus", "métro", "train", "tramway", "avion", "fusée", "hélice", "taxi", "tracteur", "chemise", "pantalon", "jupe", "robe", "veste", "manteau", "gilet", "chandail", "pull", "tuque", "bonnet", "chapeau", "casquette", "foulard", "écharpe", "gant", "mitaine", "bas", "chaussette", "soulier", "botte", "sandale", "ceinture", "cravate", "bijou", "bague", "collier", "bracelet", "perle", "diamant", "lunettes", "parapluie", "tête", "visage", "oeil", "yeux", "nez", "bouche", "lèvre", "dent", "langue", "oreille", "cou", "épaule", "bras", "coude", "main", "doigt", "pouce", "ongle", "poing", "dos", "ventre", "jambe", "genou", "pied", "orteil", "coeur", "cerveau", "poumon", "foie", "peau", "sang", "muscle", "cheveu", "barbe", "front", "joue", "menton", "père", "mère", "frère", "soeur", "fils", "fille", "oncle", "tante", "cousin", "cousine", "neveu", "nièce", "bébé", "enfant", "garçon", "homme", "femme", "ami", "amie", "voisin", "roi", "reine", "prince", "princesse", "chevalier", "pirate", "sorcier", "sorcière", "fée", "géant", "nain", "ange", "diable", "fantôme", "vampire", "dragon", "licorne", "sirène", "ogre", "lutin", "elfe", "docteur", "médecin", "avocat", "juge", "policier", "pompier", "soldat", "marin", "pilote", "chauffeur", "boulanger", "boucher", "fermier", "pêcheur", "chasseur", "cuisinier", "serveur", "facteur", "artiste", "peintre", "chanteur", "danseur", "acteur", "auteur", "poète", "magicien", "clown", "professeur", "élève", "étudiant", "patron", "soleil", "lune", "étoile", "planète", "comète", "ciel", "nuage", "pluie", "neige", "grêle", "orage", "éclair", "tonnerre", "vent", "brume", "brouillard", "arc", "givre", "gel", "froid", "chaleur", "été", "hiver", "printemps", "automne", "matin", "midi", "soir", "nuit", "aube", "aurore", "jour", "semaine", "mois", "année", "siècle", "heure", "minute", "seconde", "montagne", "colline", "vallée", "plaine", "désert", "jungle", "prairie", "champ", "falaise", "grotte", "volcan", "rocher", "caillou", "pierre", "roche", "glacier", "océan", "mer", "baie", "golfe", "rouge", "bleu", "vert", "jaune", "noir", "blanc", "gris", "brun", "mauve", "violet", "beige", "doré", "argent", "amour", "paix", "joie", "peur", "colère", "rêve", "espoir", "chance", "destin", "secret", "mystère", "magie", "esprit", "âme", "mémoire", "pensée", "idée", "vérité", "mensonge", "silence", "musique", "chanson", "danse", "fête", "jeu", "sport", "match", "équipe", "ballon", "balle", "but", "filet", "raquette", "piste", "course", "guitare", "piano", "violon", "flûte", "tambour", "trompette", "harpe", "orgue", "clarinette", "saxophone", "banjo", "fer", "cuivre", "acier", "bronze", "plomb", "zinc", "cuir", "laine", "soie", "coton", "plastique", "marbre", "béton", "brique", "monnaie", "dollar", "euro", "sou", "banque", "prix", "cadeau", "trésor", "clé", "clef", "serrure", "chaîne", "corde", "fil", "aiguille", "bouton", "ruban", "ficelle", "feu", "flamme", "fumée", "cendre", "braise", "bougie", "chandelle", "allumette", "lanterne", "torche", "roman", "conte", "poème", "film", "série", "histoire", "légende", "mythe", "fable", "énigme", "puzzle", "échecs", "domino", "ville", "village", "pays", "nation", "monde", "terre", "route", "rue", "chemin", "sentier", "avenue", "boulevard", "parc", "place", "tunnel", "frontière", "nombre", "chiffre", "zéro", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "cent", "mille", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre", "hockey", "soccer", "tennis", "golf", "baseball", "boxe", "ski", "patin", "nage", "yoga", "fusil", "épée", "sabre", "flèche", "bouclier", "armure", "casque", "canon", "nid", "aile", "bec", "griffe", "patte", "queue", "corne", "sabot", "crinière", "fourrure", "huile", "vinaigre", "moutarde", "ketchup", "mayo", "mot", "nom", "phrase", "voix", "cri", "rire", "larme", "sourire", "baiser", "câlin", "regard", "geste", "loi", "droit", "ordre", "guerre", "victoire", "défaite", "combat", "bataille", "anorak", "yak", "bifteck", "hadj", "taj", "show", "bungalow", "poney", "jockey", "rugby", "whisky", "gaz", "chez", "quartz", "choux", "faux", "roux", "flash", "coach", "long", "hareng", "camping", "parking", "club", "snob", "kebab", "toubib", "coup", "galop", "chef", "nef", "soif", "bac", "choc", "leitmotiv", "tard", "nord", "sud", "bord", "fond", "gland", "marchand", "chaud", "lourd", "col", "travail", "rail", "email", "métal", "animal", "cour", "désir", "enfer", "hier", "fruit", "bruit", "bout", "goût", "pot", "repas", "colis", "temps", "corps", "velours", "album", "parfum", "forum", "rhum", "maximum", "opéra", "puma", "véranda", "samba"];
 const ALIMENTS = new Set(["AGNEAU", "AIL", "AMANDE", "ANANAS", "AVOINE", "BACON", "BANANE", "BEURRE", "BIERE", "BIFTECK", "BISCUIT", "BLE", "BLEUET", "BOEUF", "BONBON", "BURGER", "CAFE", "CANNELLE", "CARAMEL", "CAROTTE", "CASSIS", "CELERI", "CERISE", "CHOCOLAT", "CHOU", "CHOUX", "CIDRE", "CITRON", "CITROUILLE", "CONCOMBRE", "COURGE", "CRABE", "CREME", "CREPE", "CREVETTE", "DATTE", "EAU", "EPINARD", "FARINE", "FEVE", "FIGUE", "FRAISE", "FRAMBOISE", "FRITE", "FROMAGE", "GATEAU", "GAUFRE", "GLACE", "HARENG", "HOMARD", "HUILE", "HUITRE", "JAMBON", "JUS", "KEBAB", "KETCHUP", "KIWI", "LAIT", "LAITUE", "MAIS", "MANGUE", "MAYO", "MELON", "MENTHE", "MIEL", "MORUE", "MOULE", "MOUTARDE", "MURE", "NAVET", "NOISETTE", "NOIX", "OEUF", "OIGNON", "OLIVE", "ORANGE", "ORGE", "PAIN", "PATATE", "PATE", "PECHE", "PIZZA", "POIRE", "POIREAU", "POIS", "POISSON", "POIVRE", "POMME", "PORC", "POULET", "PRUNE", "RADIS", "RAISIN", "RHUM", "RIZ", "SALADE", "SANDWICH", "SAUCE", "SAUCISSE", "SAUMON", "SEL", "SIROP", "SODA", "SORBET", "SOUPE", "STEAK", "SUCRE", "TARTE", "THE", "THON", "TOMATE", "TRUITE", "VANILLE", "VEAU", "VIANDE", "VIN", "VINAIGRE"]);
 const REGLAGES_KEY = 'notagram-reglages';
-let reglages = { mode: 'anagramme', nbMots: 40, garder: true };
+let reglages = { mode: 'anagramme', nbMots: 40, garder: true, bugDelai: 4, bugNoir: 6 };
 try { reglages = Object.assign(reglages, JSON.parse(localStorage.getItem(REGLAGES_KEY) || '{}')); } catch (e) {}
 function saveReglages() { try { localStorage.setItem(REGLAGES_KEY, JSON.stringify(reglages)); } catch (e) {} }
 
@@ -545,7 +591,7 @@ function section(d) {
 }
 function afficherAccueil() {
     m2Liste.innerHTML = '';
-    const tri = notesM2.slice().sort((a, b) => b.date - a.date);
+    const tri = notesM2.filter(n => !(reglages.mode === 'bug' && n.id === 'mots')).sort((a, b) => b.date - a.date);
     let sec = null, grp = null;
     tri.forEach(n => {
         const s = section(n.date);
@@ -564,7 +610,7 @@ function afficherAccueil() {
         r.onclick = () => ouvrirNote(n);
         grp.appendChild(r);
     });
-    const c = document.createElement('div'); c.className = 'm2-compte'; c.textContent = notesM2.length + ' notes'; m2Liste.appendChild(c);
+    const c = document.createElement('div'); c.className = 'm2-compte'; c.textContent = tri.length + ' notes'; m2Liste.appendChild(c);
 }
 
 // Ouvrir / créer une note
@@ -589,10 +635,21 @@ function nouvelleNote() {
 }
 document.getElementById('m2Nouvelle').onclick = nouvelleNote;
 document.getElementById('m2Nouvelle2').onclick = nouvelleNote;
-m2Editeur.addEventListener('focus', () => { m2Ok.hidden = false; });
-m2Editeur.addEventListener('blur', () => { setTimeout(() => { if (document.activeElement !== m2Editeur) m2Ok.hidden = true; }, 50); });
+m2Editeur.addEventListener('focus', () => { m2Ok.hidden = false; annulerBug(); });
+m2Editeur.addEventListener('blur', () => {
+    setTimeout(() => {
+        if (document.activeElement === m2Editeur) return;
+        m2Ok.hidden = true;
+        apresClavier();     // clavier baissé : le mot est pris en compte, même sans « OK »
+    }, 60);
+});
+function apresClavier() {
+    if (!noteOuverte || !noteOuverte.duSpectateur) return;
+    if (reglages.mode === 'liste') terminerNote();
+    else if (reglages.mode === 'bug') preparerBug();
+}
 m2Ok.addEventListener('mousedown', e => e.preventDefault());
-m2Ok.onclick = () => { m2Editeur.blur(); m2Ok.hidden = true; terminerNote(); };
+m2Ok.onclick = () => { m2Editeur.blur(); m2Ok.hidden = true; apresClavier(); };
 
 // La magie : quand le spectateur appuie sur OK
 function terminerNote() {
@@ -609,7 +666,8 @@ function terminerNote() {
     }
 }
 document.getElementById('m2Retour').onclick = () => {
-    if (document.activeElement === m2Editeur) { m2Editeur.blur(); terminerNote(); }
+    if (document.activeElement === m2Editeur) m2Editeur.blur();
+    if (noteOuverte && noteOuverte.duSpectateur) apresClavier();   // capte le mot même si on revient vite
     else if (noteOuverte && noteOuverte.id !== 'mots') noteOuverte.texte = m2Editeur.innerText.trim() || noteOuverte.texte;
     if (noteOuverte && noteOuverte.duSpectateur) {
         const deja = notesM2.includes(noteOuverte);
@@ -687,9 +745,10 @@ document.addEventListener('click', e => {
 function majMenuMode() {
     document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === reglages.mode));
     document.getElementById('optListe').style.display = reglages.mode === 'liste' ? '' : 'none';
+    document.getElementById('optBug').style.display = reglages.mode === 'bug' ? '' : 'none';
 }
 function appliquerMode() {
-    const liste = reglages.mode === 'liste';
+    const liste = reglages.mode === 'liste' || reglages.mode === 'bug';   // le mode Bug utilise aussi l'accueil de Notes
     m2.hidden = !liste;
     majMenuMode();
     if (liste) { m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil(); }
@@ -703,7 +762,81 @@ m2Nb.onchange = () => {
 m2Garder.onchange = () => { reglages.garder = m2Garder.checked; saveReglages(); };
 document.getElementById('voirCrib').onclick = () => { sheet.hidden = true; afficherCrib(); };
 const _ouvrirReglages = ouvrirReglages;
-ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; majMenuMode(); _ouvrirReglages(); };
+ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; bugDelai.value = reglages.bugDelai; bugNoir.value = reglages.bugNoir; majMenuMode(); _ouvrirReglages(); };
+
+
+// =====================================================================
+// ===== MODE 3 : BUG — faux plantage, écran noir, écran de code
+// =====================================================================
+const bugEcran = document.getElementById('bug'), verrou = document.getElementById('verrou');
+const verrouTitre = document.getElementById('verrouTitre'), verrouPoints = document.getElementById('verrouPoints');
+const bugDelai = document.getElementById('bugDelai'), bugNoir = document.getElementById('bugNoir');
+let bugMot = '', bugMinuterie = null, bugTimers = [], code = 0, bugNote = null;
+
+bugDelai.onchange = () => { reglages.bugDelai = Math.max(1, Math.min(30, parseInt(bugDelai.value, 10) || 4)); bugDelai.value = reglages.bugDelai; saveReglages(); };
+bugNoir.onchange = () => { reglages.bugNoir = Math.max(2, Math.min(30, parseInt(bugNoir.value, 10) || 6)); bugNoir.value = reglages.bugNoir; saveReglages(); };
+
+function annulerBug() { clearTimeout(bugMinuterie); bugMinuterie = null; }
+function preparerBug() {
+    const texte = m2Editeur.innerText.replace(/ /g, ' ').trim();
+    if (!texte) return;
+    const mot = texte.split('\n')[0].trim();
+    bugNote = noteOuverte;
+    if (noteOuverte) noteOuverte.texte = texte;   // visible dans la liste jusqu'au plantage
+    if (mot !== bugMot) { bugMot = mot; if (relay.on) sendRelay(mot).catch(() => {}); }
+    annulerBug();
+    bugMinuterie = setTimeout(planter, (reglages.bugDelai || 4) * 1000);
+}
+function planter() {
+    bugMinuterie = null;
+    try { m2Editeur.blur(); } catch (e) {}
+    // la note du spectateur disparaît : on revient à l'accueil sans la garder
+    noteOuverte = null;
+    if (bugNote) { const i = notesM2.indexOf(bugNote); if (i >= 0) notesM2.splice(i, 1); bugNote = null; }
+    m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil();
+    code = 0; majPoints();
+    verrou.hidden = true; verrou.classList.remove('visible');
+    bugEcran.hidden = false;
+    bugTimers.push(setTimeout(() => {
+        verrou.hidden = false;
+        requestAnimationFrame(() => requestAnimationFrame(() => verrou.classList.add('visible')));
+    }, (reglages.bugNoir || 6) * 1000));
+}
+
+// Pavé numérique (rien n'est enregistré : n'importe quel code à 6 chiffres ouvre)
+const LETTRES = { 2: 'ABC', 3: 'DEF', 4: 'GHI', 5: 'JKL', 6: 'MNO', 7: 'PQRS', 8: 'TUV', 9: 'WXYZ' };
+const pave = document.getElementById('pave');
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].forEach(n => {
+    const t = document.createElement('div'); t.className = 'touche' + (n === 0 ? ' zero' : '');
+    const b = document.createElement('b'); b.textContent = n; t.appendChild(b);
+    const sm = document.createElement('small'); sm.textContent = LETTRES[n] || (n === 1 ? ' ' : ''); t.appendChild(sm);
+    t.addEventListener('click', () => toucheCode());
+    pave.appendChild(t);
+});
+function majPoints() {
+    [...verrouPoints.children].forEach((p, i) => p.classList.toggle('plein', i < code));
+    document.getElementById('verrouEffacer').textContent = code ? 'Supprimer' : 'Annuler';
+}
+function toucheCode() {
+    if (code >= 6) return;
+    code++; majPoints();
+    if (code === 6) setTimeout(deverrouiller, 250);
+}
+document.getElementById('verrouEffacer').onclick = () => { if (code) { code--; majPoints(); } };
+function deverrouiller() {
+    bugTimers.forEach(clearTimeout); bugTimers = [];
+    verrou.classList.remove('visible');
+    setTimeout(() => { bugEcran.hidden = true; verrou.hidden = true; code = 0; majPoints(); }, 300);
+}
+
+// Peek : garder le doigt sur « Urgence » montre le mot à la place du titre
+const urgence = document.getElementById('urgence');
+const montrer = () => { verrouTitre.textContent = bugMot || '—'; };
+const cacher = () => { verrouTitre.textContent = 'Saisissez le code'; };
+urgence.addEventListener('touchstart', montrer, { passive: true });
+urgence.addEventListener('mousedown', montrer);
+['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => urgence.addEventListener(ev, cacher));
+urgence.addEventListener('contextmenu', e => e.preventDefault());
 
 // Démarrage
 initNotes(); construireListe(''); majNoteMots(); appliquerMode();
