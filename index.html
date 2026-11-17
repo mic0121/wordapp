@@ -300,7 +300,7 @@ html { background: #000; }
             <div class="groupe">
                 <label class="rang"><span>Brouiller les lettres</span><input type="checkbox" class="interrupteur" id="typoBrouiller"></label>
             </div>
-            <p class="indice">Le spectateur ouvre une nouvelle note et écrit son mot sans regarder. Les lettres affichées sont légèrement changées pour qu'il croie avoir raté. En secret, Notagram retrouve le mot voulu d'après les touches voisines du clavier (hors ligne). Peek : garde le doigt sur la date de la note, ou sur le titre « Notes ». Les 3 mots les plus probables sont envoyés à l'appareil externe quand le clavier se baisse.</p>
+            <p class="indice">Le spectateur ouvre une nouvelle note et écrit son mot sans regarder. Les lettres affichées sont légèrement changées pour qu'il croie avoir raté. En secret, Notagram retrouve le mot voulu d'après les touches voisines du clavier (hors ligne). Peek : garde le doigt sur « Aa » en bas de la note — les mots possibles remplacent la date. Sur l'accueil : garde le doigt sur le titre « Notes ». Les 3 mots les plus probables sont envoyés à l'appareil externe quand le clavier se baisse.</p>
         </div>
         <div id="optBug">
             <div class="sous-titre">Mode Bug</div>
@@ -1146,22 +1146,24 @@ function terminerTypo() {
     }
 }
 
-// Peek : garder le doigt sur la date de la note (ou sur le titre « Notes ») affiche les mots possibles
-function peekTypo(elm, texteNormal) {
-    const montrer = () => {
+// Peek : garder le doigt sur « Aa » (barre du bas de la note) affiche les mots possibles à la place de la date.
+// Sur l'accueil : garder le doigt sur le titre « Notes ».
+function peekTypo(declencheur, cible) {
+    const montrer = (e) => {
         if (reglages.mode !== 'typo') return;
+        if (e && e.cancelable && declencheur !== cible) e.preventDefault();   // ne ferme pas le clavier
         const mots = (noteOuverte && noteOuverte.typo) ? typoMots() : typoDernier;
-        elm.dataset.avant = elm.textContent;
-        elm.textContent = mots.length ? mots.slice(0, 4).join(' · ') : '—';
+        if (cible.dataset.avant == null) cible.dataset.avant = cible.textContent;
+        cible.textContent = mots.length ? mots.slice(0, 4).join(' · ') : '—';
     };
-    const cacher = () => { if (elm.dataset.avant != null) { elm.textContent = elm.dataset.avant; delete elm.dataset.avant; } };
-    elm.addEventListener('touchstart', montrer, { passive: true });
-    elm.addEventListener('mousedown', montrer);
-    ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => elm.addEventListener(ev, cacher));
-    elm.addEventListener('contextmenu', e => e.preventDefault());
+    const cacher = () => { if (cible.dataset.avant != null) { cible.textContent = cible.dataset.avant; delete cible.dataset.avant; } };
+    declencheur.addEventListener('touchstart', montrer, { passive: false });
+    declencheur.addEventListener('mousedown', montrer);
+    ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => declencheur.addEventListener(ev, cacher));
+    declencheur.addEventListener('contextmenu', e => e.preventDefault());
 }
-peekTypo(m2Date);
-peekTypo(document.getElementById('m2Titre'));
+peekTypo(document.querySelector('#m2Note .toolbar .tb-btn:nth-child(3)'), m2Date);
+peekTypo(document.getElementById('m2Titre'), document.getElementById('m2Titre'));
 
 // Réglage : brouiller les lettres affichées
 const typoBrouillerBox = document.getElementById('typoBrouiller');
