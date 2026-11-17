@@ -275,7 +275,7 @@ html { background: #000; }
 <!-- Antisèche secrète (mode 2) -->
 <div class="crib" id="crib" hidden></div>
 
-<!-- Réglages cachés : double-toucher l'icône à 3 barres en bas à gauche -->
+<!-- Réglages cachés : double-toucher les 3 points en haut à droite de l'accueil -->
 <div class="sheet-bg" id="relaySheet" hidden>
     <div class="sheet">
         <div class="sheet-grab"></div>
@@ -292,7 +292,7 @@ html { background: #000; }
                 <label class="rang"><span>Mots dans la liste</span><input type="number" id="m2Nb" min="10" max="80" inputmode="numeric"></label>
                 <label class="rang"><span>Garder sa note</span><input type="checkbox" class="interrupteur" id="m2Garder"></label>
             </div>
-            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : double-toucher l'icône à 3 barres en bas à gauche.</p>
+            <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : double-toucher les 3 points en haut à droite de l'accueil.</p>
             <button class="lien-crib" id="voirCrib">Voir l'antisèche</button>
         </div>
         <div id="optTypo">
@@ -300,7 +300,7 @@ html { background: #000; }
             <div class="groupe">
                 <label class="rang"><span>Brouiller les lettres</span><input type="checkbox" class="interrupteur" id="typoBrouiller"></label>
             </div>
-            <p class="indice">Le spectateur ouvre une nouvelle note et écrit son mot sans regarder. Les lettres affichées sont légèrement changées pour qu'il croie avoir raté. En secret, Notagram retrouve le mot voulu d'après les touches voisines du clavier (hors ligne). Peek : garde le doigt sur « Aa » en bas de la note — les mots possibles remplacent la date. Sur l'accueil : garde le doigt sur le titre « Notes ». Les 3 mots les plus probables sont envoyés à l'appareil externe quand le clavier se baisse.</p>
+            <p class="indice">Le spectateur ouvre une nouvelle note et écrit son mot sans regarder. Les lettres affichées sont légèrement changées pour qu'il croie avoir raté. En secret, Notagram retrouve le mot voulu d'après les touches voisines du clavier (hors ligne). Peek : garde le doigt sur « Aa » en bas de la note — les mots possibles remplacent la date. Sur l'accueil : garde le doigt sur le titre « Notes ». Les 3 mots les plus probables sont envoyés à l'appareil externe quand le clavier se baisse. Interrupteur secret : touche le trombone en bas de la note pour couper ou remettre le mode (coupé = le spectateur tape normalement; le trombone est alors un peu plus pâle).</p>
         </div>
         <div id="optBug">
             <div class="sous-titre">Mode Bug</div>
@@ -463,7 +463,14 @@ backBtn.onclick = () => {
         editor.innerHTML = noteSauvee;   // retour à la note écrite
         noteSauvee = null;
     } else {
-        editor.innerHTML = ""; 
+        // retour à l'accueil de Notes ; la note du spectateur y reste (si « Garder sa note »)
+        const texte = editor.innerText.trim();
+        if (texte && typeof notesM2 !== 'undefined' && reglages.garder) {
+            notesM2.push({ id: 'a' + Date.now(), titre: '', texte, date: new Date(), duSpectateur: true });
+        }
+        try { editor.blur(); } catch (e) {}
+        editor.innerHTML = "";
+        if (typeof m2 !== 'undefined') { m2.hidden = false; m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil(); }
     }
 };
 
@@ -641,7 +648,7 @@ function section(d) {
 }
 function afficherAccueil() {
     m2Liste.innerHTML = '';
-    const tri = notesM2.filter(n => !((reglages.mode === 'bug' || reglages.mode === 'typo') && n.id === 'mots')).sort((a, b) => b.date - a.date);
+    const tri = notesM2.filter(n => !(reglages.mode !== 'liste' && n.id === 'mots')).sort((a, b) => b.date - a.date);
     let sec = null, grp = null;
     tri.forEach(n => {
         const s = section(n.date);
@@ -679,6 +686,12 @@ function ouvrirNote(n, nouvelle) {
     if (nouvelle) m2Editeur.focus();   // synchrone : iOS ouvre le clavier en même temps
 }
 function nouvelleNote() {
+    if (reglages.mode === 'anagramme') {          // la note Anagramme est l'écran principal
+        if (noteOuverte) document.getElementById('m2Retour').click();
+        m2.hidden = true;
+        newNoteBtn.click();                       // vide la note et ouvre le clavier (même toucher : iOS l'accepte)
+        return;
+    }
     if (noteOuverte) document.getElementById('m2Retour').click();   // range la note en cours
     const n = { id: 'n' + Date.now(), titre: '', texte: '', date: new Date(), duSpectateur: true };
     ouvrirNote(n, true);
@@ -777,10 +790,11 @@ function appuiMenu(elm) {
     ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => elm.addEventListener(ev, stop));
     elm.addEventListener('contextmenu', e => e.preventDefault());
 }
-// Menu : double-toucher l'icône « liste » (3 barres) en bas à gauche, dans les deux modes
-document.querySelectorAll('.toolbar .tb-btn:first-child').forEach(btn => {
+// Menu : double-toucher les 3 points en haut à droite de l'accueil de Notes (tous les modes)
+document.querySelectorAll('#m2Accueil .dots').forEach(btn => {
     let dernier = 0;
-    btn.addEventListener('click', () => {
+    btn.style.cursor = 'pointer';
+    btn.addEventListener('pointerup', () => {
         const t = Date.now();
         if (t - dernier < 400) { dernier = 0; ouvrirReglages(); } else dernier = t;
     });
@@ -800,9 +814,9 @@ function majMenuMode() {
     document.getElementById('optTypo').style.display = reglages.mode === 'typo' ? '' : 'none';
 }
 function appliquerMode() {
-    const liste = reglages.mode === 'liste' || reglages.mode === 'bug' || reglages.mode === 'typo';   // Bug et Typo utilisent aussi l'accueil de Notes
+    const liste = true;   // tous les modes commencent par l'accueil de Notes
     m2.hidden = !liste;
-    majClavierTypo();
+    majClavierTypo(); if (typeof majIndiceTypo === 'function') majIndiceTypo();
     majMenuMode();
     if (liste) { m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil(); }
 }
@@ -1086,7 +1100,8 @@ function typoBrouiller(ch, position) {
 }
 
 // État de la note en cours (gardé sur la note elle-même)
-function typoActif() { return reglages.mode === 'typo' && noteOuverte && noteOuverte.duSpectateur; }
+let typoEnMarche = true;   // interrupteur secret : toucher le trombone en bas de la note
+function typoActif() { return typoEnMarche && reglages.mode === 'typo' && noteOuverte && noteOuverte.duSpectateur; }
 function typoEtat() { const n = noteOuverte; if (!n.typo) n.typo = { brut: [], vu: [] }; return n.typo; }
 function typoRedessiner() {
     const s = typoEtat();
@@ -1096,7 +1111,16 @@ function typoRedessiner() {
     const r = document.createRange(); r.selectNodeContents(m2Editeur); r.collapse(false);
     const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
 }
-function typoMots() { const s = noteOuverte && noteOuverte.typo; return s ? typoDevine(s.brut.join(''), 4) : []; }
+function typoMots() {
+    if (!noteOuverte) return [];
+    const s = noteOuverte.typo;
+    if (!typoEnMarche || !s) {   // mode coupé : le spectateur voit ce qu'il tape, on prend le dernier mot tel quel
+        const m = m2Editeur.innerText.trim().split(/\s+/).filter(Boolean).pop();
+        return m ? [majuscule(m)] : [];
+    }
+    const dernier = s.brut.join('').trim().split(/\s+/).filter(Boolean).pop() || '';
+    return typoDevine(dernier, 4);
+}
 let typoDernier = [];
 function typoMaj() {
     typoDernier = typoMots();
@@ -1136,7 +1160,7 @@ m2Editeur.addEventListener('input', () => {
 
 // Clavier baissé : on capte et on envoie les 2-3 mots les plus probables
 function terminerTypo() {
-    if (!noteOuverte || !noteOuverte.typo) return;
+    if (!noteOuverte || !noteOuverte.duSpectateur) return;
     noteOuverte.texte = m2Editeur.innerText.trim();
     typoDernier = typoMots();
     if (relay.on && typoDernier.length) {
@@ -1165,11 +1189,29 @@ function peekTypo(declencheur, cible) {
 peekTypo(document.querySelector('#m2Note .toolbar .tb-btn:nth-child(3)'), m2Date);
 peekTypo(document.getElementById('m2Titre'), document.getElementById('m2Titre'));
 
+// Interrupteur secret : toucher le trombone (2e icône en bas de la note) coupe ou remet le mode Typo.
+// Coupé : le spectateur tape normalement (autocorrecteur d'iOS inclus). Indice discret : le trombone est un peu plus pâle.
+const typoBouton = document.querySelector('#m2Note .toolbar .tb-btn:nth-child(2)');
+function majIndiceTypo() { typoBouton.style.opacity = (reglages.mode === 'typo' && !typoEnMarche) ? '0.55' : ''; }
+function basculerTypo(e) {
+    if (reglages.mode !== 'typo') return;
+    if (e && e.cancelable) e.preventDefault();   // ne ferme pas le clavier
+    typoEnMarche = !typoEnMarche;
+    if (typoEnMarche && noteOuverte && noteOuverte.duSpectateur) {
+        // on repart du texte affiché : les prochaines lettres seront captées et brouillées
+        const t = m2Editeur.innerText.replace(/\n/g, ' ');
+        noteOuverte.typo = { brut: [...t], vu: [...t] };
+    }
+    majClavierTypo(); majIndiceTypo();
+}
+typoBouton.addEventListener('touchstart', basculerTypo, { passive: false });
+typoBouton.addEventListener('mousedown', basculerTypo);
+
 // Réglage : brouiller les lettres affichées
 const typoBrouillerBox = document.getElementById('typoBrouiller');
 typoBrouillerBox.onchange = () => { reglages.typoBrouiller = typoBrouillerBox.checked; saveReglages(); };
 function majClavierTypo() {
-    const off = reglages.mode === 'typo';
+    const off = reglages.mode === 'typo' && typoEnMarche;
     ['autocorrect', 'autocapitalize', 'autocomplete'].forEach(a => off ? m2Editeur.setAttribute(a, 'off') : m2Editeur.removeAttribute(a));
 }
 
