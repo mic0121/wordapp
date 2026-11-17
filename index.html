@@ -282,7 +282,8 @@ html { background: #000; }
         <h3>Réglages</h3>
         <div class="segment" id="modeSeg">
             <button data-mode="anagramme">Anagramme</button>
-            <button data-mode="liste">Liste</button>
+            <button data-mode="typo">Typo</button>
+            <!-- <button data-mode="liste">Liste</button>  (mode Liste gardé dans le code, caché) -->
             <button data-mode="bug">Bug</button>
         </div>
         <div id="optListe">
@@ -293,6 +294,13 @@ html { background: #000; }
             </div>
             <p class="indice">La dernière lettre de chaque mot, depuis le début de la liste, épelle le mot écrit, suivi de « Kiwi ». Le mot que le spectateur touche dans la liste est capté et envoyé. Antisèche : appui long sur la date dans « Mots aléatoires ». Menu : double-toucher l'icône à 3 barres en bas à gauche.</p>
             <button class="lien-crib" id="voirCrib">Voir l'antisèche</button>
+        </div>
+        <div id="optTypo">
+            <div class="sous-titre">Mode Typo</div>
+            <div class="groupe">
+                <label class="rang"><span>Brouiller les lettres</span><input type="checkbox" class="interrupteur" id="typoBrouiller"></label>
+            </div>
+            <p class="indice">Le spectateur ouvre une nouvelle note et écrit son mot sans regarder. Les lettres affichées sont légèrement changées pour qu'il croie avoir raté. En secret, Notagram retrouve le mot voulu d'après les touches voisines du clavier (hors ligne). Peek : garde le doigt sur la date de la note, ou sur le titre « Notes ». Les 3 mots les plus probables sont envoyés à l'appareil externe quand le clavier se baisse.</p>
         </div>
         <div id="optBug">
             <div class="sous-titre">Mode Bug</div>
@@ -551,7 +559,7 @@ sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };
 const MOTS_LISTE = ["rame",    "barque", "voile", "voilier", "canot", "kayak", "radeau", "navire", "bateau", "pirogue", "ancre", "quai", "port", "phare", "bouée", "vague", "marée", "plage", "sable", "dune", "côte", "île", "lac", "étang", "mare", "rivière", "fleuve", "ruisseau", "source", "cascade", "chute", "rive", "berge", "pont", "écluse", "canal", "digue", "arbre", "bois", "forêt", "feuille", "racine", "tronc", "branche", "écorce", "fleur", "rose", "tulipe", "lys", "lilas", "iris", "muguet", "violette", "pétale", "tige", "graine", "herbe", "gazon", "mousse", "fougère", "lierre", "vigne", "sapin", "chêne", "érable", "bouleau", "saule", "pin", "cèdre", "hêtre", "frêne", "orme", "tilleul", "palmier", "cactus", "bambou", "buisson", "haie", "jardin", "potager", "verger", "serre", "pomme", "poire", "prune", "pêche", "cerise", "fraise", "framboise", "mûre", "bleuet", "cassis", "raisin", "citron", "orange", "banane", "ananas", "mangue", "kiwi", "melon", "figue", "datte", "noix", "noisette", "amande", "olive", "tomate", "carotte", "navet", "radis", "poireau", "oignon", "ail", "chou", "laitue", "salade", "épinard", "céleri", "concombre", "courge", "citrouille", "patate", "pois", "fève", "maïs", "riz", "blé", "orge", "avoine", "pain", "beurre", "fromage", "lait", "crème", "oeuf", "sucre", "sel", "poivre", "miel", "farine", "pâte", "tarte", "gâteau", "biscuit", "crêpe", "gaufre", "soupe", "sauce", "viande", "poulet", "boeuf", "porc", "veau", "agneau", "jambon", "saucisse", "bacon", "poisson", "saumon", "thon", "morue", "truite", "crevette", "homard", "crabe", "moule", "huître", "steak", "frite", "pizza", "burger", "sandwich", "café", "thé", "jus", "vin", "bière", "cidre", "eau", "soda", "sirop", "chocolat", "bonbon", "glace", "sorbet", "caramel", "vanille", "cannelle", "menthe", "chat", "chien", "cheval", "vache", "cochon", "mouton", "chèvre", "lapin", "poule", "coq", "canard", "oie", "dinde", "âne", "mule", "taureau", "souris", "rat", "écureuil", "castor", "ours", "loup", "renard", "lynx", "orignal", "cerf", "biche", "chevreuil", "lièvre", "hibou", "aigle", "faucon", "corbeau", "pigeon", "moineau", "merle", "mouette", "pingouin", "manchot", "cygne", "héron", "pélican", "perroquet", "lion", "tigre", "panthère", "jaguar", "léopard", "guépard", "zèbre", "girafe", "éléphant", "rhinocéros", "hippo", "singe", "gorille", "chameau", "kangourou", "koala", "panda", "phoque", "baleine", "dauphin", "requin", "pieuvre", "méduse", "tortue", "lézard", "serpent", "grenouille", "crapaud", "abeille", "guêpe", "mouche", "moustique", "fourmi", "papillon", "chenille", "araignée", "scorpion", "escargot", "ver", "puce", "maison", "chalet", "cabane", "villa", "château", "tour", "palais", "temple", "église", "école", "usine", "bureau", "magasin", "boutique", "hôtel", "hôpital", "musée", "théâtre", "cinéma", "stade", "gare", "aéroport", "garage", "grange", "ferme", "atelier", "cave", "grenier", "salon", "cuisine", "chambre", "toilette", "douche", "bain", "couloir", "escalier", "balcon", "terrasse", "toit", "mur", "porte", "fenêtre", "volet", "plafond", "plancher", "sol", "tapis", "rideau", "lampe", "lustre", "miroir", "cadre", "horloge", "pendule", "table", "chaise", "banc", "tabouret", "fauteuil", "canapé", "sofa", "lit", "matelas", "oreiller", "drap", "couverture", "armoire", "tiroir", "étagère", "coffre", "boîte", "panier", "sac", "valise", "malle", "caisse", "bouteille", "verre", "tasse", "bol", "assiette", "plat", "fourchette", "couteau", "cuillère", "poêle", "casserole", "marmite", "four", "frigo", "évier", "robinet", "livre", "cahier", "crayon", "stylo", "plume", "gomme", "règle", "ciseaux", "colle", "papier", "carte", "lettre", "enveloppe", "timbre", "journal", "revue", "page", "tableau", "craie", "dossier", "agenda", "calendrier", "téléphone", "cellulaire", "ordi", "écran", "clavier", "câble", "radio", "télé", "caméra", "photo", "appareil", "montre", "réveil", "batterie", "pile", "ampoule", "moteur", "roue", "pneu", "volant", "frein", "vélo", "moto", "auto", "voiture", "camion", "autobus", "métro", "train", "tramway", "avion", "fusée", "hélice", "taxi", "tracteur", "chemise", "pantalon", "jupe", "robe", "veste", "manteau", "gilet", "chandail", "pull", "tuque", "bonnet", "chapeau", "casquette", "foulard", "écharpe", "gant", "mitaine", "bas", "chaussette", "soulier", "botte", "sandale", "ceinture", "cravate", "bijou", "bague", "collier", "bracelet", "perle", "diamant", "lunettes", "parapluie", "tête", "visage", "oeil", "yeux", "nez", "bouche", "lèvre", "dent", "langue", "oreille", "cou", "épaule", "bras", "coude", "main", "doigt", "pouce", "ongle", "poing", "dos", "ventre", "jambe", "genou", "pied", "orteil", "coeur", "cerveau", "poumon", "foie", "peau", "sang", "muscle", "cheveu", "barbe", "front", "joue", "menton", "père", "mère", "frère", "soeur", "fils", "fille", "oncle", "tante", "cousin", "cousine", "neveu", "nièce", "bébé", "enfant", "garçon", "homme", "femme", "ami", "amie", "voisin", "roi", "reine", "prince", "princesse", "chevalier", "pirate", "sorcier", "sorcière", "fée", "géant", "nain", "ange", "diable", "fantôme", "vampire", "dragon", "licorne", "sirène", "ogre", "lutin", "elfe", "docteur", "médecin", "avocat", "juge", "policier", "pompier", "soldat", "marin", "pilote", "chauffeur", "boulanger", "boucher", "fermier", "pêcheur", "chasseur", "cuisinier", "serveur", "facteur", "artiste", "peintre", "chanteur", "danseur", "acteur", "auteur", "poète", "magicien", "clown", "professeur", "élève", "étudiant", "patron", "soleil", "lune", "étoile", "planète", "comète", "ciel", "nuage", "pluie", "neige", "grêle", "orage", "éclair", "tonnerre", "vent", "brume", "brouillard", "arc", "givre", "gel", "froid", "chaleur", "été", "hiver", "printemps", "automne", "matin", "midi", "soir", "nuit", "aube", "aurore", "jour", "semaine", "mois", "année", "siècle", "heure", "minute", "seconde", "montagne", "colline", "vallée", "plaine", "désert", "jungle", "prairie", "champ", "falaise", "grotte", "volcan", "rocher", "caillou", "pierre", "roche", "glacier", "océan", "mer", "baie", "golfe", "rouge", "bleu", "vert", "jaune", "noir", "blanc", "gris", "brun", "mauve", "violet", "beige", "doré", "argent", "amour", "paix", "joie", "peur", "colère", "rêve", "espoir", "chance", "destin", "secret", "mystère", "magie", "esprit", "âme", "mémoire", "pensée", "idée", "vérité", "mensonge", "silence", "musique", "chanson", "danse", "fête", "jeu", "sport", "match", "équipe", "ballon", "balle", "but", "filet", "raquette", "piste", "course", "guitare", "piano", "violon", "flûte", "tambour", "trompette", "harpe", "orgue", "clarinette", "saxophone", "banjo", "fer", "cuivre", "acier", "bronze", "plomb", "zinc", "cuir", "laine", "soie", "coton", "plastique", "marbre", "béton", "brique", "monnaie", "dollar", "euro", "sou", "banque", "prix", "cadeau", "trésor", "clé", "clef", "serrure", "chaîne", "corde", "fil", "aiguille", "bouton", "ruban", "ficelle", "feu", "flamme", "fumée", "cendre", "braise", "bougie", "chandelle", "allumette", "lanterne", "torche", "roman", "conte", "poème", "film", "série", "histoire", "légende", "mythe", "fable", "énigme", "puzzle", "échecs", "domino", "ville", "village", "pays", "nation", "monde", "terre", "route", "rue", "chemin", "sentier", "avenue", "boulevard", "parc", "place", "tunnel", "frontière", "nombre", "chiffre", "zéro", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf", "dix", "cent", "mille", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche", "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre", "hockey", "soccer", "tennis", "golf", "baseball", "boxe", "ski", "patin", "nage", "yoga", "fusil", "épée", "sabre", "flèche", "bouclier", "armure", "casque", "canon", "nid", "aile", "bec", "griffe", "patte", "queue", "corne", "sabot", "crinière", "fourrure", "huile", "vinaigre", "moutarde", "ketchup", "mayo", "mot", "nom", "phrase", "voix", "cri", "rire", "larme", "sourire", "baiser", "câlin", "regard", "geste", "loi", "droit", "ordre", "guerre", "victoire", "défaite", "combat", "bataille", "anorak", "yak", "bifteck", "hadj", "taj", "show", "bungalow", "poney", "jockey", "rugby", "whisky", "gaz", "chez", "quartz", "choux", "faux", "roux", "flash", "coach", "long", "hareng", "camping", "parking", "club", "snob", "kebab", "toubib", "coup", "galop", "chef", "nef", "soif", "bac", "choc", "leitmotiv", "tard", "nord", "sud", "bord", "fond", "gland", "marchand", "chaud", "lourd", "col", "travail", "rail", "email", "métal", "animal", "cour", "désir", "enfer", "hier", "fruit", "bruit", "bout", "goût", "pot", "repas", "colis", "temps", "corps", "velours", "album", "parfum", "forum", "rhum", "maximum", "opéra", "puma", "véranda", "samba"];
 const ALIMENTS = new Set(["AGNEAU", "AIL", "AMANDE", "ANANAS", "AVOINE", "BACON", "BANANE", "BEURRE", "BIERE", "BIFTECK", "BISCUIT", "BLE", "BLEUET", "BOEUF", "BONBON", "BURGER", "CAFE", "CANNELLE", "CARAMEL", "CAROTTE", "CASSIS", "CELERI", "CERISE", "CHOCOLAT", "CHOU", "CHOUX", "CIDRE", "CITRON", "CITROUILLE", "CONCOMBRE", "COURGE", "CRABE", "CREME", "CREPE", "CREVETTE", "DATTE", "EAU", "EPINARD", "FARINE", "FEVE", "FIGUE", "FRAISE", "FRAMBOISE", "FRITE", "FROMAGE", "GATEAU", "GAUFRE", "GLACE", "HARENG", "HOMARD", "HUILE", "HUITRE", "JAMBON", "JUS", "KEBAB", "KETCHUP", "KIWI", "LAIT", "LAITUE", "MAIS", "MANGUE", "MAYO", "MELON", "MENTHE", "MIEL", "MORUE", "MOULE", "MOUTARDE", "MURE", "NAVET", "NOISETTE", "NOIX", "OEUF", "OIGNON", "OLIVE", "ORANGE", "ORGE", "PAIN", "PATATE", "PATE", "PECHE", "PIZZA", "POIRE", "POIREAU", "POIS", "POISSON", "POIVRE", "POMME", "PORC", "POULET", "PRUNE", "RADIS", "RAISIN", "RHUM", "RIZ", "SALADE", "SANDWICH", "SAUCE", "SAUCISSE", "SAUMON", "SEL", "SIROP", "SODA", "SORBET", "SOUPE", "STEAK", "SUCRE", "TARTE", "THE", "THON", "TOMATE", "TRUITE", "VANILLE", "VEAU", "VIANDE", "VIN", "VINAIGRE"]);
 const REGLAGES_KEY = 'notagram-reglages';
-let reglages = { mode: 'anagramme', nbMots: 40, garder: true, bugDelai: 4, bugNoir: 6, bugImageDuree: 6 };
+let reglages = { mode: 'anagramme', typoBrouiller: true, nbMots: 40, garder: true, bugDelai: 4, bugNoir: 6, bugImageDuree: 6 };
 try { reglages = Object.assign(reglages, JSON.parse(localStorage.getItem(REGLAGES_KEY) || '{}')); } catch (e) {}
 function saveReglages() { try { localStorage.setItem(REGLAGES_KEY, JSON.stringify(reglages)); } catch (e) {} }
 
@@ -633,7 +641,7 @@ function section(d) {
 }
 function afficherAccueil() {
     m2Liste.innerHTML = '';
-    const tri = notesM2.filter(n => !(reglages.mode === 'bug' && n.id === 'mots')).sort((a, b) => b.date - a.date);
+    const tri = notesM2.filter(n => !((reglages.mode === 'bug' || reglages.mode === 'typo') && n.id === 'mots')).sort((a, b) => b.date - a.date);
     let sec = null, grp = null;
     tri.forEach(n => {
         const s = section(n.date);
@@ -689,6 +697,7 @@ function apresClavier() {
     if (!noteOuverte || !noteOuverte.duSpectateur) return;
     if (reglages.mode === 'liste') terminerNote();
     else if (reglages.mode === 'bug') preparerBug();
+    else if (reglages.mode === 'typo') terminerTypo();
 }
 m2Ok.addEventListener('mousedown', e => e.preventDefault());
 m2Ok.onclick = () => { m2Editeur.blur(); m2Ok.hidden = true; apresClavier(); };
@@ -788,10 +797,12 @@ function majMenuMode() {
     document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === reglages.mode));
     document.getElementById('optListe').style.display = reglages.mode === 'liste' ? '' : 'none';
     document.getElementById('optBug').style.display = reglages.mode === 'bug' ? '' : 'none';
+    document.getElementById('optTypo').style.display = reglages.mode === 'typo' ? '' : 'none';
 }
 function appliquerMode() {
-    const liste = reglages.mode === 'liste' || reglages.mode === 'bug';   // le mode Bug utilise aussi l'accueil de Notes
+    const liste = reglages.mode === 'liste' || reglages.mode === 'bug' || reglages.mode === 'typo';   // Bug et Typo utilisent aussi l'accueil de Notes
     m2.hidden = !liste;
+    majClavierTypo();
     majMenuMode();
     if (liste) { m2Note.hidden = true; m2Accueil.hidden = false; afficherAccueil(); }
 }
@@ -804,7 +815,7 @@ m2Nb.onchange = () => {
 m2Garder.onchange = () => { reglages.garder = m2Garder.checked; saveReglages(); };
 document.getElementById('voirCrib').onclick = () => { sheet.hidden = true; afficherCrib(); };
 const _ouvrirReglages = ouvrirReglages;
-ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; bugDelai.value = reglages.bugDelai; bugNoir.value = reglages.bugNoir; bugImageDuree.value = reglages.bugImageDuree; majImages(); majMenuMode(); _ouvrirReglages(); };
+ouvrirReglages = function () { m2Nb.value = reglages.nbMots; m2Garder.checked = reglages.garder; bugDelai.value = reglages.bugDelai; bugNoir.value = reglages.bugNoir; bugImageDuree.value = reglages.bugImageDuree; typoBrouillerBox.checked = reglages.typoBrouiller !== false; majImages(); majMenuMode(); _ouvrirReglages(); };
 
 
 // =====================================================================
@@ -1005,6 +1016,161 @@ function remesurerEcran(force) {
 [document.getElementById('editor'), document.getElementById('m2Editeur')].forEach(ed => {
     ed.addEventListener('blur', () => { setTimeout(() => remesurerEcran(false), 150); setTimeout(() => remesurerEcran(false), 600); });
 });
+
+// =====================================================================
+// ===== MODE TYPO — le spectateur écrit son mot sans regarder
+// ===== (100 % hors ligne : clavier + dictionnaire intégrés)
+// =====================================================================
+// Mots « pensables » (ordre ≈ popularité). Ils s'ajoutent au DICTIONARY et passent en priorité.
+const TYPO_PENSABLES = (
+    "chat chien cheval lion tigre éléphant girafe singe ours loup renard lapin souris oiseau poisson requin baleine dauphin serpent tortue grenouille vache cochon mouton chèvre poule coq canard aigle hibou pingouin zèbre panda koala kangourou crocodile hippopotame rhinocéros chameau castor orignal raton écureuil hérisson papillon abeille fourmi araignée mouche moustique coccinelle escargot pieuvre crabe homard crevette méduse phoque morse perroquet corbeau pigeon moineau cygne flamant paon autruche gorille léopard guépard jaguar panthère lynx caribou chevreuil cerf bison taureau âne lama hamster loutre mouffette dragon licorne dinosaure " +
+    "pomme banane orange fraise cerise raisin poire pêche ananas mangue kiwi citron melon pastèque framboise bleuet abricot prune noix coco avocat tomate carotte patate brocoli laitue concombre oignon ail poivron maïs champignon citrouille courgette épinard chou navet radis betterave céleri pizza poutine hamburger frites spaghetti lasagne sushi tacos pain fromage beurre lait oeuf chocolat gâteau biscuit bonbon crème glace café thé jus eau vin bière sirop érable sucre sel poivre miel confiture crêpe gaufre muffin beigne croissant sandwich soupe salade riz pâtes viande poulet boeuf jambon bacon saucisse steak saumon thon " +
+    "rouge bleu vert jaune noir blanc rose violet mauve gris brun marron turquoise beige argent doré " +
+    "table chaise lit lampe porte fenêtre maison voiture auto vélo bateau avion train camion autobus moto téléphone ordinateur télévision radio livre crayon stylo papier cahier sac clé montre lunettes chapeau soulier botte chaussure chandail manteau pantalon robe jupe chemise cravate bague collier bracelet miroir horloge réveil ballon guitare piano violon tambour trompette flûte micro caméra photo tableau bouteille verre tasse assiette fourchette couteau cuillère casserole frigo four bougie parapluie valise brosse savon serviette oreiller couverture tapis rideau escalier toit mur jardin piscine plage fleur arbre tulipe marguerite tournesol sapin feuille herbe pierre roche sable montagne rivière lac mer océan île forêt désert volcan nuage pluie neige soleil lune étoile planète ciel vent orage tonnerre éclair feu terre ciseaux marteau tournevis échelle pelle balai poubelle boîte cadeau carte enveloppe timbre journal billet monnaie dollar trésor couronne épée bouclier château tour pont église école hôpital magasin restaurant hôtel cinéma théâtre musée parc stade aéroport gare bureau usine ferme grange cabane tente fusée satellite robot poupée toutou jouet dés échecs " +
+    "médecin docteur infirmière dentiste pompier policier avocat professeur enseignant étudiant cuisinier chef boulanger boucher pilote astronaute magicien clown acteur chanteur musicien danseur peintre artiste écrivain journaliste photographe plombier électricien menuisier mécanicien fermier pêcheur soldat roi reine prince princesse pirate sorcier sorcière fantôme vampire zombie ange démon héros bébé enfant garçon fille homme femme maman papa frère soeur ami amour " +
+    "hockey soccer football baseball basketball tennis golf natation ski patin boxe karaté judo yoga course danse musique lecture voyage camping pêche chasse jeu " +
+    "canada québec france italie espagne japon chine mexique brésil allemagne angleterre irlande portugal grèce égypte inde russie australie suisse belgique maroc haïti cuba montréal toronto paris londres rome tokyo madrid berlin vancouver ottawa gatineau sherbrooke saguenay lévis laval longueuil rimouski chicoutimi " +
+    "bonheur liberté paix rêve secret magie mystère chance destin temps vie mort espoir peur joie colère courage force sagesse vérité mensonge silence lumière ombre noël halloween pâques anniversaire mariage vacances été hiver automne printemps lundi mardi mercredi jeudi vendredi samedi dimanche janvier février mars avril mai juin juillet août septembre octobre novembre décembre"
+).split(/\s+/).filter(Boolean);
+
+const TYPO_MOTS = (() => {
+    const vu = new Map();
+    TYPO_PENSABLES.forEach((w, i) => { const k = normalize(w).toLowerCase(); if (k && !vu.has(k)) vu.set(k, { k, aff: w, bonus: 0.12 * Math.log(i + 10) / Math.log(600) }); });
+    DICTIONARY.forEach(W => { const k = normalize(W).toLowerCase(); if (k && !vu.has(k)) vu.set(k, { k, aff: W.toLowerCase(), bonus: PRIORITAIRES.has(W) ? 0.2 : 0.42 }); });
+    return [...vu.values()];
+})();
+
+// Géométrie du clavier QWERTY iOS (fr-CA)
+const TYPO_POS = {};
+[["qwertyuiop", 0], ["asdfghjkl", 0.5], ["zxcvbnm", 1.5]].forEach(([r, off], y) => [...r].forEach((c, x) => TYPO_POS[c] = [x + off, y]));
+function typoDist(a, b) { const p = TYPO_POS[a], q = TYPO_POS[b]; return (p && q) ? Math.hypot(p[0] - q[0], p[1] - q[1]) : 9; }
+const TYPO_VOISINS = {};
+Object.keys(TYPO_POS).forEach(c => TYPO_VOISINS[c] = Object.keys(TYPO_POS).filter(o => o !== c && typoDist(c, o) < 1.2));
+
+// Distance d'édition pondérée par le clavier : une touche voisine coûte peu, une lettre en trop/manquante un peu plus
+function typoCout(t, w) {
+    const n = t.length, m = w.length, d = [];
+    for (let i = 0; i <= n; i++) { d.push(new Array(m + 1).fill(0)); d[i][0] = i * 0.75; }
+    for (let j = 1; j <= m; j++) d[0][j] = j * 0.7;
+    for (let i = 1; i <= n; i++) for (let j = 1; j <= m; j++) {
+        const a = t[i - 1], b = w[j - 1];
+        const sub = a === b ? 0 : Math.min(1, 0.15 + 0.35 * typoDist(a, b));
+        const ins = ((i > 1 && typoDist(a, t[i - 2]) < 1.2) || typoDist(a, b) < 1.2) ? 0.4 : 0.75;
+        let v = Math.min(d[i - 1][j] + ins, d[i][j - 1] + 0.7, d[i - 1][j - 1] + sub);
+        if (i > 1 && j > 1 && a === w[j - 2] && t[i - 2] === b) v = Math.min(v, d[i - 2][j - 2] + 0.45);
+        d[i][j] = v;
+    }
+    return d[n][m];
+}
+function typoDevine(brut, combien) {
+    const t = normalize(brut || '').toLowerCase();
+    if (!t) return [];
+    const res = [];
+    for (const e of TYPO_MOTS) {
+        if (Math.abs(e.k.length - t.length) > 3) continue;
+        res.push([typoCout(t, e.k) / Math.max(3, e.k.length) * 3 + e.bonus, e.aff]);
+    }
+    res.sort((a, b) => a[0] - b[0]);
+    return res.slice(0, combien || 4).map(x => majuscule(x[1]));
+}
+
+// Ce que voit le spectateur : parfois une touche voisine, parfois une lettre doublée
+function typoBrouiller(ch, position) {
+    const c = ch.toLowerCase();
+    if (reglages.typoBrouiller === false || !TYPO_VOISINS[c]) return ch;
+    const r = hasard(100), garde = position === 0 ? 70 : 42;
+    const voisin = () => { const v = TYPO_VOISINS[c]; const x = v[hasard(v.length)]; return ch === c ? x : x.toUpperCase(); };
+    if (r < garde) return ch;
+    if (r < garde + 10) return ch + voisin();           // doigt qui accroche deux touches
+    return voisin();
+}
+
+// État de la note en cours (gardé sur la note elle-même)
+function typoActif() { return reglages.mode === 'typo' && noteOuverte && noteOuverte.duSpectateur; }
+function typoEtat() { const n = noteOuverte; if (!n.typo) n.typo = { brut: [], vu: [] }; return n.typo; }
+function typoRedessiner() {
+    const s = typoEtat();
+    let txt = s.vu.join('');
+    if (txt) txt = txt.charAt(0).toUpperCase() + txt.slice(1);   // Notes met une majuscule au début
+    m2Editeur.textContent = txt;
+    const r = document.createRange(); r.selectNodeContents(m2Editeur); r.collapse(false);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+}
+function typoMots() { const s = noteOuverte && noteOuverte.typo; return s ? typoDevine(s.brut.join(''), 4) : []; }
+let typoDernier = [];
+function typoMaj() {
+    typoDernier = typoMots();
+    if (typoDernier.length) relayWord(typoDernier.slice(0, 3).join(' / '));
+}
+
+m2Editeur.addEventListener('beforeinput', e => {
+    if (!typoActif()) return;
+    const s = typoEtat(), type = e.inputType || '';
+    if (type === 'insertText' || type === 'insertReplacementText' || type === 'insertFromPaste') {
+        e.preventDefault();
+        if (type !== 'insertText') return;                // on ignore les corrections / suggestions d'iOS
+        [...(e.data || '')].forEach(ch => { s.brut.push(ch); s.vu.push(/\s/.test(ch) ? ch : typoBrouiller(ch, s.brut.length - 1)); });
+        typoRedessiner(); typoMaj();
+    } else if (type.startsWith('delete')) {
+        e.preventDefault();
+        s.brut.pop(); s.vu.pop();
+        typoRedessiner(); typoMaj();
+    } else if (type === 'insertParagraph' || type === 'insertLineBreak') {
+        e.preventDefault();                               // un seul mot : Retour ne fait rien
+    }
+});
+// Filet de sécurité si iOS insère du texte sans « beforeinput »
+m2Editeur.addEventListener('input', () => {
+    if (!typoActif()) return;
+    const s = typoEtat();
+    let attendu = s.vu.join(''); if (attendu) attendu = attendu.charAt(0).toUpperCase() + attendu.slice(1);
+    const actuel = m2Editeur.innerText.replace(/\n/g, '');
+    if (actuel === attendu) return;
+    if (actuel.length > attendu.length && actuel.toLowerCase().startsWith(attendu.toLowerCase())) {
+        [...actuel.slice(attendu.length)].forEach(ch => { s.brut.push(ch); s.vu.push(/\s/.test(ch) ? ch : typoBrouiller(ch, s.brut.length - 1)); });
+    } else {
+        while (s.vu.length && s.vu.join('').length > actuel.length) { s.brut.pop(); s.vu.pop(); }
+    }
+    typoRedessiner(); typoMaj();
+});
+
+// Clavier baissé : on capte et on envoie les 2-3 mots les plus probables
+function terminerTypo() {
+    if (!noteOuverte || !noteOuverte.typo) return;
+    noteOuverte.texte = m2Editeur.innerText.trim();
+    typoDernier = typoMots();
+    if (relay.on && typoDernier.length) {
+        const txt = typoDernier.slice(0, 3).join(' / ');
+        clearTimeout(relayTimer); relayLast = txt;
+        sendRelay(txt).catch(() => { relayLast = ''; });
+    }
+}
+
+// Peek : garder le doigt sur la date de la note (ou sur le titre « Notes ») affiche les mots possibles
+function peekTypo(elm, texteNormal) {
+    const montrer = () => {
+        if (reglages.mode !== 'typo') return;
+        const mots = (noteOuverte && noteOuverte.typo) ? typoMots() : typoDernier;
+        elm.dataset.avant = elm.textContent;
+        elm.textContent = mots.length ? mots.slice(0, 4).join(' · ') : '—';
+    };
+    const cacher = () => { if (elm.dataset.avant != null) { elm.textContent = elm.dataset.avant; delete elm.dataset.avant; } };
+    elm.addEventListener('touchstart', montrer, { passive: true });
+    elm.addEventListener('mousedown', montrer);
+    ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev => elm.addEventListener(ev, cacher));
+    elm.addEventListener('contextmenu', e => e.preventDefault());
+}
+peekTypo(m2Date);
+peekTypo(document.getElementById('m2Titre'));
+
+// Réglage : brouiller les lettres affichées
+const typoBrouillerBox = document.getElementById('typoBrouiller');
+typoBrouillerBox.onchange = () => { reglages.typoBrouiller = typoBrouillerBox.checked; saveReglages(); };
+function majClavierTypo() {
+    const off = reglages.mode === 'typo';
+    ['autocorrect', 'autocapitalize', 'autocomplete'].forEach(a => off ? m2Editeur.setAttribute(a, 'off') : m2Editeur.removeAttribute(a));
+}
+
 
 // Démarrage
 initNotes(); construireListe(''); majNoteMots(); appliquerMode();
